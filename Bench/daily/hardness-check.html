@@ -46,6 +46,7 @@
     align-items: center;
     gap: 14px;
   }
+  .back{width:34px;height:34px;border:none;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -6px rgba(140,100,200,.6);cursor:pointer;flex:none}
   .content {
     flex: 1;
     padding: 12px 24px 18px;
@@ -199,13 +200,10 @@
     </div>
   </div>
 
-  <div class="topbar">
-    <div style="flex:1;height:10px;border-radius:6px;background:#EDE4FA;overflow:hidden"><div style="width:75%;height:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);border-radius:6px"></div></div>
-    <span style="font:400 15px Jua,Pretendard;color:#7A63C8">STEP 6</span>
-    <button id="helpOpen" type="button" class="help" style="width:34px;height:34px;background:#fff;box-shadow:0 4px 10px -6px rgba(140,100,200,.6)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#8A76B0" stroke-width="2" stroke-linecap="round"/></svg></button>
-  </div>
-
   <div class="content">
+    <div class="topline" style="margin-bottom:8px">
+      <button onClick="location.href='./emotion-subcategory.html'" class="back" type="button" aria-label="뒤로 가기"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.5 2.5L4 7l4.5 4.5" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
     <div>
       <h1 style="margin:0 0 4px;font:400 26px/1.2 Jua,Pretendard;color:#4A3550">그때 너의 마음은<br>어느 쪽이었어?</h1>
       <p style="margin:0;font:500 14px Pretendard;color:#B08FC0">가장 비슷한 걸 하나 골라줘 · ? 를 누르면 자세히</p>
