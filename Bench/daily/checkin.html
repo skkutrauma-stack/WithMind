@@ -1,65 +1,132 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>html,body{margin:0;min-height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff}body{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:24px;box-sizing:border-box;overflow:auto}</style></head><body>
-<div style="width:390px;min-height:844px;background:radial-gradient(130% 50% at 20% 0%,#E7DFFF,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 30px 4px;font:600 15px Pretendard"><span>9:41</span><div style="display:flex;gap:7px;align-items:center"><svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg></div></div>
-  <div style="padding:14px 26px 6px;display:flex;align-items:center;gap:14px"><div style="flex:1;height:10px;border-radius:6px;background:#EDE4FA;overflow:hidden"><div style="width:37.5%;height:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);border-radius:6px"></div></div><span style="font:400 15px Jua,Pretendard;color:#7A63C8">STEP 3</span><button onClick="location.href='./emotion-subcategory.html'" style="width:34px;height:34px;border:none;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -6px rgba(140,100,200,.6);cursor:pointer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#8A76B0" stroke-width="2" stroke-linecap="round"/></svg></button></div>
-  <div style="flex:1;padding:18px 26px;display:flex;flex-direction:column;gap:18px">
-    <div><h1 style="margin:0 0 4px;font:400 26px/1.2 Jua,Pretendard;color:#4A3550">금방 끝나!</h1><p style="margin:0;font:500 14px Pretendard;color:#B08FC0">떠오르는 대로 골라줘</p></div>
-    <div class="qcard" data-q="mood" style="background:#fff;border-radius:28px;padding:22px 20px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5)"><p style="margin:0 0 20px;font:400 17px Jua,Pretendard;color:#4A3550">오늘 기분은 어땠어?</p><div class="dots" style="display:flex;align-items:center;justify-content:space-between;gap:10px"><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#FFE0D3;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#FFE0D3;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#FFE0D3;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#FFE0D3;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#FFE0D3;cursor:pointer;padding:0"></button></div><div style="display:flex;justify-content:space-between;margin-top:14px;font:600 11px Pretendard;color:#B08FC0"><span>가라앉음</span><span>좋음</span></div></div>
-    <div class="qcard" data-q="hard" style="background:#fff;border-radius:28px;padding:22px 20px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5)"><p style="margin:0 0 20px;font:400 17px Jua,Pretendard;color:#4A3550">오늘 하루, 얼마나 버거웠어?</p><div class="dots" style="display:flex;align-items:center;justify-content:space-between;gap:10px"><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#DBEFFB;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#DBEFFB;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#DBEFFB;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#DBEFFB;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#DBEFFB;cursor:pointer;padding:0"></button></div><div style="display:flex;justify-content:space-between;margin-top:14px;font:600 11px Pretendard;color:#B08FC0"><span>전혀</span><span>매우</span></div></div>
-    <div class="qcard" data-q="conn" style="background:#fff;border-radius:28px;padding:22px 20px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5)"><p style="margin:0 0 20px;font:400 17px Jua,Pretendard;color:#4A3550">누군가와 연결된 느낌은?</p><div class="dots" style="display:flex;align-items:center;justify-content:space-between;gap:10px"><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#EDE4FA;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#EDE4FA;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#EDE4FA;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#EDE4FA;cursor:pointer;padding:0"></button><button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:#EDE4FA;cursor:pointer;padding:0"></button></div><div style="display:flex;justify-content:space-between;margin-top:14px;font:600 11px Pretendard;color:#B08FC0"><span>혼자</span><span>함께</span></div></div>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet"><style>html,body{margin:0;min-height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff;overflow:hidden}body{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:24px;box-sizing:border-box}.phone{width:390px;height:844px;background:radial-gradient(130% 50% at 20% 0%,#E7DFFF,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550}.status{display:flex;justify-content:flex-start;align-items:center;padding:16px 30px 0;font:600 15px Pretendard}.content{flex:1;min-height:0;padding:14px 24px 18px;display:flex;flex-direction:column;gap:14px}.topline{display:flex;align-items:center;gap:10px;margin-bottom:6px}.back{width:34px;height:34px;border:none;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -6px rgba(140,100,200,.6);cursor:pointer;flex:none}.title{margin:0;font:400 30px/1.15 Jua,Pretendard;color:#4A3550}.subtitle{margin:0;font:500 14px Pretendard;color:#B08FC0}#questionList{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;overflow:auto;scrollbar-width:none;-ms-overflow-style:none}#questionList::-webkit-scrollbar{width:0;height:0}.footer{padding:8px 26px 30px}#nextButton{border:none;width:100%;background:#D8C7F2;color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:not-allowed;box-shadow:none}</style></head><body>
+<div class="phone">
+  <div aria-hidden="true" style="height:35px;flex:none"></div>
+  <div class="content">
+    <div class="topline" style="margin-bottom:8px">
+      <button onClick="location.href='./emotion-subcategory.html'" class="back" type="button" aria-label="뒤로 가기"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.5 2.5L4 7l4.5 4.5" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  <div style="padding-top:0;padding-bottom:8px">
+      <p style="margin:0 0 5px;font:700 12px Pretendard;color:#A98BE8">오늘의 EMA</p>
+      <h1 class="title" style="font-size:33px;line-height:1.12">지우야, 오늘 어때?</h1>
+      <p class="subtitle" style="margin-top:6px">떠오르는 대로 골라줘</p>
+    </div>
+    <div id="questionList" style="flex:1;min-height:0;overflow:auto"></div>
+    <div class="summary" id="selectionSummary" style="display:none"></div>
   </div>
-  <div style="padding:8px 26px 30px"><button id="nextButton" type="button" style="border:none;width:100%;background:#D8C7F2;color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:not-allowed;box-shadow:none">다음</button></div>
+  <div class="footer"><button id="nextButton" type="button" class="next" disabled>다음</button></div>
 </div>
 <script>
-  function styleDot(dot, active) {
-    const colors = {
-      mood: active ? '#FF8A6B' : '#FFE0D3',
-      hard: active ? '#5AB0E8' : '#DBEFFB',
-      conn: active ? '#A98BE8' : '#EDE4FA'
-    };
-    const shadows = {
-      mood: active ? '0 0 0 5px #FFD9CB,0 8px 16px -6px rgba(255,120,90,.7)' : 'none',
-      hard: active ? '0 0 0 5px #C7E7F8,0 8px 16px -6px rgba(90,176,232,.7)' : 'none',
-      conn: active ? '0 0 0 5px #E1D7F7,0 8px 16px -6px rgba(140,100,200,.7)' : 'none'
-    };
-    dot.style.background = colors[dot.closest('.qcard').dataset.q];
-    dot.style.boxShadow = shadows[dot.closest('.qcard').dataset.q];
+  const questions = [
+    { id: 'q01', text: '나는 동료의식이 없다고 자주 느낀다.', points: 4 },
+    { id: 'q02', text: '나는 따돌림을 당한다고 자주 느낀다.', points: 4 },
+    { id: 'q03', text: '나는 다른 사람들과 고립되어 있다고 자주 느낀다.', points: 4 },
+    { id: 'q04', text: '나는 위통을 자주 겪는다.', points: 3 },
+    { id: 'q05', text: '나는 허리 통증을 자주 겪는다.', points: 3 },
+    { id: 'q06', text: '나는 팔, 다리, 관절(예: 무릎, 고관절 등)의 통증을 자주 겪는다.', points: 3 },
+    { id: 'q07', text: '나는 생리 기간 동안 생리통 등의 문제를 자주 겪는다.', points: 3 },
+    { id: 'q08', text: '나는 두통을 자주 겪는다.', points: 3 },
+    { id: 'q09', text: '나는 가슴 통증이나 흉통을 자주 겪는다.', points: 3 },
+    { id: 'q10', text: '나는 어지러움을 자주 겪는다.', points: 3 },
+    { id: 'q11', text: '나는 기절할 것 같은 느낌을 자주 겪는다.', points: 3 },
+    { id: 'q12', text: '나는 심장이 빨리 뜀을 자주 겪는다.', points: 3 },
+    { id: 'q13', text: '나는 숨이 참을 자주 겪는다.', points: 3 },
+    { id: 'q14', text: '나는 성교 중 통증 등의 문제를 자주 겪는다.', points: 3 },
+    { id: 'q15', text: '나는 신경성 복통이나 빈번한 화장실 사용(과민성 대장 증상)을 자주 겪는다.', points: 3 },
+    { id: 'q16', text: '나는 메스꺼움, 방귀, 소화불량을 자주 겪는다.', points: 3 },
+    { id: 'q17', text: '나는 피로감이나 기운 없음을 자주 겪는다.', points: 3 },
+    { id: 'q18', text: '나는 수면의 어려움을 자주 겪는다.', points: 3 },
+    { id: 'q19', text: '나는 마음을 분산시키기 위해 일을 하거나 다른 활동을 한다.', points: 4 },
+    { id: 'q20', text: '나는 “그것은 사실일 리가 없어”라고 나 자신에게 말한다.', points: 4 },
+    { id: 'q21', text: '나는 기분이 나아지기 위해 술을 마신다.', points: 4 },
+    { id: 'q22', text: '나는 그 일을 대처하기 위해 노력하는 것을 포기한다.', points: 4 },
+    { id: 'q23', text: '나는 그 일이 일어났다는 사실을 믿기를 거부한다.', points: 4 },
+    { id: 'q24', text: '나는 괴로운 감정에서 벗어나기 위해 무슨 말이든 한다.', points: 4 },
+    { id: 'q25', text: '나는 그 일을 극복하기 위해 술을 마신다.', points: 4 },
+    { id: 'q26', text: '나는 자신을 비난한다.', points: 4 },
+    { id: 'q27', text: '나는 그 일에 대처하기 위해 무엇인가 시도하는 것을 포기한다.', points: 4 },
+    { id: 'q28', text: '나는 그것에 대해 덜 생각하기 위해 영화를 보러 가거나 TV를 시청하고, 독서나 수면 등과 같이 무엇인가를 한다.', points: 4 },
+    { id: 'q29', text: '나는 나의 부정적인 감정을 표현한다.', points: 4 },
+    { id: 'q30', text: '나는 문제가 발생한 것에 대하여 스스로를 자책한다.', points: 4 }
+  ];
+
+  const wrappers = {
+    4: { base: '#EADCF8', active: '#9A7CF0', shadow: '0 0 0 5px #DDD0F4,0 8px 16px -6px rgba(154,124,240,.7)', left: '전혀 아니다', right: '항상 그렇다' },
+    3: { base: '#DCEFF8', active: '#4F9FD8', shadow: '0 0 0 5px #C9E3F4,0 8px 16px -6px rgba(79,159,216,.7)', left: '전혀 아니다', right: '항상 그렇다' }
+  };
+
+  function renderQuestionCard(q, index, total) {
+    const w = wrappers[q.points] || wrappers[4];
+    return `
+      <div class="qcard" data-q="${q.id}" data-points="${q.points}" style="width:calc(100% - 8px);box-sizing:border-box;background:#fff;border-radius:28px;padding:22px 24px 24px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5);transition:transform .22s ease,opacity .22s ease">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font:700 12px Pretendard;color:#A98BE8">질문 ${index + 1}/${total}</span>
+        </div>
+        <p style="margin:0 0 20px;font:400 17px Jua,Pretendard;color:#4A3550">${q.text}</p>
+        <div class="dots" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-right:2px">
+          ${Array.from({ length: q.points }, () => `<button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:${w.base};cursor:pointer;padding:0"></button>`).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:14px;font:600 11px Pretendard;color:#B08FC0;padding-right:4px"><span>${q.left || w.left}</span><span>${q.right || w.right}</span></div>
+      </div>
+    `;
   }
 
+  const questionList = document.getElementById('questionList');
+  const selectedAnswers = [];
   const nextButton = document.getElementById('nextButton');
 
-  function updateNextButton() {
-    const allAnswered = [...document.querySelectorAll('.qcard')].every((card) => {
-      return [...card.querySelectorAll('.dot')].some((dot) => dot.dataset.active === 'true');
-    });
-
-    nextButton.disabled = !allAnswered;
-    nextButton.style.background = allAnswered ? 'linear-gradient(90deg,#A98BE8,#7FA8F0)' : '#D8C7F2';
-    nextButton.style.cursor = allAnswered ? 'pointer' : 'not-allowed';
-    nextButton.style.boxShadow = allAnswered ? '0 14px 28px -12px rgba(120,100,220,.8)' : 'none';
+  function styleDot(dot, active) {
+    const card = dot.closest('.qcard');
+    const points = card ? Number(card.dataset.points) : 4;
+    const conf = wrappers[points] || wrappers[4];
+    dot.style.background = active ? conf.active : conf.base;
+    dot.style.boxShadow = active ? conf.shadow : 'none';
   }
 
-  document.querySelectorAll('.qcard').forEach((card) => {
-    const dots = [...card.querySelectorAll('.dot')];
-    dots.forEach((dot) => {
-      dot.dataset.active = 'false';
-      styleDot(dot, false);
-      dot.addEventListener('click', () => {
-        dots.forEach((d) => {
-          d.dataset.active = String(d === dot);
-          styleDot(d, d === dot);
+  function renderAllQuestions() {
+    const total = questions.length;
+    questionList.innerHTML = questions.map((q, index) => renderQuestionCard(q, index, total)).join('');
+    const cards = [...questionList.querySelectorAll('.qcard')];
+
+    cards.forEach((card, index) => {
+      const dots = [...card.querySelectorAll('.dot')];
+      dots.forEach((dot) => {
+        dot.dataset.active = 'false';
+        styleDot(dot, false);
+        dot.addEventListener('click', () => {
+          const wasSelected = dot.dataset.active === 'true';
+          dots.forEach((d) => {
+            d.dataset.active = String(d === dot);
+            styleDot(d, d === dot);
+          });
+          selectedAnswers[index] = wasSelected ? null : dots.indexOf(dot);
+          const nextCard = cards[index + 1];
+          if (nextCard && !wasSelected) {
+            nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          const allAnswered = selectedAnswers.filter((v) => v !== undefined && v !== null).length === questions.length;
+          nextButton.disabled = !allAnswered;
+          nextButton.style.background = allAnswered ? 'linear-gradient(90deg,#A98BE8,#7FA8F0)' : '#D8C7F2';
+          nextButton.style.cursor = allAnswered ? 'pointer' : 'not-allowed';
+          nextButton.style.boxShadow = allAnswered ? '0 14px 28px -12px rgba(120,100,220,.8)' : 'none';
         });
-        updateNextButton();
       });
     });
-  });
+
+    nextButton.disabled = true;
+    nextButton.style.background = '#D8C7F2';
+    nextButton.style.cursor = 'not-allowed';
+    nextButton.style.boxShadow = 'none';
+  }
 
   nextButton.addEventListener('click', () => {
-    if (!nextButton.disabled) {
-      location.href = './mood-character.html';
-    }
+    const allAnswered = selectedAnswers.filter((v) => v !== undefined && v !== null).length === questions.length;
+    if (!allAnswered) return;
+    try {
+      localStorage.setItem('checkinAnswers', JSON.stringify(selectedAnswers));
+    } catch (e) {}
+    location.href = './mood-character.html';
   });
 
-  updateNextButton();
+  renderAllQuestions();
 </script>
 </body></html>

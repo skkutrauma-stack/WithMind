@@ -24,12 +24,13 @@
     border:0;
     display:block;
     background:#FFF9FE;
+    overflow:hidden;
   }
 </style>
 </head>
 <body>
   <div class="shell">
-    <iframe id="frame" class="frame" title="Prototype screen"></iframe>
+    <iframe id="frame" class="frame" title="Prototype screen" scrolling="no"></iframe>
   </div>
 
   <script>
@@ -67,6 +68,46 @@
       current = Math.max(0, Math.min(index, flow.length - 1));
       frame.src = flow[current];
     }
+
+    frame.addEventListener('load', () => {
+      try {
+        const doc = frame.contentDocument;
+        if (!doc || !doc.documentElement || !doc.body) return;
+        const isOnboarding = flow[current].includes('/onboarding/');
+        doc.documentElement.style.margin = '0';
+        doc.documentElement.style.padding = '0';
+        doc.documentElement.style.width = '100%';
+        doc.documentElement.style.minHeight = '100%';
+        doc.documentElement.style.overflow = 'hidden';
+        doc.documentElement.style.background = 'transparent';
+        doc.body.style.margin = '0';
+        doc.body.style.padding = '0';
+        doc.body.style.width = '100%';
+        doc.body.style.minHeight = '100%';
+        doc.body.style.display = 'block';
+        doc.body.style.overflow = 'hidden';
+        doc.body.style.background = 'transparent';
+        doc.body.style.boxSizing = 'border-box';
+        const root = doc.getElementById('dc-root');
+        if (root) {
+          root.style.boxSizing = 'border-box';
+          root.style.margin = '0';
+          root.style.background = 'transparent';
+          root.style.overflow = 'hidden';
+          if (isOnboarding) {
+            root.style.width = 'calc(100% + 64px)';
+            root.style.height = 'calc(100% + 64px)';
+            root.style.transform = 'translate(-32px, -32px)';
+          } else {
+            root.style.width = '100%';
+            root.style.height = '100%';
+            root.style.transform = 'none';
+          }
+        }
+      } catch (error) {
+        // Ignore cross-document timing quirks while the frame swaps screens.
+      }
+    });
 
     window.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowRight') setScreen(current + 1);

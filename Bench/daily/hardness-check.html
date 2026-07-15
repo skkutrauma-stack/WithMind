@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   html, body {
     margin: 0;
@@ -42,9 +46,10 @@
     align-items: center;
     gap: 14px;
   }
+  .back{width:34px;height:34px;border:none;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -6px rgba(140,100,200,.6);cursor:pointer;flex:none}
   .content {
     flex: 1;
-    padding: 12px 24px 18px;
+    padding: 14px 24px 18px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -147,7 +152,7 @@
     flex: 1;
   }
   #moreBox {
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 8px;
   }
@@ -165,7 +170,6 @@
   <div id="helpModal">
     <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:0 14px 18px">
       <div style="width:100%;background:#fff;border-radius:30px 30px 24px 24px;padding:22px 20px 18px;box-shadow:0 -18px 40px -20px rgba(74,53,80,.4)">
-        <div style="width:42px;height:5px;border-radius:3px;background:#EDE4FA;margin:0 auto 16px"></div>
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
           <div>
             <p style="margin:0 0 6px;font:700 12px Pretendard;color:#A98BE8">도움말</p>
@@ -187,35 +191,23 @@
     </div>
   </div>
 
-  <div class="status">
-    <span>9:41</span>
-    <div style="display:flex;gap:7px;align-items:center">
-      <svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/></svg>
-      <svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg>
-    </div>
-  </div>
-
-  <div class="topbar">
-    <div style="flex:1;height:10px;border-radius:6px;background:#EDE4FA;overflow:hidden"><div style="width:75%;height:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);border-radius:6px"></div></div>
-    <span style="font:400 15px Jua,Pretendard;color:#7A63C8">STEP 6</span>
-    <button id="helpOpen" type="button" class="help" style="width:34px;height:34px;background:#fff;box-shadow:0 4px 10px -6px rgba(140,100,200,.6)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#8A76B0" stroke-width="2" stroke-linecap="round"/></svg></button>
-  </div>
+  <div aria-hidden="true" style="height:35px"></div>
 
   <div class="content">
+    <div class="topline" style="margin-bottom:8px">
+      <button onClick="location.href='./emotion-subcategory.html'" class="back" type="button" aria-label="뒤로 가기"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.5 2.5L4 7l4.5 4.5" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
     <div>
       <h1 style="margin:0 0 4px;font:400 26px/1.2 Jua,Pretendard;color:#4A3550">그때 너의 마음은<br>어느 쪽이었어?</h1>
       <p style="margin:0;font:500 14px Pretendard;color:#B08FC0">가장 비슷한 걸 하나 골라줘 · ? 를 누르면 자세히</p>
     </div>
 
     <div id="choices" class="choice-list"></div>
-    <button id="more" type="button" class="more">다른 것도 보기</button>
     <div id="moreBox"></div>
 
     <div class="safe-gap"></div>
     <button id="nextBtn" class="cta">다음</button>
   </div>
-
-  <div style="display:flex;justify-content:center;padding:8px 0 12px"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
 </div>
 
 <script>
@@ -244,17 +236,17 @@
       definition: '불편한 감정에서 벗어나기 위해 주의를 다른 곳으로 돌리는 방식.',
       example: '그냥 딴 데로 관심을 돌리며 감정을 넘겨버렸어.'
     },
-    회피: {
-      title: '회피',
-      desc: '마주하기 싫은 감정이나 상황에서 거리를 두는 방식이야.',
-      definition: '불편한 대상이나 감정을 피해서 직접 경험하지 않으려는 방식.',
-      example: '그냥 넘기고 싶어서 대화를 미뤘어.'
+    자의식: {
+      title: '자의식',
+      desc: '다른 사람의 시선이 너무 크게 느껴져서, 내 마음보다 바깥을 먼저 살피게 되는 상태야.',
+      definition: '자기 감정보다 타인의 반응과 시선을 과하게 의식하며 말과 행동을 조절하는 방식.',
+      example: '그냥 넘기고 싶었는데, 내가 어떻게 보일지 먼저 생각하게 됐어.'
     },
-    억제: {
-      title: '억제',
-      desc: '느낌을 알고도 겉으로는 드러내지 않으려는 거야.',
-      definition: '불편한 감정표현을 의식적으로 누르고 참는 방식.',
-      example: '아무것도 아닌 척하며 표정과 말을 눌렀어.'
+    융합: {
+      title: '융합',
+      desc: '내 감정과 상대의 감정 경계가 흐려져서, 구분하기보다 함께 묶여 버리는 느낌이야.',
+      definition: '자기 감정과 타인의 기대를 분리하지 못해, 관계 안에서 경계가 희미해지는 방식.',
+      example: '아무 일도 아닌 척하다가, 결국 상대 분위기에 맞춰 내 마음도 같이 눌렀어.'
     }
   };
 
@@ -263,13 +255,12 @@
     { key: '투사', text: '내 감정인데 남 얘기처럼 멀게 느껴져' },
     { key: '내사', text: '“원래 이래야 해”라는 생각에 눌렸어' },
     { key: '편향', text: '감정을 흐릿하게 덮어버린 것 같아' },
-    { key: '회피', text: '그냥 넘기고 싶었어', more: true },
-    { key: '억제', text: '아무 일도 아닌 척 지나쳤어', more: true }
+    { key: '자의식', text: '내가 어떻게 보일지 먼저 신경 쓰였어', more: true },
+    { key: '융합', text: '상대 분위기에 맞추느라 내 마음이 흐려졌어', more: true }
   ];
 
   const choices = document.getElementById('choices');
   const moreBox = document.getElementById('moreBox');
-  const more = document.getElementById('more');
   const helpModal = document.getElementById('helpModal');
   const helpTitle = document.getElementById('helpTitle');
   const helpDesc = document.getElementById('helpDesc');
@@ -335,14 +326,13 @@
     }
   });
 
-  more.addEventListener('click', () => {
-    moreBox.style.display = moreBox.style.display === 'none' ? 'flex' : 'none';
-    more.textContent = moreBox.style.display === 'none' ? '다른 것도 보기' : '숨기기';
-  });
+  const helpOpen = document.getElementById('helpOpen');
+  const closeHelp = document.getElementById('closeHelp');
+  const confirmHelp = document.getElementById('confirmHelp');
 
-  document.getElementById('helpOpen').addEventListener('click', () => openHelp('반전'));
-  document.getElementById('closeHelp').addEventListener('click', closeHelpModal);
-  document.getElementById('confirmHelp').addEventListener('click', closeHelpModal);
+  if (helpOpen) helpOpen.addEventListener('click', () => openHelp('반전'));
+  if (closeHelp) closeHelp.addEventListener('click', closeHelpModal);
+  if (confirmHelp) confirmHelp.addEventListener('click', closeHelpModal);
   helpModal.addEventListener('click', (event) => {
     if (event.target === helpModal) closeHelpModal();
   });

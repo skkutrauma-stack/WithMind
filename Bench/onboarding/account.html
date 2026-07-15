@@ -1,61 +1,120 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
-<style>
-  body{
-    margin:0;
-    background:#DED6CE;
-    font-family:Pretendard,system-ui,sans-serif;
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:32px;
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script src="./support.js"></script></head><body><x-dc><helmet data-dc-atomics><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"><link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet"><style>body{margin:0;background:#DED6CE;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}.pw-field{position:relative;margin-bottom:16px}.pw-field input{margin-bottom:0;padding-right:62px}.pw-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:46px;height:46px;border:none;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px -16px rgba(140,100,200,.5);opacity:0;pointer-events:none;transition:opacity .15s ease}.pw-field[data-filled="true"] .pw-toggle{opacity:1;pointer-events:auto;cursor:pointer}.account-error{margin:8px 0 0;text-align:center;color:#D85B66;font:600 12px Pretendard;line-height:1.4;letter-spacing:-.01em;white-space:pre-line;opacity:0;transform:translateY(6px);max-height:0;overflow:hidden;transition:opacity .22s ease,transform .22s ease,max-height .22s ease}.account-error.is-visible{opacity:1;transform:translateY(0);max-height:72px}.pw-field input[type=password]::-ms-reveal,.pw-field input[type=password]::-ms-clear{display:none}</style></helmet><div style="width:390px;height:844px;border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);background:radial-gradient(120% 45% at 30% 0%,#E7DFFF,#FDF3FF 52%);color:#4A3550"><div style="display:flex;justify-content:space-between;align-items:center;padding:16px 30px 4px;font:600 15px Pretendard"><span>9:41</span><div style="display:flex;gap:7px;align-items:center"><svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg></div></div><div style="padding:16px 30px 6px;display:flex;align-items:center;gap:8px"><button onClick="location.href='./welcome.html'" style="border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div style="flex:1;display:flex;gap:6px"><div style="flex:1;height:8px;border-radius:4px;background:#A98BE8"></div><div style="flex:1;height:8px;border-radius:4px;background:#E4D5F2"></div><div style="flex:1;height:8px;border-radius:4px;background:#E4D5F2"></div></div><span style="font:400 15px Jua,Pretendard;color:#A98BE8">1/3</span></div><div style="flex:1;padding:28px 30px 26px;display:flex;flex-direction:column"><h1 style="margin:0 0 8px;font:400 30px Jua,Pretendard;color:#4A3550">계정을 만들자</h1><p style="margin:0 0 30px;font:500 14px Pretendard;color:#9A7FAD">1 / 3 · 로그인에 쓸 정보야</p><label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:8px">이메일</label><input placeholder="you@email.com" style="display:block;width:100%;box-sizing:border-box;border:none;outline:none;background:#fff;border-radius:18px;padding:16px 17px;margin-bottom:16px;box-shadow:0 8px 20px -16px rgba(140,100,200,.5);font:500 15px Pretendard;color:#4A3550" /><label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:8px">비밀번호 <span style="color:#CFC0DE;font-weight:500">· 8자 이상</span></label><div class="pw-field"><input type="password" placeholder="12345678" style="display:block;width:100%;box-sizing:border-box;border:none;outline:none;background:#fff;border-radius:18px;padding:16px 62px 16px 17px;box-shadow:0 8px 20px -16px rgba(140,100,200,.5);font:500 15px Pretendard;color:#4A3550" /><button type="button" class="pw-toggle" aria-label="비밀번호 보기/숨기기"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 7s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5Z" stroke="#4A3550" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="7" r="2.3" fill="#4A3550"/></svg></button></div><label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:8px">별명</label><input placeholder="신나는 바람개비" style="display:block;width:100%;box-sizing:border-box;border:none;outline:none;background:#fff;border-radius:18px;padding:16px 17px;margin-bottom:16px;box-shadow:0 8px 20px -16px rgba(140,100,200,.5);font:500 15px Pretendard;color:#4A3550" /><div style="display:block;width:100%;box-sizing:border-box;background:#F3E9FB;border-radius:16px;padding:14px 16px;font:500 12px/1.5 Pretendard;color:#8A72B8">이메일은 로그인에만 쓰여. 앱에서는 <b style="color:#7A63C8">별명</b>으로 지내.</div><div style="flex:1"></div><button type="button" class="account-next" style="display:block;border:none;width:100%;box-sizing:border-box;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 21px Jua,Pretendard;padding:16px 0;margin-top:14px;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">다음</button><p id="account-error" class="account-error" aria-live="polite"></p></div></div></x-dc><script>
+(() => {
+  const bindPasswordField = () => {
+    const field = document.querySelector('.pw-field');
+    if (!field) return false;
+    if (field.dataset.bound === 'true') return true;
+    const input = field.querySelector('input');
+    const toggle = field.querySelector('.pw-toggle');
+    if (!input || !toggle) return false;
+
+    const sync = () => {
+      const filled = input.value.length > 0;
+      if (filled) field.dataset.filled = 'true';
+      else field.removeAttribute('data-filled');
+      if (!filled && input.type !== 'password') input.type = 'password';
+    };
+
+    toggle.addEventListener('click', () => {
+      if (!input.value.length) return;
+      input.type = input.type === 'password' ? 'text' : 'password';
+      sync();
+      input.focus();
+    });
+
+    input.addEventListener('input', sync);
+    input.addEventListener('change', sync);
+    sync();
+    field.dataset.bound = 'true';
+    return true;
+  };
+
+  const bindNextButton = () => {
+    const nextButton = document.querySelector('.account-next');
+    const message = document.querySelector('#account-error');
+    if (!nextButton || !message || nextButton.dataset.bound === 'true') return !!nextButton;
+    const inputs = document.querySelectorAll('input');
+    const emailInput = inputs[0];
+    const passwordInput = inputs[1];
+    const nicknameInput = inputs[2];
+    let visibleTimer = null;
+    let clearTimer = null;
+
+    const clearTimers = () => {
+      if (visibleTimer) clearTimeout(visibleTimer);
+      if (clearTimer) clearTimeout(clearTimer);
+      visibleTimer = null;
+      clearTimer = null;
+    };
+
+    const hideMessage = () => {
+      message.classList.remove('is-visible');
+      if (clearTimer) clearTimeout(clearTimer);
+      clearTimer = setTimeout(() => {
+        message.textContent = '';
+        clearTimer = null;
+      }, 240);
+    };
+
+    const showMessages = (lines) => {
+      clearTimers();
+      message.textContent = lines.join('\n');
+      message.classList.add('is-visible');
+      visibleTimer = setTimeout(() => {
+        hideMessage();
+        visibleTimer = null;
+      }, 2000);
+    };
+
+    const formatMissing = (items) => {
+      const quoted = items.map((item) => `"${item}"`).join(', ');
+      return items.length === 1
+        ? `${quoted}를 입력해야 다음으로 넘어갈 수 있어.`
+        : `${quoted}을 입력해야 다음으로 넘어갈 수 있어.`;
+    };
+
+    nextButton.addEventListener('click', () => {
+      const emailValue = emailInput ? emailInput.value.trim() : '';
+      const rawPasswordValue = passwordInput ? passwordInput.value : '';
+      const nicknameValue = nicknameInput ? nicknameInput.value.trim() : '';
+      const trimmedPasswordValue = rawPasswordValue.trim();
+
+      const missing = [];
+      if (!emailValue) missing.push('이메일');
+      if (!trimmedPasswordValue) missing.push('비밀번호');
+      if (!nicknameValue) missing.push('별명');
+
+      const passwordTooShort = trimmedPasswordValue.length > 0 && rawPasswordValue.length < 8;
+      const lines = [];
+      if (missing.length) lines.push(formatMissing(missing));
+      if (passwordTooShort) lines.push('"비밀번호"는 8자리 이상 입력해야해.');
+
+      if (lines.length) {
+        showMessages(lines);
+        return;
+      }
+
+      clearTimers();
+      message.classList.remove('is-visible');
+      message.textContent = '';
+      location.href = './profile.html';
+    });
+
+    nextButton.dataset.bound = 'true';
+    return true;
+  };
+
+  const waitForReady = () => {
+    const passwordReady = bindPasswordField();
+    const nextReady = bindNextButton();
+    if (!passwordReady || !nextReady) requestAnimationFrame(waitForReady);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', waitForReady, { once: true });
+  } else {
+    waitForReady();
   }
-</style>
-</head>
-<body>
-<x-dc>
-<helmet data-dc-atomics>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-</helmet>
-<div style="width:390px;height:844px;border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);background:radial-gradient(120% 45% at 30% 0%,#E7DFFF,#FDF3FF 52%);color:#4A3550">
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 30px 4px;font:600 15px Pretendard"><span>9:41</span><div style="display:flex;gap:7px;align-items:center"><svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg></div></div>
-  <div style="padding:16px 30px 6px;display:flex;align-items:center;gap:8px"><button onClick="location.href='./welcome.html'" style="border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div style="flex:1;display:flex;gap:6px"><div style="flex:1;height:8px;border-radius:4px;background:#A98BE8"></div><div style="flex:1;height:8px;border-radius:4px;background:#E4D5F2"></div><div style="flex:1;height:8px;border-radius:4px;background:#E4D5F2"></div></div><span style="font:400 15px Jua,Pretendard;color:#A98BE8">1/3</span></div>
-  <div style="flex:1;padding:28px 30px 26px;display:flex;flex-direction:column">
-    <h1 style="margin:0 0 8px;font:400 30px Jua,Pretendard;color:#4A3550">계정 만들기</h1>
-    <p style="margin:0 0 30px;font:500 14px Pretendard;color:#9A7FAD">1 / 3 · 로그인에 필요한 정보를 적어줘</p>
-    <label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:8px">이메일</label>
-    <input id="account-email" placeholder="you@email.com" style="display:block;width:100%;box-sizing:border-box;border:none;outline:none;background:#fff;border-radius:18px;padding:16px 17px;margin-bottom:16px;box-shadow:0 8px 20px -16px rgba(140,100,200,.5);font:500 15px Pretendard;color:#4A3550" />
-    <label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:8px">비밀번호 <span style="color:#CFC0DE;font-weight:500">· 8자 이상</span></label>
-    <input type="password" placeholder="12345678" style="display:block;width:100%;box-sizing:border-box;border:none;outline:none;background:#fff;border-radius:18px;padding:16px 17px;margin-bottom:16px;box-shadow:0 8px 20px -16px rgba(140,100,200,.5);font:500 15px Pretendard;color:#4A3550" />
-    <label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:8px">이름</label>
-    <input id="account-name" placeholder="봄봄" style="display:block;width:100%;box-sizing:border-box;border:none;outline:none;background:#fff;border-radius:18px;padding:16px 17px;margin-bottom:16px;box-shadow:0 8px 20px -16px rgba(140,100,200,.5);font:500 15px Pretendard;color:#4A3550" />
-    <div style="display:block;width:100%;box-sizing:border-box;background:#F3E9FB;border-radius:16px;padding:14px 16px;font:500 12px/1.5 Pretendard;color:#8A72B8">이 정보는 로그인에만 쓰여요. 홈 화면에서는 <b style="color:#7A63C8">이름</b>으로 불러올게요.</div>
-    <div style="flex:1"></div>
-    <button id="account-next" type="button" style="display:block;border:none;width:100%;box-sizing:border-box;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 21px Jua,Pretendard;padding:16px 0;margin-top:14px;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">다음</button>
-  </div>
-</div>
-<script>
-  const emailInput = document.getElementById('account-email');
-  const nextButton = document.getElementById('account-next');
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  nextButton.addEventListener('click', () => {
-    if (!emailPattern.test(emailInput.value.trim())) {
-      alert('이메일 형식을 올바르게 입력해 주세요.');
-      emailInput.focus();
-      return;
-    }
-
-    location.href = './agreement.html';
-  });
-</script>
-</x-dc>
-</body>
-</html>
+})();
+</script></body></html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang='ko'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css'>
+<link rel='preconnect' href='https://fonts.googleapis.com'>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+<link href='https://fonts.googleapis.com/css2?family=Jua&display=swap' rel='stylesheet'>
+<title>두려움 소분류 | WithMind</title>
+<style>
+html,body{margin:0;min-height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff;overflow:hidden}
+body{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:24px;box-sizing:border-box}
+.phone{width:390px;height:844px;border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550;background:radial-gradient(130% 50% at 28% 0%,#FFDCD0,#FDF3FF 55%)}
+.status{display:flex;justify-content:flex-start;align-items:center;padding:16px 30px 0;font:600 15px Pretendard}
+.content{flex:1;padding:14px 24px 18px;display:flex;flex-direction:column;min-height:0}
+.topline{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.back{width:34px;height:34px;border:none;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -6px rgba(140,100,200,.6);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+.back:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(140,100,200,.55)}
+.mainpill{font:700 12px Pretendard;color:#fff;background:linear-gradient(90deg,var(--accent),var(--accent-strong));padding:6px 13px;border-radius:20px}
+.countpill{font:700 11px Pretendard;color:#7A63C8;background:rgba(255,255,255,.58);padding:6px 11px;border-radius:20px}
+.kicker{margin:0 0 5px;font:700 12px Pretendard;color:var(--accent)}
+.title{margin:0;font:400 25px/1.28 Jua,Pretendard;color:#4A3550}
+.subtitle{margin:6px 0 14px;font:500 13px Pretendard;color:#9A7FAD}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start}
+.option{border:2px solid var(--border);background:var(--soft);border-radius:20px;padding:15px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease,border-color .18s ease}
+.option:hover{transform:translateY(-2px);box-shadow:0 12px 24px -16px rgba(120,100,220,.45)}
+.option.is-active{background:linear-gradient(90deg,var(--accent),var(--accent-strong));border-color:transparent;box-shadow:0 12px 28px -16px rgba(120,100,220,.55)}
+.dot{width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex:none;color:#fff;font:700 16px/1 Pretendard;box-shadow:inset 0 0 0 4px rgba(255,255,255,.18);transition:background .18s ease,box-shadow .18s ease,color .18s ease}
+.option.is-active .dot{background:rgba(255,255,255,.22);box-shadow:inset 0 0 0 2px rgba(255,255,255,.5);color:#fff}
+.label{font:400 15px Jua,Pretendard;color:var(--accent-strong);transition:color .18s ease}
+.option.is-active .label{color:#fff}
+.option.wide{grid-column:1 / -1}
+.summary{background:rgba(255,255,255,.58);border-radius:16px;padding:13px 16px;margin-top:16px;font:400 15px Jua,Pretendard;color:#6A5A78;text-align:center;box-shadow:0 8px 18px -18px rgba(140,100,200,.5);min-height:24px}
+.summary strong{color:var(--accent-strong)}
+.footer{flex:1;display:flex;align-items:flex-end;padding-top:14px}
+.next{border:none;width:100%;background:#D8C7F2;color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:not-allowed;box-shadow:none;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease,background .18s ease}
+.next:hover{transform:translateY(-1px);filter:brightness(1.01)}
+.next:disabled{opacity:1}
+</style>
+</head>
+<body>
+<div class='phone' id='phone'>
+  <div aria-hidden="true" style="height:35px;flex:none"></div>
+  <div class='content'>
+    <div class='topline'>
+      <button id='backButton' class='back' type='button' aria-label='뒤로 가기'>
+        <svg width='14' height='14' viewBox='0 0 14 14' fill='none'><path d='M8.5 2.5L4 7l4.5 4.5' stroke='#9A7FAD' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>
+      </button>
+      <span class='mainpill' id='mainEmotionPill'></span>
+      <span class='countpill' id='countPill'>0/3</span>
+    </div>
+    <p class='kicker' id='mainEmotionKicker'></p>
+    <h1 class='title' id='mainEmotionTitle'></h1>
+    <p class='subtitle'>가장 가까운 결을 최대 3개까지 골라보자</p>
+    <div class='grid' id='optionGrid'></div>
+    <div class='summary' id='selectionSummary'></div>
+    <div class='footer'>
+      <button id='subNext' class='next' type='button' disabled>EMA 체크인하기</button>
+    </div>
+  </div>
+</div>
+<script>
+const page = {"main":"두려움","slug":"fear","accent":"#B8A6F0","accentStrong":"#9A7BE0","soft":"#F5F1FE","border":"#DDD4FA","bg1":"#EEE7FF","bg2":"#FDF3FF","nextRoute":"./checkin.html","options":["걱정스럽다","불안하다","초조하다","긴장되다","무섭다"]};
+const phone = document.getElementById('phone');
+const grid = document.getElementById('optionGrid');
+const summary = document.getElementById('selectionSummary');
+const countPill = document.getElementById('countPill');
+const backButton = document.getElementById('backButton');
+const nextButton = document.getElementById('subNext');
+const mainEmotionPill = document.getElementById('mainEmotionPill');
+const mainEmotionKicker = document.getElementById('mainEmotionKicker');
+const mainEmotionTitle = document.getElementById('mainEmotionTitle');
+const selected = new Set();
+
+phone.style.background = 'radial-gradient(130% 50% at 28% 0%,' + page.bg1 + ',' + page.bg2 + ' 55%)';
+phone.style.setProperty('--accent', page.accent);
+phone.style.setProperty('--accent-strong', page.accentStrong);
+phone.style.setProperty('--soft', page.soft);
+phone.style.setProperty('--border', page.border);
+
+mainEmotionPill.textContent = page.main;
+mainEmotionKicker.textContent = page.main + ' · 소분류';
+mainEmotionTitle.textContent = page.main + ', 좀 더 들여다볼까?';
+
+function paintCard(button, active) {
+  const dot = button.querySelector('.dot');
+  button.classList.toggle('is-active', active);
+  if (dot) dot.textContent = active ? '✓' : '';
+}
+
+function syncNextButton() {
+  const enabled = selected.size > 0;
+  nextButton.disabled = !enabled;
+  nextButton.style.background = enabled ? 'linear-gradient(90deg,#A98BE8,#7FA8F0)' : '#D8C7F2';
+  nextButton.style.cursor = enabled ? 'pointer' : 'not-allowed';
+  nextButton.style.boxShadow = enabled ? '0 14px 28px -12px rgba(120,100,220,.8)' : 'none';
+}
+
+function syncSummary() {
+  const labels = [...selected];
+  countPill.textContent = labels.length + '/3';
+  summary.innerHTML = labels.length ? ('<strong>' + labels.join(' · ') + '</strong>를 골랐어') : (page.main + '의 결을 최대 3개까지 골라줘');
+  syncNextButton();
+}
+
+function renderOptions() {
+  grid.innerHTML = '';
+  page.options.forEach((label, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'option' + (index === page.options.length - 1 ? ' wide' : '');
+    button.dataset.label = label;
+    button.style.setProperty('--accent', page.accent);
+    button.style.setProperty('--accent-strong', page.accentStrong);
+    button.style.setProperty('--soft', page.soft);
+    button.style.setProperty('--border', page.border);
+    button.innerHTML = '<span class="dot"></span><span class="label">' + label + '</span>';
+    grid.appendChild(button);
+  });
+}
+
+renderOptions();
+
+[...grid.querySelectorAll('.option')].forEach((button) => {
+  const label = button.dataset.label;
+  paintCard(button, selected.has(label));
+});
+syncSummary();
+
+grid.addEventListener('click', (event) => {
+  const button = event.target.closest('.option');
+  if (!button) return;
+  const label = button.dataset.label;
+  const active = selected.has(label);
+  if (active) {
+    selected.delete(label);
+    paintCard(button, false);
+    syncSummary();
+    return;
+  }
+  if (selected.size >= 3) return;
+  selected.add(label);
+  paintCard(button, true);
+  syncSummary();
+});
+
+backButton.addEventListener('click', () => {
+  location.href = './emotion-card-main.html';
+});
+
+nextButton.addEventListener('click', () => {
+  if (nextButton.disabled) return;
+  const labels = [...selected];
+  try {
+    localStorage.setItem('selectedEmotionMain', page.main);
+    localStorage.setItem('selectedEmotionMainSlug', page.slug);
+    localStorage.setItem('selectedEmotionSubList', JSON.stringify(labels));
+    localStorage.setItem('selectedEmotion', labels.length ? (page.main + ' › ' + labels.join(', ')) : page.main);
+  } catch (e) {}
+  location.href = page.nextRoute;
+});
+</script>
+</body>
+</html>
