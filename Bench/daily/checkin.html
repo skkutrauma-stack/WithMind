@@ -17,59 +17,53 @@
 </div>
 <script>
   const questions = [
-    { id: 'q01', text: '오늘 가장 먼저 떠오른 감정은?', left: '가라앉음', right: '좋음', color: 'mood' },
-    { id: 'q02', text: '지금 마음은 얼마나 무거워?', left: '가벼움', right: '무거움', color: 'hard' },
-    { id: 'q03', text: '오늘 사람들과의 거리는 어땠어?', left: '혼자', right: '함께', color: 'conn' },
-    { id: 'q04', text: '마음이 가장 먼저 반응한 장면은?', left: '조용함', right: '선명함', color: 'mood' },
-    { id: 'q05', text: '오늘 버티는 데 힘이 많이 들었어?', left: '아님', right: '많이', color: 'hard' },
-    { id: 'q06', text: '누군가의 한마디가 오래 남았어?', left: '아님', right: '그럼', color: 'conn' },
-    { id: 'q07', text: '기분이 움직인 방향은 어느 쪽이야?', left: '가라앉음', right: '좋아짐', color: 'mood' },
-    { id: 'q08', text: '몸과 마음이 동시에 지쳤어?', left: '아니', right: '그렇다', color: 'hard' },
-    { id: 'q09', text: '혼자 있고 싶은 마음이 컸어?', left: '아니', right: '컸어', color: 'conn' },
-    { id: 'q10', text: '오늘 하루의 분위기는 어땠어?', left: '차분', right: '요동', color: 'mood' },
-    { id: 'q11', text: '감정을 참는 데 에너지가 들었어?', left: '아니', right: '많이', color: 'hard' },
-    { id: 'q12', text: '누군가에게 기대고 싶었어?', left: '아니', right: '그랬어', color: 'conn' },
-    { id: 'q13', text: '오늘의 마음은 꽤 복잡했어?', left: '단순', right: '복잡', color: 'mood' },
-    { id: 'q14', text: '해야 할 일 앞에서 버거웠어?', left: '괜찮아', right: '버거워', color: 'hard' },
-    { id: 'q15', text: '사람들의 시선이 많이 신경 쓰였어?', left: '아니', right: '많이', color: 'conn' },
-    { id: 'q16', text: '마음이 들뜬 쪽이었어, 가라앉은 쪽이었어?', left: '가라앉음', right: '들뜸', color: 'mood' },
-    { id: 'q17', text: '오늘 한 번쯤 멈추고 싶었어?', left: '아니', right: '그랬어', color: 'hard' },
-    { id: 'q18', text: '누군가와 감정이 이어진 느낌이 있었어?', left: '아니', right: '있었어', color: 'conn' },
-    { id: 'q19', text: '오늘 기분은 쉽게 바뀌었어?', left: '아니', right: '그랬어', color: 'mood' },
-    { id: 'q20', text: '지나간 일을 떠올리면 다시 지쳤어?', left: '아니', right: '그랬어', color: 'hard' },
-    { id: 'q21', text: '말보다 표정이 더 중요하게 느껴졌어?', left: '아니', right: '그랬어', color: 'conn' },
-    { id: 'q22', text: '오늘 마음은 숨을 고르는 쪽이었어?', left: '아니', right: '그랬어', color: 'mood' },
-    { id: 'q23', text: '정리되지 않은 감정이 남아있어?', left: '아니', right: '많아', color: 'hard' },
-    { id: 'q24', text: '누군가와 멀어지고 싶었어?', left: '아니', right: '그랬어', color: 'conn' },
-    { id: 'q25', text: '오늘 기분을 한 단어로 말하면?', left: '잔잔', right: '복잡', color: 'mood' },
-    { id: 'q26', text: '스스로에게 너무 많은 걸 요구했어?', left: '아니', right: '그랬어', color: 'hard' },
-    { id: 'q27', text: '주변 사람에게 마음이 흔들렸어?', left: '아니', right: '그랬어', color: 'conn' },
-    { id: 'q28', text: '오늘은 마음이 쉬는 날 같았어?', left: '아니', right: '그랬어', color: 'mood' },
-    { id: 'q29', text: '감정을 말로 꺼내기 어려웠어?', left: '아니', right: '그랬어', color: 'hard' },
-    { id: 'q30', text: '누군가의 반응에 크게 영향을 받았어?', left: '아니', right: '그랬어', color: 'conn' },
-    { id: 'q31', text: '오늘의 마음은 어떤 결에 가까웠어?', left: '가벼움', right: '무거움', color: 'mood' }
+    { id: 'q01', text: '나는 동료의식이 없다고 자주 느낀다.', points: 4 },
+    { id: 'q02', text: '나는 따돌림을 당한다고 자주 느낀다.', points: 4 },
+    { id: 'q03', text: '나는 다른 사람들과 고립되어 있다고 자주 느낀다.', points: 4 },
+    { id: 'q04', text: '나는 위통을 자주 겪는다.', points: 3 },
+    { id: 'q05', text: '나는 허리 통증을 자주 겪는다.', points: 3 },
+    { id: 'q06', text: '나는 팔, 다리, 관절(예: 무릎, 고관절 등)의 통증을 자주 겪는다.', points: 3 },
+    { id: 'q07', text: '나는 생리 기간 동안 생리통 등의 문제를 자주 겪는다.', points: 3 },
+    { id: 'q08', text: '나는 두통을 자주 겪는다.', points: 3 },
+    { id: 'q09', text: '나는 가슴 통증이나 흉통을 자주 겪는다.', points: 3 },
+    { id: 'q10', text: '나는 어지러움을 자주 겪는다.', points: 3 },
+    { id: 'q11', text: '나는 기절할 것 같은 느낌을 자주 겪는다.', points: 3 },
+    { id: 'q12', text: '나는 심장이 빨리 뜀을 자주 겪는다.', points: 3 },
+    { id: 'q13', text: '나는 숨이 참을 자주 겪는다.', points: 3 },
+    { id: 'q14', text: '나는 성교 중 통증 등의 문제를 자주 겪는다.', points: 3 },
+    { id: 'q15', text: '나는 신경성 복통이나 빈번한 화장실 사용(과민성 대장 증상)을 자주 겪는다.', points: 3 },
+    { id: 'q16', text: '나는 메스꺼움, 방귀, 소화불량을 자주 겪는다.', points: 3 },
+    { id: 'q17', text: '나는 피로감이나 기운 없음을 자주 겪는다.', points: 3 },
+    { id: 'q18', text: '나는 수면의 어려움을 자주 겪는다.', points: 3 },
+    { id: 'q19', text: '나는 마음을 분산시키기 위해 일을 하거나 다른 활동을 한다.', points: 4 },
+    { id: 'q20', text: '나는 “그것은 사실일 리가 없어”라고 나 자신에게 말한다.', points: 4 },
+    { id: 'q21', text: '나는 기분이 나아지기 위해 술을 마신다.', points: 4 },
+    { id: 'q22', text: '나는 그 일을 대처하기 위해 노력하는 것을 포기한다.', points: 4 },
+    { id: 'q23', text: '나는 그 일이 일어났다는 사실을 믿기를 거부한다.', points: 4 },
+    { id: 'q24', text: '나는 괴로운 감정에서 벗어나기 위해 무슨 말이든 한다.', points: 4 },
+    { id: 'q25', text: '나는 그 일을 극복하기 위해 술을 마신다.', points: 4 },
+    { id: 'q26', text: '나는 자신을 비난한다.', points: 4 },
+    { id: 'q27', text: '나는 그 일에 대처하기 위해 무엇인가 시도하는 것을 포기한다.', points: 4 },
+    { id: 'q28', text: '나는 그것에 대해 덜 생각하기 위해 영화를 보러 가거나 TV를 시청하고, 독서나 수면 등과 같이 무엇인가를 한다.', points: 4 },
+    { id: 'q29', text: '나는 나의 부정적인 감정을 표현한다.', points: 4 },
+    { id: 'q30', text: '나는 문제가 발생한 것에 대하여 스스로를 자책한다.', points: 4 }
   ];
 
   const wrappers = {
-    mood: { base: '#FFE0D3', active: '#FF8A6B', shadow: '0 0 0 5px #FFD9CB,0 8px 16px -6px rgba(255,120,90,.7)', left: '가라앉음', right: '좋음' },
-    hard: { base: '#DBEFFB', active: '#5AB0E8', shadow: '0 0 0 5px #C7E7F8,0 8px 16px -6px rgba(90,176,232,.7)', left: '전혀', right: '매우' },
-    conn: { base: '#EDE4FA', active: '#A98BE8', shadow: '0 0 0 5px #E1D7F7,0 8px 16px -6px rgba(140,100,200,.7)', left: '혼자', right: '함께' }
+    4: { base: '#EADCF8', active: '#9A7CF0', shadow: '0 0 0 5px #DDD0F4,0 8px 16px -6px rgba(154,124,240,.7)', left: '전혀 아니다', right: '항상 그렇다' },
+    3: { base: '#DCEFF8', active: '#4F9FD8', shadow: '0 0 0 5px #C9E3F4,0 8px 16px -6px rgba(79,159,216,.7)', left: '전혀 아니다', right: '항상 그렇다' }
   };
 
   function renderQuestionCard(q, index, total) {
-    const w = wrappers[q.color] || wrappers.mood;
+    const w = wrappers[q.points] || wrappers[4];
     return `
-      <div class="qcard" data-q="${q.id}" data-color="${q.color}" style="width:calc(100% - 8px);box-sizing:border-box;background:#fff;border-radius:28px;padding:22px 24px 24px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5);transition:transform .22s ease,opacity .22s ease">
+      <div class="qcard" data-q="${q.id}" data-points="${q.points}" style="width:calc(100% - 8px);box-sizing:border-box;background:#fff;border-radius:28px;padding:22px 24px 24px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5);transition:transform .22s ease,opacity .22s ease">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <span style="font:700 12px Pretendard;color:#A98BE8">질문 ${index + 1}/${total}</span>
         </div>
         <p style="margin:0 0 20px;font:400 17px Jua,Pretendard;color:#4A3550">${q.text}</p>
         <div class="dots" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-right:2px">
-          <button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:${w.base};cursor:pointer;padding:0"></button>
-          <button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:${w.base};cursor:pointer;padding:0"></button>
-          <button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:${w.base};cursor:pointer;padding:0"></button>
-          <button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:${w.base};cursor:pointer;padding:0"></button>
-          <button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:${w.base};cursor:pointer;padding:0"></button>
+          ${Array.from({ length: q.points }, () => `<button class="dot" type="button" data-active="false" style="width:18px;height:18px;border:none;border-radius:50%;background:${w.base};cursor:pointer;padding:0"></button>`).join('')}
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:14px;font:600 11px Pretendard;color:#B08FC0;padding-right:4px"><span>${q.left || w.left}</span><span>${q.right || w.right}</span></div>
       </div>
@@ -82,8 +76,8 @@
 
   function styleDot(dot, active) {
     const card = dot.closest('.qcard');
-    const color = card ? card.dataset.color : 'mood';
-    const conf = wrappers[color] || wrappers.mood;
+    const points = card ? Number(card.dataset.points) : 4;
+    const conf = wrappers[points] || wrappers[4];
     dot.style.background = active ? conf.active : conf.base;
     dot.style.boxShadow = active ? conf.shadow : 'none';
   }
