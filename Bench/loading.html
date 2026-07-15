@@ -52,61 +52,15 @@
       isolation: isolate;
     }
 
-    .status-bar {
-      position: absolute;
-      z-index: 2;
-      top: max(22px, env(safe-area-inset-top));
-      left: 34px;
-      right: 31px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 20px;
-      font-size: 16px;
-      font-weight: 500;
-      letter-spacing: -0.02em;
-    }
-
-    .battery {
-      position: relative;
-      width: 22px;
-      height: 11px;
-      border: 1.6px solid var(--ink);
-      border-radius: 3px;
-      opacity: 0.95;
-    }
-
-    .battery::before {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 14px;
-      height: 5px;
-      border-radius: 1px;
-      background: var(--ink);
-      content: "";
-    }
-
-    .battery::after {
-      position: absolute;
-      top: 3px;
-      right: -3px;
-      width: 2px;
-      height: 4px;
-      border-radius: 0 1px 1px 0;
-      background: var(--ink);
-      content: "";
-    }
-
     .loading-content {
       position: relative;
       z-index: 1;
       display: flex;
-      min-height: 100vh;
-      min-height: 100svh;
+      min-height: calc(100vh - 35px);
+      min-height: calc(100svh - 35px);
       flex-direction: column;
       align-items: center;
-      padding-top: clamp(184px, 27.6svh, 260px);
+      padding-top: calc(clamp(184px, 27.6svh, 260px) - 35px);
       text-align: center;
     }
 
@@ -245,10 +199,7 @@
 </head>
 <body>
   <main class="loading-screen" aria-labelledby="loading-title" aria-describedby="loading-description">
-    <div class="status-bar" aria-hidden="true">
-      <span>9:41</span>
-      <span class="battery"></span>
-    </div>
+    <div aria-hidden="true" style="height:35px;flex:none"></div>
 
     <section class="loading-content" role="status" aria-live="polite" aria-atomic="true">
       <div class="logo-tile" aria-hidden="true">
