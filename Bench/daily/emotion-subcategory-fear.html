@@ -118,14 +118,6 @@ function renderOptions() {
 
 renderOptions();
 
-try {
-  const savedSlug = localStorage.getItem('selectedEmotionMainSlug');
-  if (savedSlug === page.slug) {
-    const saved = JSON.parse(localStorage.getItem('selectedEmotionSubList') || '[]');
-    saved.filter((label) => page.options.includes(label)).slice(0, 3).forEach((label) => selected.add(label));
-  }
-} catch (e) {}
-
 [...grid.querySelectorAll('.option')].forEach((button) => {
   const label = button.dataset.label;
   paintCard(button, selected.has(label));
