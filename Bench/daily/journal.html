@@ -1,9 +1,9 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>html,body{margin:0;min-height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff}body{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:24px;box-sizing:border-box;overflow:auto}</style></head><body>
 <div style="width:390px;min-height:844px;background:radial-gradient(130% 55% at 50% 0%,#FFDCD0,#FDF3FF 58%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
   <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 30px 4px;font:600 15px Pretendard"><span>9:41</span><div style="display:flex;gap:7px;align-items:center"><svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg></div></div>
   <div style="padding:14px 26px 6px;display:flex;align-items:center;gap:14px"><div style="flex:1;height:10px;border-radius:6px;background:#F3E4DC;overflow:hidden"><div style="width:87.5%;height:100%;background:linear-gradient(90deg,#FF8A6B,#A98BE8);border-radius:6px"></div></div><span style="font:400 15px Jua,Pretendard;color:#C87A4A">STEP 7</span><div style="width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -6px rgba(200,120,60,.5)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#B0865A" stroke-width="2" stroke-linecap="round"/></svg></div></div>
   <div style="flex:1;padding:18px 24px 22px;display:flex;flex-direction:column;gap:14px;min-height:0">
-    <div style="display:flex;align-items:center;gap:8px"><span style="font:700 11px Pretendard;color:#fff;background:#A98BE8;padding:6px 12px;border-radius:20px">반전</span><p style="margin:0;font:500 14px Pretendard;color:#9A7FAD">5개 중 <b style="color:#4A3550">최대 2개</b>를 골라 답해줘</p></div>
+    <div style="display:flex;align-items:center;gap:8px"><span id="strategyPill" style="font:700 11px Pretendard;color:#fff;background:#A98BE8;padding:6px 12px;border-radius:20px;display:none"></span><p style="margin:0;font:500 14px Pretendard;color:#9A7FAD">5개 중 <b style="color:#4A3550">최대 2개</b>를 골라 답해줘</p></div>
     <div id="checks" style="display:flex;flex-direction:column;gap:10px;align-items:stretch">
       <button type="button" class="check-item" data-active="false" style="width:100%;box-sizing:border-box;background:#fff;border:2px solid #E7DBF3;border-radius:16px;padding:13px 14px;display:flex;gap:11px;align-items:center;box-shadow:0 8px 18px -18px rgba(140,100,200,.5);cursor:pointer;text-align:left">
         <div class="box" style="width:22px;height:22px;border-radius:8px;border:2px solid #DDD2ED;flex:none"></div><span style="font:600 13px/1.4 Pretendard;color:#9A7FAD">그 감정을 남에게 냈다면 어땠을까?</span>
@@ -26,7 +26,7 @@
       <p style="margin:0 0 10px;font:500 13px Pretendard;color:#C6B4D4">고른 질문에 답을 적어줘. 길어도 괜찮아.</p>
       <textarea id="journalInput" placeholder="오늘 일어난 일, 느낀 것, 떠오른 생각을 적어줘." style="flex:1;min-height:140px;border:none;outline:none;background:#F7F2FC;border-radius:16px;padding:14px 14px;resize:none;font:500 13px/1.7 Pretendard;color:#4A3550"></textarea>
     </div>
-    <button onClick="location.href='./ai-comment.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">다 썼어</button>
+    <button id="doneBtn" disabled style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:default;box-shadow:0 14px 28px -12px rgba(120,100,220,.8);opacity:.5">다 썼어</button>
   </div>
   <div style="display:flex;justify-content:center;padding:2px 0 12px"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
 </div>
@@ -45,6 +45,9 @@
       item.style.border = '2px solid #A98BE8';
       box.style.background = '#A98BE8';
       box.style.border = 'none';
+      box.style.display = 'flex';
+      box.style.alignItems = 'center';
+      box.style.justifyContent = 'center';
       box.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       text.style.color = '#4A3550';
     } else {
@@ -56,5 +59,62 @@
       text.style.color = '#9A7FAD';
     }
   }));
+
+  // Read previously-selected strategy (from hardness-check) and show it
+  try {
+    const strategy = localStorage.getItem('selectedStrategy');
+    const pill = document.getElementById('strategyPill');
+    if (strategy && pill) {
+      pill.textContent = strategy;
+      pill.style.display = 'inline-block';
+    } else if (pill) {
+      pill.style.display = 'none';
+    }
+  } catch (e) { /* ignore storage errors */ }
+
+  // Enable the Done button only when at least one question is selected and journal has text
+  const doneBtn = document.getElementById('doneBtn');
+  const journalInputEl = document.getElementById('journalInput');
+  function updateDoneButton() {
+    const hasText = journalInputEl && journalInputEl.value && journalInputEl.value.trim().length > 0;
+    const canProceed = selected > 0 && hasText;
+    if (doneBtn) {
+      doneBtn.disabled = !canProceed;
+      doneBtn.style.opacity = canProceed ? '1' : '.5';
+      doneBtn.style.cursor = canProceed ? 'pointer' : 'default';
+    }
+  }
+  // call after selection changes and on input
+  items.forEach((item) => item.addEventListener('click', updateDoneButton));
+  if (journalInputEl) journalInputEl.addEventListener('input', updateDoneButton);
+  // initial update
+  updateDoneButton();
+  if (doneBtn) {
+    doneBtn.addEventListener('click', () => {
+      if (doneBtn.disabled) return;
+      try {
+        // collect selected questions
+        const selectedQuestions = items.filter((it) => it.dataset.active === 'true').map((it) => {
+          const s = it.querySelector('span');
+          return s ? s.textContent.trim() : '';
+        }).filter(Boolean);
+        const journalText = journalInputEl ? journalInputEl.value.trim() : '';
+          // save in both localStorage and sessionStorage as a fallback
+          try { localStorage.setItem('journalSelectedQuestions', JSON.stringify(selectedQuestions)); } catch (e) {}
+          try { localStorage.setItem('journalText', journalText); } catch (e) {}
+          try { sessionStorage.setItem('journalSelectedQuestions', JSON.stringify(selectedQuestions)); } catch (e) {}
+          try { sessionStorage.setItem('journalText', journalText); } catch (e) {}
+      } catch (e) { /* ignore storage errors */ }
+      // Also pass via URL to avoid storage-loss across origins
+      try {
+        const params = new URLSearchParams();
+        params.set('q', JSON.stringify(selectedQuestions));
+        params.set('t', journalText);
+        location.href = './ai-comment.html?' + params.toString();
+      } catch (err) {
+        location.href = './ai-comment.html';
+      }
+    });
+  }
 </script>
 </body></html>

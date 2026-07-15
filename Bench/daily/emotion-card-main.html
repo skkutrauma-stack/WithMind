@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html,body{margin:0;min-height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff}body{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:24px;box-sizing:border-box;overflow:auto}</style>
 </head>
 <body>
 <div style="width:390px;min-height:844px;background:radial-gradient(130% 55% at 50% 6%,#FFDCD0,#FDF3FF 58%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
@@ -28,7 +29,7 @@
     </div>
     <p style="margin:16px 0 0;font:500 12px Pretendard;color:#9A7FAD;text-align:center">마음에 가장 가까운 하나를 톡</p>
     <div style="flex:1"></div>
-    <button onClick="location.href='./emotion-subcategory.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8);margin-top:14px">기쁨 더 자세히 보기</button>
+    <button id="mainNext" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8);margin-top:14px">더 자세히 보기</button>
   </div>
   <div style="display:flex;justify-content:center;padding:8px 0 12px"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
 </div>
@@ -43,8 +44,25 @@
       c.style.transform = active ? 'translateY(-1px)' : 'translateY(0)';
       const label = c.querySelector('span');
       if (label) label.style.color = active ? '#4A3550' : '#6A5A78';
+      // persist main selection immediately so other pages can read it
+      if (active && label) {
+        try { localStorage.setItem('selectedEmotionMain', label.textContent.trim()); } catch (e) {}
+      }
     });
   }));
+
+  // Save selected main emotion before navigating
+  const mainNext = document.getElementById('mainNext');
+  if (mainNext) {
+    mainNext.addEventListener('click', (e) => {
+      e.preventDefault();
+      const active = cards.find((c) => c.dataset.active === 'true');
+      const label = active ? active.querySelector('span') : null;
+      const text = label ? label.textContent.trim() : null;
+      try { if (text) localStorage.setItem('selectedEmotionMain', text); } catch (err) {}
+      location.href = './emotion-subcategory.html';
+    });
+  }
 </script>
 </body>
 </html>
