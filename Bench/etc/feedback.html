@@ -10,6 +10,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   body{margin:0;background:radial-gradient(130% 45% at 30% 0%,#F5E9D6,#FDF3FF 55%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center;min-height:100vh}
+  .rating{display:flex;gap:6px}
+  .rating-star{width:40px;height:40px;padding:0;border:0;background:transparent;display:grid;place-items:center;cursor:pointer}
+  .rating-star svg{width:40px;height:40px;pointer-events:none}
+  .rating-star path{fill:transparent;stroke:#E4D5F2;stroke-width:1.5;transition:fill .16s ease,stroke .16s ease,transform .16s ease;transform-origin:center}
+  .rating-star.is-selected path{fill:#FFB020;stroke:#FFB020}
+  .rating-star:active path{transform:scale(.88)}
+  .rating-star:focus-visible{outline:3px solid rgba(169,139,232,.45);outline-offset:3px;border-radius:10px}
 </style>
 </head>
 <body>
@@ -21,19 +28,45 @@
     <div style="width:68px;height:68px;border-radius:24px;background:linear-gradient(135deg,#FFE3A8,#FFC46B);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 10px 22px -12px rgba(255,180,80,.8)"><svg width="36" height="36" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg></div>
     <h1 style="margin:0 0 10px;font:400 26px Jua,Pretendard;color:#4A3550">이번주 어땠어?</h1>
     <p style="margin:0 0 24px;font:500 13px/1.55 Pretendard;color:#9A7FAD">일기와 코멘트가 마음을 돌보는 데<br>도움이 됐는지 알려줘</p>
-    <div style="display:flex;gap:6px">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="#FFB020"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg>
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="#FFB020"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg>
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="#FFB020"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg>
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="#FFB020"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg>
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z" stroke="#E4D5F2" stroke-width="1.5"/></svg>
+    <div class="rating" id="weekly-rating" role="radiogroup" aria-label="이번 주 만족도">
+      <button class="rating-star {{star1Class}}" type="button" data-rating="1" role="radio" aria-checked="{{star1Checked}}" aria-label="1점" onClick="{{selectRating}}"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg></button>
+      <button class="rating-star {{star2Class}}" type="button" data-rating="2" role="radio" aria-checked="{{star2Checked}}" aria-label="2점" onClick="{{selectRating}}"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg></button>
+      <button class="rating-star {{star3Class}}" type="button" data-rating="3" role="radio" aria-checked="{{star3Checked}}" aria-label="3점" onClick="{{selectRating}}"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg></button>
+      <button class="rating-star {{star4Class}}" type="button" data-rating="4" role="radio" aria-checked="{{star4Checked}}" aria-label="4점" onClick="{{selectRating}}"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg></button>
+      <button class="rating-star {{star5Class}}" type="button" data-rating="5" role="radio" aria-checked="{{star5Checked}}" aria-label="5점" onClick="{{selectRating}}"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.4 6.7L12 17.6 6 20.9l1.4-6.7L2.3 9l6.8-.7z"/></svg></button>
     </div>
     <textarea placeholder="이번주는 기록이 도움이 됐어.
-마음이 좀 정리되는 느낌이었어." style="width:100%;min-height:160px;border:none;outline:none;background:#fff;border-radius:20px;padding:16px 16px;resize:none;box-shadow:0 10px 24px -18px rgba(140,100,200,.5);font:500 14px/1.6 Pretendard;color:#4A3550;margin-top:8px"></textarea>
+마음이 좀 정리되는 느낌이었어." style="box-sizing:border-box;width:100%;min-height:160px;border:none;outline:none;background:#fff;border-radius:20px;padding:16px 16px;resize:none;box-shadow:0 10px 24px -18px rgba(140,100,200,.5);font:500 14px/1.6 Pretendard;color:#4A3550;margin-top:8px"></textarea>
     <div style="flex:1"></div>
-    <button onClick="location.href='../home/home.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">보내기</button>
+    <button type="button" onClick="{{goHome}}" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">보내기</button>
   </div>
 </div>
 </x-dc>
+<script type="text/plain" data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { rating: 0 };
+    this.selectRating = (event) => {
+      this.setState({ rating: Number(event.currentTarget.dataset.rating) });
+    };
+    this.goHome = () => {
+      window.location.assign('../home/home.html');
+    };
+  }
+
+  renderVals() {
+    const values = {
+      selectRating: this.selectRating,
+      goHome: this.goHome
+    };
+    for (let score = 1; score <= 5; score += 1) {
+      values[`star${score}Class`] = this.state.rating >= score ? 'is-selected' : '';
+      values[`star${score}Checked`] = this.state.rating === score;
+    }
+    return values;
+  }
+}
+</script>
 </body>
 </html>
