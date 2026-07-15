@@ -14,8 +14,35 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
+  *{box-sizing:border-box}
   body{margin:0;background:#EFE7DF;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
+  button,select{font:inherit}
+  .setting-card{background:#fff;border-radius:22px;box-shadow:0 10px 24px -20px rgba(140,100,200,.6);overflow:hidden}
+  .setting-row{width:100%;border:0;background:#fff;color:#4A3550;display:flex;align-items:center;justify-content:space-between;padding:17px 18px;cursor:pointer;text-align:left}
+  .setting-row:active{background:#FAF7FD}
+  .setting-row+.setting-row{border-top:1px solid #F0E9FB}
+  .setting-label{display:flex;align-items:center;gap:12px}
+  .setting-icon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .switch{width:46px;height:27px;border-radius:15px;background:#DED6E8;position:relative;transition:background .18s ease}
+  .switch-knob{position:absolute;left:3px;top:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(70,45,85,.18);transition:transform .18s ease}
+  .switch.is-on{background:#A98BE8}
+  .switch.is-on .switch-knob{transform:translateX(19px)}
+  .modal-layer{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(63,45,72,.34);backdrop-filter:blur(4px)}
+  .modal-card{width:100%;max-width:326px;background:#fff;border-radius:26px;padding:24px;box-shadow:0 24px 60px -24px rgba(67,43,78,.55)}
+  .modal-title{margin:0;font:400 23px Jua,Pretendard;color:#4A3550}
+  .modal-description{margin:10px 0 0;font:500 14px/1.55 Pretendard;color:#8F7B9E;word-break:keep-all}
+  .modal-actions{display:flex;gap:10px;margin-top:22px}
+  .modal-button{flex:1;border:0;border-radius:16px;padding:13px 10px;font:700 14px Pretendard;cursor:pointer}
+  .modal-button.secondary{background:#F2EDF6;color:#786985}
+  .modal-button.primary{background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff}
+  .modal-button.danger{background:#D64545;color:#fff}
+  .period-control{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px;padding:4px;background:#F3EDF8;border-radius:16px}
+  .period-button{border:0;background:transparent;color:#93819F;border-radius:12px;padding:10px;cursor:pointer;font-weight:700}
+  .period-button.is-selected{background:#fff;color:#7D63B8;box-shadow:0 4px 12px -8px rgba(80,50,110,.45)}
+  .time-fields{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-top:14px}
+  .time-select{width:100%;border:1.5px solid #E8DFF0;background:#fff;color:#4A3550;border-radius:15px;padding:12px 10px;outline:none;text-align:center}
+  .time-select:focus{border-color:#A98BE8}
+  .toast{position:absolute;z-index:30;left:50%;bottom:42px;display:none;transform:translateX(-50%);min-width:190px;padding:14px 20px;border-radius:18px;background:rgba(74,53,80,.94);color:#fff;text-align:center;font:700 14px Pretendard;box-shadow:0 12px 30px -14px rgba(50,35,55,.65)}
 </style>
 </helmet>
 
@@ -24,16 +51,221 @@
     <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 30px 4px;font:600 15px Pretendard"><span>9:41</span><div style="display:flex;gap:7px;align-items:center"><svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg></div></div>
     <div style="flex:1;padding:20px 24px 22px;display:flex;flex-direction:column;gap:22px">
       <h1 style="margin:4px 4px 0;font:400 30px Jua,Pretendard;color:#4A3550">설정</h1>
-      <div><p style="margin:0 0 10px 6px;font:700 12px Pretendard;color:#A98BE8;letter-spacing:.03em">알림</p><div style="background:#fff;border-radius:22px;box-shadow:0 10px 24px -20px rgba(140,100,200,.6);overflow:hidden"><div style="display:flex;align-items:center;justify-content:space-between;padding:17px 18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:34px;height:34px;border-radius:12px;background:#FFE3D8;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 7 2 7H4s2-2 2-7z" stroke="#FF8A6B" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 20a2 2 0 0 0 4 0" stroke="#FF8A6B" stroke-width="1.7"/></svg></div><span style="font:600 15px Pretendard">저녁 알림</span></div><span style="font:600 14px Pretendard;color:#B08FC0">9:00 PM ›</span></div></div></div>
-      <div><p style="margin:0 0 10px 6px;font:700 12px Pretendard;color:#A98BE8;letter-spacing:.03em">보안</p><div style="background:#fff;border-radius:22px;box-shadow:0 10px 24px -20px rgba(140,100,200,.6);overflow:hidden"><div style="display:flex;align-items:center;justify-content:space-between;padding:17px 18px;border-bottom:1px solid #F0E9FB"><div style="display:flex;align-items:center;gap:12px"><div style="width:34px;height:34px;border-radius:12px;background:#EDE4FA;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="3" stroke="#8A76B0" stroke-width="1.7"/><path d="M8 10V8a4 4 0 0 1 8 0v2" stroke="#8A76B0" stroke-width="1.7"/></svg></div><span style="font:600 15px Pretendard">앱 잠금</span></div><div style="width:46px;height:27px;border-radius:15px;background:#A98BE8;position:relative"><div style="position:absolute;right:3px;top:3px;width:21px;height:21px;border-radius:50%;background:#fff"></div></div></div><div style="display:flex;align-items:center;justify-content:space-between;padding:17px 18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:34px;height:34px;border-radius:12px;background:#E4EAE6;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z" stroke="#6E9482" stroke-width="1.7" stroke-linejoin="round"/></svg></div><span style="font:600 15px Pretendard">안전 계획 편집</span></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#C6B4D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
-      <div><p style="margin:0 0 10px 6px;font:700 12px Pretendard;color:#A98BE8;letter-spacing:.03em">데이터</p><div style="background:#fff;border-radius:22px;box-shadow:0 10px 24px -20px rgba(140,100,200,.6);overflow:hidden"><div style="display:flex;align-items:center;justify-content:space-between;padding:17px 18px"><div style="display:flex;align-items:center;gap:12px"><div style="width:34px;height:34px;border-radius:12px;background:#FBE0E0;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M9 7V5h6v2M6 7l1 13h10l1-13" stroke="#D64545" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span style="font:600 15px Pretendard;color:#D64545">기록 전체 삭제</span></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#E8B0B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+
+      <div>
+        <p style="margin:0 0 10px 6px;font:700 12px Pretendard;color:#A98BE8;letter-spacing:.03em">알림</p>
+        <div class="setting-card">
+          <button type="button" class="setting-row" onClick="{{openAlarm}}">
+            <span class="setting-label">
+              <span class="setting-icon" style="background:#FFE3D8"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 7 2 7H4s2-2 2-7z" stroke="#FF8A6B" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 20a2 2 0 0 0 4 0" stroke="#FF8A6B" stroke-width="1.7"/></svg></span>
+              <span style="font:600 15px Pretendard">알림</span>
+            </span>
+            <span style="font:600 14px Pretendard;color:#B08FC0">{{alarmTime}} ›</span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin:0 0 10px 6px;font:700 12px Pretendard;color:#A98BE8;letter-spacing:.03em">보안</p>
+        <div class="setting-card">
+          <button type="button" class="setting-row" role="switch" aria-checked="{{appLock}}" onClick="{{toggleAppLock}}">
+            <span class="setting-label">
+              <span class="setting-icon" style="background:#EDE4FA"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="3" stroke="#8A76B0" stroke-width="1.7"/><path d="M8 10V8a4 4 0 0 1 8 0v2" stroke="#8A76B0" stroke-width="1.7"/></svg></span>
+              <span style="font:600 15px Pretendard">앱 잠금</span>
+            </span>
+            <span style="display:flex;align-items:center;gap:9px">
+              <span style="font:600 12px Pretendard;color:#9A7FAD">{{lockStatus}}</span>
+              <span class="switch {{lockClass}}" aria-hidden="true"><span class="switch-knob"></span></span>
+            </span>
+          </button>
+          <button type="button" class="setting-row" onClick="{{openSafety}}">
+            <span class="setting-label">
+              <span class="setting-icon" style="background:#E4EAE6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z" stroke="#6E9482" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+              <span style="font:600 15px Pretendard">안전 계획 편집</span>
+            </span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#C6B4D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin:0 0 10px 6px;font:700 12px Pretendard;color:#A98BE8;letter-spacing:.03em">데이터</p>
+        <div class="setting-card">
+          <button type="button" class="setting-row" onClick="{{openDeleteConfirm}}">
+            <span class="setting-label">
+              <span class="setting-icon" style="background:#FBE0E0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M9 7V5h6v2M6 7l1 13h10l1-13" stroke="#D64545" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span style="font:600 15px Pretendard;color:#D64545">기록 전체 삭제</span>
+            </span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#E8B0B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
       <div style="flex:1"></div>
-      <button onClick="location.href='../onboarding/landing.html'" style="border:1.5px solid #F0D0D0;background:#fff;width:100%;color:#D64545;font:700 15px Pretendard;padding:15px 0;border-radius:20px;cursor:pointer">로그아웃</button>
+      <button type="button" onClick="{{openLogoutConfirm}}" style="border:1.5px solid #F0D0D0;background:#fff;width:100%;color:#D64545;font:700 15px Pretendard;padding:15px 0;border-radius:20px;cursor:pointer">로그아웃</button>
     </div>
     <div style="display:flex;justify-content:center;padding:8px 0 12px"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
+
+    <div class="modal-layer" style="display:{{alarmModalDisplay}}" role="presentation">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="alarm-modal-title">
+        <h2 class="modal-title" id="alarm-modal-title">알림 시간 설정</h2>
+        <p class="modal-description">알림을 받을 오전·오후와 시간을 선택해 주세요.</p>
+        <div class="period-control">
+          <button type="button" class="period-button {{alarmAmClass}}" data-period="AM" aria-pressed="{{alarmAmPressed}}" onClick="{{setAlarmPeriod}}">AM</button>
+          <button type="button" class="period-button {{alarmPmClass}}" data-period="PM" aria-pressed="{{alarmPmPressed}}" onClick="{{setAlarmPeriod}}">PM</button>
+        </div>
+        <div class="time-fields">
+          <select class="time-select" aria-label="시" value="{{draftHour}}" onChange="{{setAlarmHour}}">
+            <option value="1">1시</option><option value="2">2시</option><option value="3">3시</option><option value="4">4시</option><option value="5">5시</option><option value="6">6시</option><option value="7">7시</option><option value="8">8시</option><option value="9">9시</option><option value="10">10시</option><option value="11">11시</option><option value="12">12시</option>
+          </select>
+          <span style="font:700 20px Pretendard;color:#7E6C88">:</span>
+          <select class="time-select" aria-label="분" value="{{draftMinute}}" onChange="{{setAlarmMinute}}">
+            <option value="00">00분</option><option value="10">10분</option><option value="20">20분</option><option value="30">30분</option><option value="40">40분</option><option value="50">50분</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="modal-button secondary" onClick="{{closeAlarm}}">취소</button>
+          <button type="button" class="modal-button primary" onClick="{{saveAlarm}}">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-layer" style="display:{{safetyModalDisplay}}" role="presentation">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="safety-modal-title">
+        <h2 class="modal-title" id="safety-modal-title">안전 계획 편집</h2>
+        <p class="modal-description">안전 계획 화면으로 이동해 내용을 수정할까요?</p>
+        <div class="modal-actions">
+          <button type="button" class="modal-button secondary" onClick="{{closeSafety}}">취소</button>
+          <button type="button" class="modal-button primary" onClick="{{goToSafetyPlan}}">편집하기</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-layer" style="display:{{confirmModalDisplay}}" role="presentation">
+      <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-describedby="confirm-modal-description">
+        <h2 class="modal-title" id="confirm-modal-title">{{confirmTitle}}</h2>
+        <p class="modal-description" id="confirm-modal-description">{{confirmMessage}}</p>
+        <div class="modal-actions">
+          <button type="button" class="modal-button secondary" onClick="{{closeConfirm}}">아니오</button>
+          <button type="button" class="modal-button {{confirmButtonClass}}" onClick="{{runConfirmAction}}">예</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" style="display:{{toastDisplay}}" role="status" aria-live="polite">완료되었습니다</div>
   </div>
 </div>
 
 </x-dc>
+<script type="text/plain" data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      alarmPeriod: 'PM',
+      alarmHour: '9',
+      alarmMinute: '00',
+      draftPeriod: 'PM',
+      draftHour: '9',
+      draftMinute: '00',
+      alarmModalOpen: false,
+      appLock: true,
+      safetyModalOpen: false,
+      confirmKind: '',
+      toastVisible: false
+    };
+    this.toastTimer = null;
+
+    this.openAlarm = () => {
+      this.setState({
+        alarmModalOpen: true,
+        draftPeriod: this.state.alarmPeriod,
+        draftHour: this.state.alarmHour,
+        draftMinute: this.state.alarmMinute
+      });
+    };
+    this.closeAlarm = () => this.setState({ alarmModalOpen: false });
+    this.setAlarmPeriod = (event) => this.setState({ draftPeriod: event.currentTarget.dataset.period });
+    this.setAlarmHour = (event) => this.setState({ draftHour: event.target.value });
+    this.setAlarmMinute = (event) => this.setState({ draftMinute: event.target.value });
+    this.saveAlarm = () => {
+      this.setState({
+        alarmPeriod: this.state.draftPeriod,
+        alarmHour: this.state.draftHour,
+        alarmMinute: this.state.draftMinute,
+        alarmModalOpen: false
+      });
+    };
+
+    this.toggleAppLock = () => this.setState((state) => ({ appLock: !state.appLock }));
+    this.openSafety = () => this.setState({ safetyModalOpen: true });
+    this.closeSafety = () => this.setState({ safetyModalOpen: false });
+    this.goToSafetyPlan = () => window.location.assign('../safetyplan/plan.html');
+
+    this.openDeleteConfirm = () => this.setState({ confirmKind: 'delete' });
+    this.openLogoutConfirm = () => this.setState({ confirmKind: 'logout' });
+    this.closeConfirm = () => this.setState({ confirmKind: '' });
+    this.runConfirmAction = () => {
+      if (this.state.confirmKind === 'delete') {
+        this.setState({ confirmKind: '', toastVisible: true });
+        if (this.toastTimer) clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => {
+          this.setState({ toastVisible: false });
+          this.toastTimer = null;
+        }, 1600);
+        return;
+      }
+      if (this.state.confirmKind === 'logout') {
+        try {
+          sessionStorage.clear();
+        } catch (_) {
+        }
+        window.location.assign('../onboarding/landing.html');
+      }
+    };
+  }
+
+  componentWillUnmount() {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+  }
+
+  renderVals() {
+    const isDelete = this.state.confirmKind === 'delete';
+    return {
+      alarmTime: `${this.state.alarmHour}:${this.state.alarmMinute} ${this.state.alarmPeriod}`,
+      alarmModalDisplay: this.state.alarmModalOpen ? 'flex' : 'none',
+      draftHour: this.state.draftHour,
+      draftMinute: this.state.draftMinute,
+      alarmAmClass: this.state.draftPeriod === 'AM' ? 'is-selected' : '',
+      alarmPmClass: this.state.draftPeriod === 'PM' ? 'is-selected' : '',
+      alarmAmPressed: this.state.draftPeriod === 'AM',
+      alarmPmPressed: this.state.draftPeriod === 'PM',
+      appLock: this.state.appLock,
+      lockClass: this.state.appLock ? 'is-on' : '',
+      lockStatus: this.state.appLock ? '켜짐' : '꺼짐',
+      safetyModalDisplay: this.state.safetyModalOpen ? 'flex' : 'none',
+      confirmModalDisplay: this.state.confirmKind ? 'flex' : 'none',
+      confirmTitle: isDelete ? '정말 삭제하시겠습니까?' : '로그아웃 하시겠습니까?',
+      confirmMessage: isDelete ? '삭제한 기록은 복구할 수 없습니다.' : '언제든 다시 로그인할 수 있어요.',
+      confirmButtonClass: isDelete ? 'danger' : 'primary',
+      toastDisplay: this.state.toastVisible ? 'block' : 'none',
+      openAlarm: this.openAlarm,
+      closeAlarm: this.closeAlarm,
+      setAlarmPeriod: this.setAlarmPeriod,
+      setAlarmHour: this.setAlarmHour,
+      setAlarmMinute: this.setAlarmMinute,
+      saveAlarm: this.saveAlarm,
+      toggleAppLock: this.toggleAppLock,
+      openSafety: this.openSafety,
+      closeSafety: this.closeSafety,
+      goToSafetyPlan: this.goToSafetyPlan,
+      openDeleteConfirm: this.openDeleteConfirm,
+      openLogoutConfirm: this.openLogoutConfirm,
+      closeConfirm: this.closeConfirm,
+      runConfirmAction: this.runConfirmAction
+    };
+  }
+}
+</script>
 </body>
 </html>

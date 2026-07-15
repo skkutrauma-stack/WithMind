@@ -68,6 +68,7 @@
     appearance: none;
     -webkit-appearance: none;
     background: #fff;
+    position: relative;
   }
   .choice[data-active="true"] {
     border: 3px solid #A98BE8;
@@ -87,6 +88,7 @@
   .choice-body {
     flex: 1;
     min-width: 0;
+    padding-right: 36px;
   }
   .ring {
     width: 34px;
@@ -115,6 +117,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    box-shadow: 0 4px 10px -6px rgba(140,100,200,.35);
   }
   .more {
     border: none;
@@ -205,7 +212,7 @@
     <div id="moreBox"></div>
 
     <div class="safe-gap"></div>
-    <button onClick="location.href='./journal.html'" class="cta">다음</button>
+    <button id="nextBtn" class="cta">다음</button>
   </div>
 
   <div style="display:flex;justify-content:center;padding:8px 0 12px"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
@@ -275,18 +282,18 @@
     const ring = item.active ? '#A98BE8' : '#D8CAE9';
     const ringWidth = item.active ? '7px' : '3px';
     return `
-      <button type="button" class="choice" data-key="${item.key}" data-active="${active}" style="border-color:${border}">
+      <div class="choice" data-key="${item.key}" data-active="${active}" style="border-color:${border}">
+        <button type="button" class="help" data-help="${item.key}">?</button>
         <div class="choice-inner">
           <div class="ring" style="border:${ringWidth} solid ${ring}"></div>
           <div class="choice-body">
             <p style="margin:1px 0 0;font:600 14px/1.45 Pretendard;color:#4A3550">${item.text}</p>
-            <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
               <span class="pill">${item.key}</span>
-              <button type="button" class="help" data-help="${item.key}">?</button>
             </div>
           </div>
         </div>
-      </button>`;
+      </div>`;
   }
 
   choices.innerHTML = options.filter((item) => !item.more).map(cardMarkup).join('');
@@ -312,14 +319,14 @@
       openHelp(helpButton.dataset.help);
       return;
     }
-    const choice = event.target.closest('button.choice');
+    const choice = event.target.closest('.choice');
     if (choice) {
       const key = choice.dataset.key;
-      document.querySelectorAll('button.choice').forEach((button) => {
-        const active = button.dataset.key === key;
-        button.dataset.active = String(active);
-        button.style.borderColor = active ? '#A98BE8' : '#F0E7FA';
-        const ring = button.querySelector('.ring');
+      document.querySelectorAll('.choice').forEach((card) => {
+        const active = card.dataset.key === key;
+        card.dataset.active = String(active);
+        card.style.borderColor = active ? '#A98BE8' : '#F0E7FA';
+        const ring = card.querySelector('.ring');
         if (ring) {
           ring.style.borderColor = active ? '#A98BE8' : '#D8CAE9';
           ring.style.borderWidth = active ? '7px' : '3px';
@@ -338,6 +345,19 @@
   document.getElementById('confirmHelp').addEventListener('click', closeHelpModal);
   helpModal.addEventListener('click', (event) => {
     if (event.target === helpModal) closeHelpModal();
+  });
+  
+  // When user proceeds, store the selected strategy so journal.html can read it
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.addEventListener('click', () => {
+    const active = document.querySelector('.choice[data-active="true"]');
+    const key = active ? active.dataset.key : null;
+    if (key) {
+      try { localStorage.setItem('selectedStrategy', key); } catch (e) { /* ignore */ }
+    } else {
+      try { localStorage.removeItem('selectedStrategy'); } catch (e) { /* ignore */ }
+    }
+    location.href = './journal.html';
   });
 </script>
 </body>
