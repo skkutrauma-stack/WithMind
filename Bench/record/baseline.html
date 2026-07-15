@@ -10,25 +10,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   body{margin:0;background:radial-gradient(130% 45% at 50% 0%,#DFF0FB,#FDF3FF 55%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center;min-height:100vh}
+  .page-shell{animation:pageIn .24s ease-out both}
+  @keyframes pageIn{from{transform:translateX(18px);opacity:0}to{transform:translateX(0);opacity:1}}
+  .nav-btn{cursor:pointer;user-select:none}
+  .nav-btn.left-out{animation:slideLeft .22s ease-in forwards}
+  @keyframes slideLeft{to{transform:translateX(-18px);opacity:0}}
+  .nav-btn.is-exiting{pointer-events:none}
+  .month-picker{position:relative;width:max-content}
+  .month-select{appearance:none;-webkit-appearance:none;-moz-appearance:none;border:0;background:#fff;padding:10px 38px 10px 16px;border-radius:18px;box-shadow:0 8px 20px rgba(140,100,200,.12);font:400 15px Jua,Pretendard;color:#4A3550;cursor:pointer;outline:none}
+  .month-picker::after{content:"⌄";position:absolute;right:16px;top:50%;transform:translateY(-52%);pointer-events:none;color:#9A7FAD;font:400 15px Jua,Pretendard}
 </style>
+<script>
+  function goWithSlide(el, href){
+    if(!el || el.classList.contains('is-exiting')) return;
+    el.classList.add('is-exiting', 'left-out');
+    setTimeout(function(){ location.href = href; }, 170);
+  }
+</script>
 </head>
 <body>
 <x-dc><helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"></helmet>
-<div style="width:390px;min-height:844px;background:radial-gradient(130% 45% at 50% 0%,#DFF0FB,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
+<div class="page-shell" style="width:390px;min-height:844px;background:radial-gradient(130% 45% at 50% 0%,#DFF0FB,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
   <div aria-hidden="true" style="height:35px;flex:none"></div>
   <div style="padding:14px 24px 8px;display:flex;align-items:center;justify-content:space-between;gap:10px">
     <div>
       <p style="margin:0 0 4px;font:700 12px Pretendard;color:#5AB0E8">Record flow</p>
       <h2 style="margin:0;font:400 20px Jua,Pretendard;color:#4A3550">Baseline · 정리 화면</h2>
     </div>
-    <div style="text-align:right">
-      <div style="font:700 14px Pretendard;color:#5B9FCF">3 / 3</div>
-      <div style="margin-top:6px;width:110px;height:8px;border-radius:999px;background:#DBEBF7;overflow:hidden"><div style="width:100%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#5AB0E8,#7FA8F0)"></div></div>
-    </div>
   </div>
   <div style="flex:1;padding:6px 24px 22px;display:flex;flex-direction:column;gap:14px">
-    <div style="display:flex;justify-content:space-between;align-items:center"><h1 style="margin:0;font:400 28px Jua,Pretendard;color:#4A3550">나의 기록</h1><div style="display:flex;align-items:center;gap:6px;background:#fff;padding:8px 14px;border-radius:20px;box-shadow:0 6px 16px -14px rgba(140,100,200,.5)"><span style="font:400 15px Jua,Pretendard">6월</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#9A7FAD" stroke-width="2.2" stroke-linecap="round"/></svg></div></div>
-    <div style="display:flex;background:#DBEBF7;border-radius:18px;padding:4px"><div onClick="location.href='./emotion.html'" style="flex:1;text-align:center;color:#7A90A8;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">EMA</div><div onClick="location.href='./journal.html'" style="flex:1;text-align:center;color:#7A90A8;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">EMI</div><div style="flex:1;text-align:center;background:linear-gradient(90deg,#5AB0E8,#7FA8F0);color:#fff;font:400 15px Jua,Pretendard;padding:11px 0;border-radius:14px">Baseline</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><h1 style="margin:0;font:400 28px Jua,Pretendard;color:#4A3550">나의 기록</h1><div class="month-picker"><select class="month-select" id="month-select-baseline" aria-label="월 선택"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6" selected>6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select></div></div>
+    <div style="display:flex;background:#DBEBF7;border-radius:18px;padding:4px"><div class="nav-btn" onclick="goWithSlide(this,'./emotion.html')" style="flex:1;text-align:center;color:#7A90A8;font:400 15px Jua,Pretendard;padding:11px 0">EMA</div><div class="nav-btn" onclick="goWithSlide(this,'./journal.html')" style="flex:1;text-align:center;color:#7A90A8;font:400 15px Jua,Pretendard;padding:11px 0">EMI</div><div class="nav-btn" onclick="goWithSlide(this,'./baseline.html')" style="flex:1;text-align:center;background:linear-gradient(90deg,#5AB0E8,#7FA8F0);color:#fff;font:400 15px Jua,Pretendard;padding:11px 0;border-radius:14px">Baseline</div></div>
     <p style="margin:0;font:500 12px Pretendard;color:#B08FC0">기준일: 6월 12일 · 지난 7일</p>
     <div style="display:flex;justify-content:space-between;gap:5px">
       <div style="flex:1;text-align:center;padding:9px 0;border-radius:14px;background:#fff;box-shadow:0 4px 10px -12px rgba(140,100,200,.5);font:600 12px Pretendard;color:#9A7FAD">6</div>
