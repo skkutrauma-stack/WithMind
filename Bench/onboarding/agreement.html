@@ -20,19 +20,19 @@
 
     <div id="checks" style="display:flex;flex-direction:column;gap:11px">
       <button type="button" class="agree-item" data-active="false" style="background:#fff;border:2px solid #E9E0F5;border-radius:20px;padding:15px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 10px 24px -18px rgba(140,100,200,.5);cursor:pointer;text-align:left;position:relative">
-        <div class="box" style="width:26px;height:26px;border-radius:9px;border:2px solid #D9CBE8;flex:none;box-sizing:border-box"></div>
+        <div class="box" style="width:26px;height:26px;border-radius:9px;border:2px solid #D9CBE8;flex:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;overflow:hidden;line-height:0"></div>
         <div><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><p style="margin:0;font:400 16px Jua,Pretendard">서비스 이용약관</p><span style="font:700 9px Pretendard;color:#7A63C8;background:#EBE1FB;padding:2px 7px;border-radius:7px">필수</span></div><p style="margin:0;font:500 11px Pretendard;color:#9A7FAD">앱 이용에 대한 기본 약속이야</p></div>
       </button>
       <button type="button" class="agree-item" data-active="false" style="background:#fff;border:2px solid #E9E0F5;border-radius:20px;padding:15px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 10px 24px -18px rgba(140,100,200,.5);cursor:pointer;text-align:left;position:relative">
-        <div class="box" style="width:26px;height:26px;border-radius:9px;border:2px solid #D9CBE8;flex:none;box-sizing:border-box"></div>
+        <div class="box" style="width:26px;height:26px;border-radius:9px;border:2px solid #D9CBE8;flex:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;overflow:hidden;line-height:0"></div>
         <div><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><p style="margin:0;font:400 16px Jua,Pretendard">개인정보 수집·이용</p><span style="font:700 9px Pretendard;color:#7A63C8;background:#EBE1FB;padding:2px 7px;border-radius:7px">필수</span></div><p style="margin:0;font:500 11px Pretendard;color:#9A7FAD">계정과 기록을 안전히 보관해</p></div>
       </button>
       <button type="button" class="agree-item" data-active="false" style="background:#fff;border:2px solid #E9E0F5;border-radius:20px;padding:15px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 10px 24px -18px rgba(140,100,200,.5);cursor:pointer;text-align:left;position:relative">
-        <div class="box" style="width:26px;height:26px;border-radius:9px;border:2px solid #D9CBE8;flex:none;box-sizing:border-box"></div>
+        <div class="box" style="width:26px;height:26px;border-radius:9px;border:2px solid #D9CBE8;flex:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;overflow:hidden;line-height:0"></div>
         <div><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><p style="margin:0;font:400 16px Jua,Pretendard">민감정보 처리</p><span style="font:700 9px Pretendard;color:#7A63C8;background:#EBE1FB;padding:2px 7px;border-radius:7px">필수</span></div><p style="margin:0;font:500 11px Pretendard;color:#9A7FAD">감정 기록은 민감정보로 특별 보호돼</p></div>
       </button>
       <button type="button" class="agree-item" data-active="false" style="background:#fff;border:2px solid #E9E0F5;border-radius:20px;padding:15px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 10px 24px -18px rgba(140,100,200,.5);cursor:pointer;text-align:left;position:relative">
-        <div class="box" style="width:26px;height:26px;border-radius:9px;border:2px solid #D9CBE8;flex:none;box-sizing:border-box"></div>
+        <div class="box" style="width:26px;height:26px;border-radius:9px;border:2px solid #D9CBE8;flex:none;box-sizing:border-box;display:flex;align-items:center;justify-content:center;overflow:hidden;line-height:0"></div>
         <div><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><p style="margin:0;font:400 16px Jua,Pretendard">연구 목적 데이터 활용</p><span style="font:700 9px Pretendard;color:#7A63C8;background:#EBE1FB;padding:2px 7px;border-radius:7px">필수</span></div><p style="margin:0;font:500 11px Pretendard;color:#9A7FAD">익명 통계로 더 나은 도움을 연구해</p></div>
       </button>
     </div>
@@ -40,7 +40,7 @@
     <div style="flex:1"></div>
     <button id="startBtn" type="button" disabled style="border:none;width:100%;background:linear-gradient(90deg,#C8BBDB,#C7D3EA);color:#fff;opacity:.75;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:not-allowed;box-shadow:0 14px 28px -12px rgba(120,100,220,.35);margin-top:16px">동의하고 시작하기</button>
   </div>
-  <div style="display:flex;justify-content:center;padding:8px 0 12px"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
+
 </div>
 <script>
   const items = [...document.querySelectorAll('.agree-item')];
@@ -64,7 +64,7 @@
       item.style.background = '#fff';
       box.style.background = 'linear-gradient(135deg,#A98BE8,#7FA8F0)';
       box.style.border = 'none';
-      box.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      box.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12.2l3.6 3.6L18 7.4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     } else {
       item.style.border = '2px solid #E9E0F5';
       item.style.background = '#fff';
