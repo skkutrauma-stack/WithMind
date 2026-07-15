@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="../support.js"></script>
+<script src="../support.js?v=2"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
-  body{margin:0;background:radial-gradient(130% 45% at 50% 0%,#DFF0FB,#FDF3FF 55%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center;min-height:100vh}
+  body{margin:0;width:100%;height:100%;background:radial-gradient(130% 45% at 50% 0%,#DFF0FB,#FDF3FF 55%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center;overflow:hidden}
   .page-shell{animation:pageIn .24s ease-out both}
   @keyframes pageIn{from{transform:translateX(18px);opacity:0}to{transform:translateX(0);opacity:1}}
   .nav-btn{cursor:pointer;user-select:none}
@@ -30,7 +30,7 @@
 </head>
 <body>
 <x-dc><helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"></helmet>
-<div class="page-shell" style="width:390px;min-height:844px;background:radial-gradient(130% 45% at 50% 0%,#DFF0FB,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
+<div class="page-shell" style="width:390px;height:844px;background:radial-gradient(130% 45% at 50% 0%,#DFF0FB,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
   <div aria-hidden="true" style="height:35px;flex:none"></div>
   <div style="padding:14px 24px 8px;display:flex;align-items:center;justify-content:space-between;gap:10px">
     <div>
@@ -67,7 +67,7 @@
     </div>
     <div style="background:#fff;border-radius:16px;padding:15px 16px;font:600 13px/1.5 Pretendard;color:#6A5A78;box-shadow:0 8px 18px -18px rgba(140,100,200,.5)">6월 12일 · 기분 <b style="color:#FF8A6B">6.8</b> · 버거움 <b style="color:#5FC9A8">7.2</b> · 연결감 <b style="color:#5AB0E8">4.1</b></div>
   </div>
-  <div style="display:flex;justify-content:space-around;align-items:center;padding:12px 16px 8px;background:rgba(255,255,255,.75);border-top:1px solid #F0E4F5">
+  <div style="display:flex;justify-content:space-around;align-items:center;padding:12px 16px 8px;background:transparent;border-top:none">
     <a href="../home/home.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-decoration:none;color:inherit"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 11L12 4l8 7M6 10v9h12v-9" stroke="#C6B4D4" stroke-width="1.7" stroke-linejoin="round"/></svg><span style="font:600 10px Pretendard;color:#C6B4D4">홈</span></a>
     <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="#A98BE8"><path d="M6 5h9a2 2 0 0 1 2 2v12H8a2 2 0 0 0-2 2z" opacity=".2"/><path d="M6 5h9a2 2 0 0 1 2 2v12H8a2 2 0 0 0-2 2z" stroke="#A98BE8" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg><span style="font:600 10px Pretendard;color:#A98BE8">기록</span></div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:default"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-6l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="#C6B4D4" stroke-width="1.7" stroke-linejoin="round"/><circle cx="9" cy="11" r="1.1" fill="#C6B4D4"/><circle cx="12" cy="11" r="1.1" fill="#C6B4D4"/><circle cx="15" cy="11" r="1.1" fill="#C6B4D4"/></svg><span style="font:600 10px Pretendard;color:#C6B4D4">챗봇</span></div>

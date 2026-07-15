@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -24,6 +24,18 @@
     background: #F3E9FB;
     color: #9A7FAD;
   }
+  .gender, .birth-trigger, .region-trigger, .next-btn {
+    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease, background .16s ease, color .16s ease;
+  }
+  .gender:hover, .birth-trigger:hover, .region-trigger:hover, .next-btn:hover, .back-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.03);
+    box-shadow: 0 16px 28px -18px rgba(120,90,180,.45);
+  }
+  .gender:active, .birth-trigger:active, .region-trigger:active, .next-btn:active, .back-btn:active {
+    transform: translateY(0) scale(.995);
+    filter: brightness(.99);
+  }
   body {
     margin: 0;
     background: #DED6CE;
@@ -31,9 +43,9 @@
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0;
   }
   .screen {
     width: 390px;
@@ -66,6 +78,131 @@
     color: #4A3550;
     display: block;
   }
+  .birth-group {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+  }
+  .birth-trigger {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 20px -16px rgba(140,100,200,.5);
+    font: 500 15px Pretendard;
+    color: #4A3550;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .birth-trigger::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #A98BE8;
+    border-bottom: 2px solid #A98BE8;
+    transform: rotate(45deg) translateY(-2px);
+    flex:none;
+    transition: transform .16s ease;
+  }
+  .birth-group[data-open="true"] .birth-trigger::after {
+    transform: rotate(-135deg) translateY(2px);
+  }
+  .birth-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 8px);
+    background: rgba(255,255,255,.98);
+    border-radius: 18px;
+    box-shadow: 0 18px 34px -20px rgba(120,90,180,.45);
+    border: 1px solid rgba(224,210,242,.8);
+    padding: 8px;
+    display: none;
+    z-index: 20;
+    max-height: 240px;
+    overflow: auto;
+  }
+  .birth-group[data-open="true"] .birth-menu { display: block; }
+  .birth-option {
+    width: 100%;
+    border: none;
+    background: transparent;
+    border-radius: 14px;
+    padding: 11px 12px;
+    text-align: left;
+    font: 500 14px Pretendard;
+    color: #4A3550;
+    cursor: pointer;
+  }
+  .birth-option:hover { background: #F3E9FB; color: #7A63C8; transform: translateX(2px); }
+  .region-group {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .region-trigger {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 20px -16px rgba(140,100,200,.5);
+    font: 500 15px Pretendard;
+    color: #4A3550;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .region-trigger::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #A98BE8;
+    border-bottom: 2px solid #A98BE8;
+    transform: rotate(45deg) translateY(-2px);
+    flex:none;
+    transition: transform .16s ease;
+  }
+  .region-group[data-open="true"] .region-trigger::after {
+    transform: rotate(-135deg) translateY(2px);
+  }
+  .region-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 8px);
+    background: rgba(255,255,255,.98);
+    border-radius: 18px;
+    box-shadow: 0 18px 34px -20px rgba(120,90,180,.45);
+    border: 1px solid rgba(224,210,242,.8);
+    padding: 8px;
+    display: none;
+    z-index: 20;
+    max-height: 240px;
+    overflow: auto;
+  }
+  .region-group[data-open="true"] .region-menu { display: block; }
+  .region-option {
+    width: 100%;
+    border: none;
+    background: transparent;
+    border-radius: 14px;
+    padding: 11px 12px;
+    text-align: left;
+    font: 500 14px Pretendard;
+    color: #4A3550;
+    cursor: pointer;
+  }
+  .region-option:hover { background: #F3E9FB; color: #7A63C8; transform: translateX(2px); }
 </style>
 </head>
 <body>
@@ -77,7 +214,7 @@
 <div class="screen">
   <div aria-hidden="true" style="height:35px;flex:none"></div>
   <div style="padding:14px 30px 6px;display:flex;align-items:center;gap:8px">
-    <button onClick="location.href='./account.html'" style="border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center">
+    <button class="back-btn" onClick="location.href='./account.html'" style="border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
     <div style="flex:1;display:flex;gap:6px">
@@ -101,22 +238,176 @@
 
     <label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:10px">생년월일</label>
     <div style="display:flex;gap:8px;margin-bottom:22px">
-      <input class="field" placeholder="1995">
-      <input class="field" placeholder="05">
-      <input class="field" placeholder="24">
+      <div class="birth-group" data-key="year" data-open="false">
+        <button class="birth-trigger" type="button" aria-label="생년 선택"><span class="birth-display">년</span></button>
+        <div class="birth-menu" role="listbox" aria-label="생년 목록">
+          <button class="birth-option" type="button" data-value="">년</button>
+          <button class="birth-option" type="button" data-value="2018">2018</button>
+          <button class="birth-option" type="button" data-value="2017">2017</button>
+          <button class="birth-option" type="button" data-value="2016">2016</button>
+          <button class="birth-option" type="button" data-value="2015">2015</button>
+          <button class="birth-option" type="button" data-value="2014">2014</button>
+          <button class="birth-option" type="button" data-value="2013">2013</button>
+          <button class="birth-option" type="button" data-value="2012">2012</button>
+          <button class="birth-option" type="button" data-value="2011">2011</button>
+          <button class="birth-option" type="button" data-value="2010">2010</button>
+          <button class="birth-option" type="button" data-value="2009">2009</button>
+          <button class="birth-option" type="button" data-value="2008">2008</button>
+          <button class="birth-option" type="button" data-value="2007">2007</button>
+          <button class="birth-option" type="button" data-value="2006">2006</button>
+          <button class="birth-option" type="button" data-value="2005">2005</button>
+          <button class="birth-option" type="button" data-value="2004">2004</button>
+          <button class="birth-option" type="button" data-value="2003">2003</button>
+          <button class="birth-option" type="button" data-value="2002">2002</button>
+          <button class="birth-option" type="button" data-value="2001">2001</button>
+          <button class="birth-option" type="button" data-value="2000">2000</button>
+          <button class="birth-option" type="button" data-value="1999">1999</button>
+          <button class="birth-option" type="button" data-value="1998">1998</button>
+          <button class="birth-option" type="button" data-value="1997">1997</button>
+          <button class="birth-option" type="button" data-value="1996">1996</button>
+          <button class="birth-option" type="button" data-value="1995">1995</button>
+          <button class="birth-option" type="button" data-value="1994">1994</button>
+          <button class="birth-option" type="button" data-value="1993">1993</button>
+          <button class="birth-option" type="button" data-value="1992">1992</button>
+          <button class="birth-option" type="button" data-value="1991">1991</button>
+          <button class="birth-option" type="button" data-value="1990">1990</button>
+        </div>
+      </div>
+      <div class="birth-group" data-key="month" data-open="false">
+        <button class="birth-trigger" type="button" aria-label="생월 선택"><span class="birth-display">월</span></button>
+        <div class="birth-menu" role="listbox" aria-label="생월 목록">
+          <button class="birth-option" type="button" data-value="">월</button>
+          <button class="birth-option" type="button" data-value="01">01</button>
+          <button class="birth-option" type="button" data-value="02">02</button>
+          <button class="birth-option" type="button" data-value="03">03</button>
+          <button class="birth-option" type="button" data-value="04">04</button>
+          <button class="birth-option" type="button" data-value="05">05</button>
+          <button class="birth-option" type="button" data-value="06">06</button>
+          <button class="birth-option" type="button" data-value="07">07</button>
+          <button class="birth-option" type="button" data-value="08">08</button>
+          <button class="birth-option" type="button" data-value="09">09</button>
+          <button class="birth-option" type="button" data-value="10">10</button>
+          <button class="birth-option" type="button" data-value="11">11</button>
+          <button class="birth-option" type="button" data-value="12">12</button>
+        </div>
+      </div>
+      <div class="birth-group" data-key="day" data-open="false">
+        <button class="birth-trigger" type="button" aria-label="생일 선택"><span class="birth-display">일</span></button>
+        <div class="birth-menu" role="listbox" aria-label="생일 목록">
+          <button class="birth-option" type="button" data-value="">일</button>
+          <button class="birth-option" type="button" data-value="01">01</button>
+          <button class="birth-option" type="button" data-value="02">02</button>
+          <button class="birth-option" type="button" data-value="03">03</button>
+          <button class="birth-option" type="button" data-value="04">04</button>
+          <button class="birth-option" type="button" data-value="05">05</button>
+          <button class="birth-option" type="button" data-value="06">06</button>
+          <button class="birth-option" type="button" data-value="07">07</button>
+          <button class="birth-option" type="button" data-value="08">08</button>
+          <button class="birth-option" type="button" data-value="09">09</button>
+          <button class="birth-option" type="button" data-value="10">10</button>
+          <button class="birth-option" type="button" data-value="11">11</button>
+          <button class="birth-option" type="button" data-value="12">12</button>
+          <button class="birth-option" type="button" data-value="13">13</button>
+          <button class="birth-option" type="button" data-value="14">14</button>
+          <button class="birth-option" type="button" data-value="15">15</button>
+          <button class="birth-option" type="button" data-value="16">16</button>
+          <button class="birth-option" type="button" data-value="17">17</button>
+          <button class="birth-option" type="button" data-value="18">18</button>
+          <button class="birth-option" type="button" data-value="19">19</button>
+          <button class="birth-option" type="button" data-value="20">20</button>
+          <button class="birth-option" type="button" data-value="21">21</button>
+          <button class="birth-option" type="button" data-value="22">22</button>
+          <button class="birth-option" type="button" data-value="23">23</button>
+          <button class="birth-option" type="button" data-value="24">24</button>
+          <button class="birth-option" type="button" data-value="25">25</button>
+          <button class="birth-option" type="button" data-value="26">26</button>
+          <button class="birth-option" type="button" data-value="27">27</button>
+          <button class="birth-option" type="button" data-value="28">28</button>
+          <button class="birth-option" type="button" data-value="29">29</button>
+          <button class="birth-option" type="button" data-value="30">30</button>
+          <button class="birth-option" type="button" data-value="31">31</button>
+        </div>
+      </div>
     </div>
 
     <label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:10px">사는 곳</label>
-    <input class="field" placeholder="지역을 입력해줘" style="margin-bottom:16px">
+    <div class="region-group" data-open="false">
+      <button class="region-trigger" type="button" aria-label="사는 곳 선택"><span class="region-display">지역</span></button>
+      <div class="region-menu" role="listbox" aria-label="사는 곳 목록">
+        <button class="region-option" type="button" data-value="">지역</button>
+        <button class="region-option" type="button" data-value="서울특별시">서울특별시</button>
+        <button class="region-option" type="button" data-value="부산광역시">부산광역시</button>
+        <button class="region-option" type="button" data-value="대구광역시">대구광역시</button>
+        <button class="region-option" type="button" data-value="인천광역시">인천광역시</button>
+        <button class="region-option" type="button" data-value="광주광역시">광주광역시</button>
+        <button class="region-option" type="button" data-value="대전광역시">대전광역시</button>
+        <button class="region-option" type="button" data-value="울산광역시">울산광역시</button>
+        <button class="region-option" type="button" data-value="세종특별자치시">세종특별자치시</button>
+        <button class="region-option" type="button" data-value="경기도">경기도</button>
+        <button class="region-option" type="button" data-value="강원특별자치도">강원특별자치도</button>
+        <button class="region-option" type="button" data-value="충청북도">충청북도</button>
+        <button class="region-option" type="button" data-value="충청남도">충청남도</button>
+        <button class="region-option" type="button" data-value="전북특별자치도">전북특별자치도</button>
+        <button class="region-option" type="button" data-value="전라남도">전라남도</button>
+        <button class="region-option" type="button" data-value="경상북도">경상북도</button>
+        <button class="region-option" type="button" data-value="경상남도">경상남도</button>
+        <button class="region-option" type="button" data-value="제주특별자치도">제주특별자치도</button>
+      </div>
+    </div>
 
     <div style="flex:1"></div>
-    <button onClick="location.href='./agreement.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 21px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">다음</button>
+    <button class="next-btn" onClick="location.href='./agreement.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 21px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">다음</button>
   </div>
   </div>
 </div>
 <script>
   const g = [...document.querySelectorAll('.gender')];
   g.forEach((b, i) => b.addEventListener('click', () => g.forEach((x, j) => x.dataset.active = String(i === j))));
+
+  const birthGroups = [...document.querySelectorAll('.birth-group')];
+  const closeAllBirthMenus = () => birthGroups.forEach((group) => group.dataset.open = 'false');
+
+  birthGroups.forEach((group) => {
+    const trigger = group.querySelector('.birth-trigger');
+    const display = group.querySelector('.birth-display');
+    const options = [...group.querySelectorAll('.birth-option')];
+    trigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const willOpen = group.dataset.open !== 'true';
+      closeAllBirthMenus();
+      group.dataset.open = String(willOpen);
+    });
+    options.forEach((option) => {
+      option.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const value = option.dataset.value || '';
+        display.textContent = value || (group.dataset.key === 'year' ? '년' : group.dataset.key === 'month' ? '월' : '일');
+        group.dataset.open = 'false';
+      });
+    });
+  });
+
+  const regionGroup = document.querySelector('.region-group');
+  if (regionGroup) {
+    const regionTrigger = regionGroup.querySelector('.region-trigger');
+    const regionDisplay = regionGroup.querySelector('.region-display');
+    const regionOptions = [...regionGroup.querySelectorAll('.region-option')];
+    regionTrigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      regionGroup.dataset.open = String(regionGroup.dataset.open !== 'true');
+    });
+    regionOptions.forEach((option) => {
+      option.addEventListener('click', (event) => {
+        event.stopPropagation();
+        regionDisplay.textContent = option.dataset.value || '지역';
+        regionGroup.dataset.open = 'false';
+      });
+    });
+  }
+  document.addEventListener('click', () => {
+    closeAllBirthMenus();
+    if (regionGroup) regionGroup.dataset.open = 'false';
+  });
 </script>
 </x-dc>
 </body>

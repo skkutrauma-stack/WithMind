@@ -7,10 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-<style>html,body{margin:0;min-height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff}body{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:24px;box-sizing:border-box;overflow:auto}</style>
+<style>html,body{margin:0;width:100%;height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff;overflow:hidden}body{display:flex;justify-content:center;align-items:center;box-sizing:border-box}.emotion-card{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,filter .12s ease,border-color .12s ease,background-color .12s ease;will-change:transform}.emotion-card:hover{transform:translateY(-3px) scale(1.02) rotate(-.05deg);filter:saturate(1.04) brightness(1.01);box-shadow:0 16px 28px -12px rgba(140,100,200,.68)}.emotion-card:active{transform:translateY(-1px) scale(.99);box-shadow:0 12px 22px -12px rgba(140,100,200,.64)}.emotion-card[data-active="true"]{box-shadow:0 12px 26px -10px rgba(255,180,60,.82)!important}.main-next{transition:transform .14s ease,box-shadow .14s ease,filter .14s ease,opacity .14s ease}.main-next:hover:not(:disabled){transform:translateY(-4px) scale(1.03);filter:saturate(1.08);box-shadow:0 20px 36px -12px rgba(120,100,220,.95)}.main-next:active:not(:disabled){transform:translateY(-1px) scale(.985);box-shadow:0 14px 26px -14px rgba(120,100,220,.8)}</style>
 </head>
 <body>
-<div style="width:390px;min-height:844px;background:radial-gradient(130% 55% at 50% 6%,#FFDCD0,#FDF3FF 58%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
+<div style="width:390px;height:844px;background:radial-gradient(130% 55% at 50% 6%,#FFDCD0,#FDF3FF 58%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
   <div aria-hidden="true" style="height:35px;flex:none"></div>
   <div style="flex:1;padding:14px 24px 22px;display:flex;flex-direction:column">
     <div style="display:grid;grid-template-columns:1fr auto;column-gap:16px;align-items:start;padding-bottom:18px">
@@ -22,17 +22,17 @@
       <span style="font:700 11px Pretendard;color:#fff;background:linear-gradient(90deg,#A98BE8,#FF8A6B);padding:6px 12px;border-radius:20px;justify-self:end;align-self:start;margin-top:54px">1개 선택</span>
     </div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px">
-      <button type="button" data-active="false" data-slug="anger" data-route="./emotion-subcategory-anger.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/anger.png" alt="분노" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">분노</span></button>
-      <button type="button" data-active="false" data-slug="surprise" data-route="./emotion-subcategory-surprise.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/surprise.png" alt="놀람" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">놀람</span></button>
-      <button type="button" data-active="false" data-slug="joy" data-route="./emotion-subcategory-joy.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/joy.png" alt="기쁨" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">기쁨</span></button>
-      <button type="button" data-active="false" data-slug="discomfort" data-route="./emotion-subcategory-discomfort.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/discomfort.png" alt="불편함" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">불편함</span></button>
-      <button type="button" data-active="false" data-slug="sadness" data-route="./emotion-subcategory-sadness.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/sadness.png" alt="슬픔" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">슬픔</span></button>
-      <button type="button" data-active="false" data-slug="fear" data-route="./emotion-subcategory-fear.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/fear.png" alt="두려움" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">두려움</span></button>
-      <button type="button" data-active="false" data-slug="apathy" data-route="./emotion-subcategory-apathy.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/lethargy.png" alt="무기력함" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">무기력함</span></button>
+      <button class="emotion-card" type="button" data-active="false" data-slug="anger" data-route="./emotion-subcategory-anger.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/anger.png" alt="분노" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">분노</span></button>
+      <button class="emotion-card" type="button" data-active="false" data-slug="surprise" data-route="./emotion-subcategory-surprise.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/surprise.png" alt="놀람" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">놀람</span></button>
+      <button class="emotion-card" type="button" data-active="false" data-slug="joy" data-route="./emotion-subcategory-joy.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/joy.png" alt="기쁨" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">기쁨</span></button>
+      <button class="emotion-card" type="button" data-active="false" data-slug="discomfort" data-route="./emotion-subcategory-discomfort.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/discomfort.png" alt="불편함" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">불편함</span></button>
+      <button class="emotion-card" type="button" data-active="false" data-slug="sadness" data-route="./emotion-subcategory-sadness.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/sadness.png" alt="슬픔" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">슬픔</span></button>
+      <button class="emotion-card" type="button" data-active="false" data-slug="fear" data-route="./emotion-subcategory-fear.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/fear.png" alt="두려움" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">두려움</span></button>
+      <button class="emotion-card" type="button" data-active="false" data-slug="apathy" data-route="./emotion-subcategory-apathy.html" style="border:none;background:#fff;border-radius:22px;padding:14px 6px;text-align:center;box-shadow:0 8px 18px -16px rgba(140,100,200,.5);cursor:pointer"><img src="../assets/05_emotion/lethargy.png" alt="무기력함" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto 7px"><span style="font:400 14px Jua,Pretendard;color:#6A5A78">무기력함</span></button>
     </div>
     <p style="margin:16px 0 0;font:500 12px Pretendard;color:#9A7FAD;text-align:center">마음에 가장 가까운 하나를 톡</p>
     <div style="flex:1"></div>
-    <button id="mainNext" disabled style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:not-allowed;box-shadow:none;margin-top:14px;opacity:.55">더 자세히 보기</button>
+    <button id="mainNext" class="main-next" disabled style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:not-allowed;box-shadow:none;margin-top:14px;opacity:.55">더 자세히 보기</button>
   </div>
 </div>
 <script>
@@ -67,6 +67,24 @@
   cards.forEach((card) => card.addEventListener('click', () => {
     updateSelection(card);
   }));
+
+  cards.forEach((card) => {
+    card.addEventListener('mouseenter', () => {
+      if (card.dataset.active === 'true') return;
+      card.style.transform = 'translateY(-3px) scale(1.02) rotate(-.05deg)';
+      card.style.boxShadow = '0 16px 28px -12px rgba(140,100,200,.68)';
+      card.style.filter = 'saturate(1.04) brightness(1.01)';
+    });
+    card.addEventListener('mouseleave', () => {
+      if (card.dataset.active === 'true') {
+        updateSelection(card);
+        return;
+      }
+      card.style.transform = 'translateY(0) scale(1)';
+      card.style.boxShadow = '0 8px 18px -16px rgba(140,100,200,.5)';
+      card.style.filter = 'none';
+    });
+  });
 
   if (mainNext) {
     mainNext.addEventListener('click', (e) => {

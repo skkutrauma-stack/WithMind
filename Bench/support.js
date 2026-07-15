@@ -84,6 +84,40 @@
 
   // src/boot.ts
   var BASE_CSS = `
+    html[data-sc-hover-scope="non-daily"] button,
+    html[data-sc-hover-scope="non-daily"] [role="button"],
+    html[data-sc-hover-scope="non-daily"] .nav-btn,
+    html[data-sc-hover-scope="non-daily"] .month-select,
+    html[data-sc-hover-scope="non-daily"] a {
+      transition: transform .16s ease, filter .16s ease, box-shadow .16s ease, opacity .16s ease;
+      cursor: pointer;
+    }
+    html[data-sc-hover-scope="non-daily"] button:hover,
+    html[data-sc-hover-scope="non-daily"] [role="button"]:hover,
+    html[data-sc-hover-scope="non-daily"] .nav-btn:hover,
+    html[data-sc-hover-scope="non-daily"] .month-select:hover,
+    html[data-sc-hover-scope="non-daily"] a:hover {
+      filter: brightness(1.06);
+      transform: translateY(-2px) scale(1.016);
+      box-shadow: 0 16px 32px -16px rgba(120, 90, 180, .52);
+    }
+    html[data-sc-hover-scope="non-daily"] button:active,
+    html[data-sc-hover-scope="non-daily"] [role="button"]:active,
+    html[data-sc-hover-scope="non-daily"] .nav-btn:active,
+    html[data-sc-hover-scope="non-daily"] .month-select:active,
+    html[data-sc-hover-scope="non-daily"] a:active {
+      transform: translateY(0) scale(.995);
+      filter: brightness(.98);
+    }
+    html[data-sc-hover-scope="non-daily"] button.sc-hovered,
+    html[data-sc-hover-scope="non-daily"] [role="button"].sc-hovered,
+    html[data-sc-hover-scope="non-daily"] .nav-btn.sc-hovered,
+    html[data-sc-hover-scope="non-daily"] .month-select.sc-hovered,
+    html[data-sc-hover-scope="non-daily"] a.sc-hovered {
+      outline: 2px solid rgba(168, 139, 232, .55);
+      outline-offset: 2px;
+      box-shadow: 0 18px 36px -16px rgba(120, 90, 180, .58) !important;
+    }
     .sc-placeholder{background:color-mix(in srgb,currentColor 8%,transparent);
       border:1px solid color-mix(in srgb,currentColor 50%,transparent);
       border-radius:2px;box-sizing:border-box;overflow:hidden}
@@ -1757,6 +1791,28 @@
     };
     Object.assign(window, api);
     window.__dcContentKeyed = true;
+    document.documentElement.dataset.scHoverScope = location.pathname.includes('/daily/') ? 'daily' : 'non-daily';
+    const hoverSelector = 'html[data-sc-hover-scope="non-daily"] button, html[data-sc-hover-scope="non-daily"] [role="button"], html[data-sc-hover-scope="non-daily"] .nav-btn, html[data-sc-hover-scope="non-daily"] .month-select, html[data-sc-hover-scope="non-daily"] a';
+    let hovered = null;
+    const clearHover = () => {
+      if (hovered) hovered.classList.remove('sc-hovered');
+      hovered = null;
+    };
+    document.addEventListener('pointerover', (event) => {
+      if (document.documentElement.dataset.scHoverScope !== 'non-daily') return;
+      const target = event.target && event.target.closest ? event.target.closest(hoverSelector) : null;
+      if (!target || target === hovered) return;
+      clearHover();
+      hovered = target;
+      hovered.classList.add('sc-hovered');
+    });
+    document.addEventListener('pointerout', (event) => {
+      if (document.documentElement.dataset.scHoverScope !== 'non-daily') return;
+      if (!hovered) return;
+      const related = event.relatedTarget;
+      if (related && hovered.contains(related)) return;
+      clearHover();
+    });
     if (document.readyState !== "loading") api.__dcBoot();
     else document.addEventListener("DOMContentLoaded", () => api.__dcBoot());
   }
