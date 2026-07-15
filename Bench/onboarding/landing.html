@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#DED6CE;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
+  .scr{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+</style>
+</helmet>
+
+<div style="width:390px;height:844px;border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);background:radial-gradient(130% 55% at 50% 6%,#FFDCD0,#FDF3FF 58%);color:#4A3550">
+  <div style="position:absolute;top:130px;left:-30px;width:100px;height:100px;border-radius:50%;background:#EAD9FA;opacity:.7"></div>
+  <div style="position:absolute;top:260px;right:-20px;width:80px;height:80px;border-radius:50%;background:#D3ECFB;opacity:.7"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 30px 4px;font:600 15px Pretendard;position:relative"><span>9:41</span><div style="display:flex;gap:7px;align-items:center"><svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg></div></div>
+  <div style="flex:1;padding:20px 30px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative">
+    <div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="width:28px;height:28px;border-radius:10px;background:linear-gradient(135deg,#A98BE8,#FF8A6B);display:flex;align-items:center;justify-content:center"><div style="width:11px;height:11px;border-radius:4px;background:#fff"></div></div><span style="font:400 18px Jua,Pretendard">마음성냥 <span style="color:#C6B4D4;font-family:Pretendard;font-weight:600;font-size:13px">(서비스명)</span></span></div>
+    <div style="animation:floaty 4s ease-in-out infinite;margin:44px 0 8px">
+      <svg width="160" height="188" viewBox="0 0 130 150" fill="none"><ellipse cx="65" cy="142" rx="46" ry="9" fill="#E8CFDD" opacity=".6"/><rect x="51" y="54" width="28" height="80" rx="14" fill="#E3B486"/><ellipse cx="65" cy="46" rx="33" ry="37" fill="#FF8A6B"/><ellipse cx="53" cy="31" rx="9" ry="11" fill="#fff" opacity=".4"/><circle cx="56" cy="47" r="3.8" fill="#4A3550"/><circle cx="77" cy="47" r="3.8" fill="#4A3550"/><path d="M56 61q4.8 4.4 9.5 0t9.5 0" stroke="#4A3550" stroke-width="2.8" fill="none" stroke-linecap="round"/><ellipse cx="46" cy="57" rx="6" ry="3.4" fill="#FF3E6E" opacity=".3"/><ellipse cx="84" cy="57" rx="6" ry="3.4" fill="#FF3E6E" opacity=".3"/><path d="M98 26q3.4 7 0 10a5 5 0 0 1 0-10z" fill="#8FD0EE"/><path d="M30 40q2.8 5.6 0 8.6a4 4 0 0 1 0-8.6z" fill="#8FD0EE"/></svg>
+    </div>
+    <h1 style="margin:20px 0 12px;font:400 34px/1.2 Jua,Pretendard;color:#4A3550">오늘의 마음,<br>여기에만</h1>
+    <p style="margin:0;font:500 15px/1.55 Pretendard;color:#9A7FAD">감정을 적으면,<br>마음이 보이기 시작해</p>
+    <div style="display:flex;gap:7px;margin:26px 0 0"><div style="width:22px;height:7px;border-radius:4px;background:#A98BE8"></div><div style="width:7px;height:7px;border-radius:4px;background:#E4D5F2"></div><div style="width:7px;height:7px;border-radius:4px;background:#E4D5F2"></div><div style="width:7px;height:7px;border-radius:4px;background:#E4D5F2"></div><div style="width:7px;height:7px;border-radius:4px;background:#E4D5F2"></div></div>
+    <div style="flex:1"></div>
+    <button onClick="location.href='./welcome.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#FF8A6B);color:#fff;font:400 21px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(140,100,200,.8);margin-bottom:12px">시작하기</button>
+    <button onClick="location.href='./login.html'" style="border:none;width:100%;background:#fff;color:#7A63C8;font:400 21px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 8px 18px -12px rgba(140,100,200,.5)">로그인</button>
+    <p style="margin:18px 0 0;font:500 11px/1.5 Pretendard;color:#9A7FAD;background:#F3E9FB;padding:11px 15px;border-radius:14px">이 앱은 응급 서비스가 아니야. 긴급할 땐 <b style="color:#7A63C8">109 · 1388</b></p>
+  </div>
+  <div style="display:flex;justify-content:center;padding:8px 0 12px;position:relative"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
+</div>
+</x-dc>
+</body>
+</html>

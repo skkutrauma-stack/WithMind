@@ -1,0 +1,177 @@
+{
+  "version": "1.0",
+  "source": "마음곁_젤리팝_브랜드북_v3.3.docx",
+  "assets": [
+    {
+      "file": "01_logo/logo_app_icon_master_1024.png",
+      "kind": "logo",
+      "description": "앱스토어·런처용 1024px 정사각형 마스터. 외곽 투명도 없음",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": false
+    },
+    {
+      "file": "01_logo/logo_app_icon_preview_1024.png",
+      "kind": "logo",
+      "description": "브랜드북처럼 둥근 타일 외곽이 투명한 프리뷰",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "01_logo/logo_symbol_color_1024.png",
+      "kind": "logo",
+      "description": "밝은 배경용 컬러 심볼, 투명 배경",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "01_logo/logo_symbol_light_1024.png",
+      "kind": "logo",
+      "description": "어두운 배경용 흰색·코랄 심볼, 투명 배경",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "01_logo/logo_wordmark_horizontal_2048.png",
+      "kind": "logo",
+      "description": "컬러 심볼과 마음곁 워드마크의 가로 조합, 투명 배경",
+      "width": 2048,
+      "height": 720,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "02_characters/transparent_1024/character_sun_pebble_1024.png",
+      "kind": "character",
+      "id": "sun_pebble",
+      "name": "볕 모으는 조약돌",
+      "internal_reference": "Node 4 · 평시관리형",
+      "description": "볕 모으는 조약돌 기본형. 카드 배경과 문구를 포함하지 않는 투명 PNG",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "02_characters/transparent_1024/character_cloud_cushion_1024.png",
+      "kind": "character",
+      "id": "cloud_cushion",
+      "name": "눌린 구름쿠션",
+      "internal_reference": "Node 9 · 가족압박형",
+      "description": "눌린 구름쿠션 기본형. 카드 배경과 문구를 포함하지 않는 투명 PNG",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "02_characters/transparent_1024/character_water_pot_1024.png",
+      "kind": "character",
+      "id": "water_pot",
+      "name": "물 머금은 화분",
+      "internal_reference": "Node 10 · 가족부담형",
+      "description": "물 머금은 화분 기본형. 카드 배경과 문구를 포함하지 않는 투명 PNG",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "02_characters/transparent_1024/character_radio_1024.png",
+      "kind": "character",
+      "id": "radio",
+      "name": "신호 찾는 라디오",
+      "internal_reference": "Node 12 · 고립중심형",
+      "description": "신호 찾는 라디오 기본형. 카드 배경과 문구를 포함하지 않는 투명 PNG",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "02_characters/transparent_1024/character_tense_balloon_1024.png",
+      "kind": "character",
+      "id": "balloon",
+      "name": "팽팽한 풍선",
+      "internal_reference": "Node 14 · 고립-신체긴장형",
+      "description": "팽팽한 풍선 기본형. 카드 배경과 문구를 포함하지 않는 투명 PNG",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "02_characters/transparent_1024/character_tangled_earphones_1024.png",
+      "kind": "character",
+      "id": "earphones",
+      "name": "엉킨 이어폰",
+      "internal_reference": "Node 15 · 복합대처형",
+      "description": "엉킨 이어폰 기본형. 카드 배경과 문구를 포함하지 않는 투명 PNG",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent": true
+    },
+    {
+      "file": "04_brandbook_images/brand_cover_visual.png",
+      "kind": "brandbook-image",
+      "description": "브랜드북 표지 젤리팝 비주얼",
+      "width": 1600,
+      "height": 780,
+      "mode": "RGB",
+      "transparent": false
+    },
+    {
+      "file": "04_brandbook_images/persona_reference.png",
+      "kind": "brandbook-image",
+      "description": "가상 페르소나 참고 이미지",
+      "width": 900,
+      "height": 1080,
+      "mode": "RGB",
+      "transparent": false
+    },
+    {
+      "file": "03_mockups/jellypop_ui_mockup_3screens.png",
+      "kind": "brandbook-image",
+      "description": "홈·EMA·캐릭터 결과 3화면 시안",
+      "width": 1020,
+      "height": 716,
+      "mode": "RGBA",
+      "transparent": false
+    },
+    {
+      "file": "04_brandbook_images/logo_mascot_identity_board.png",
+      "kind": "brandbook-image",
+      "description": "로고·워드마크·마스코트 운용 보드",
+      "width": 1600,
+      "height": 600,
+      "mode": "RGB",
+      "transparent": false
+    },
+    {
+      "file": "04_brandbook_images/ema_character_system_board.png",
+      "kind": "brandbook-image",
+      "description": "EMA에서 감정 캐릭터로 이어지는 구조 보드",
+      "width": 1600,
+      "height": 560,
+      "mode": "RGB",
+      "transparent": false
+    },
+    {
+      "file": "04_brandbook_images/core_character_six_board.png",
+      "kind": "brandbook-image",
+      "description": "확정된 핵심 캐릭터 6종 보드",
+      "width": 1600,
+      "height": 420,
+      "mode": "RGB",
+      "transparent": false
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bench Prototype</title>
+<style>
+  html,body{height:100%;margin:0;background:#FFF9FE;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center}
+  .shell{
+    width:390px;
+    height:844px;
+    max-width:100vw;
+    max-height:100vh;
+    background:#FFF9FE;
+    position:relative;
+    overflow:hidden;
+    border-radius:46px;
+    box-shadow:0 26px 64px -22px rgba(120,70,120,.24);
+  }
+  .frame{
+    width:100%;
+    height:100%;
+    border:0;
+    display:block;
+    background:#FFF9FE;
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <iframe id="frame" class="frame" title="Prototype screen"></iframe>
+  </div>
+
+  <script>
+    const flow = [
+      './onboarding/landing.html',
+      './onboarding/welcome.html',
+      './onboarding/account.html',
+      './onboarding/profile.html',
+      './onboarding/agreement.html',
+      './onboarding/alert.html',
+      './onboarding/safety_contact.html',
+      './home/home.html',
+      './daily/emotion-card-main.html',
+      './daily/emotion-subcategory.html',
+      './daily/checkin.html',
+      './daily/mood-character.html',
+      './daily/mood-type.html',
+      './daily/hardness-check.html',
+      './daily/help-popup.html',
+      './daily/journal.html',
+      './daily/ai-comment.html',
+      './record/emotion.html',
+      './record/journal.html',
+      './record/baseline.html',
+      './safetyplan/home.html',
+      './safetyplan/plan.html',
+      './safetyplan/crisis.html',
+      './etc/settings.html',
+      './etc/feedback.html'
+    ];
+    const frame = document.getElementById('frame');
+    let current = 0;
+
+    function setScreen(index) {
+      current = Math.max(0, Math.min(index, flow.length - 1));
+      frame.src = flow[current];
+    }
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') setScreen(current + 1);
+      if (event.key === 'ArrowLeft') setScreen(current - 1);
+    });
+
+    setScreen(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:radial-gradient(130% 45% at 30% 0%,#F4DDE5,#FDF3FF 55%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center;min-height:100vh}
+</style>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"></helmet>
+<div style="width:390px;min-height:844px;background:radial-gradient(130% 45% at 30% 0%,#F4DDE5,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 30px 4px;font:600 15px Pretendard"><span>9:41</span><div style="display:flex;gap:7px;align-items:center"><svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/></svg><svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg></div></div>
+  <div style="padding:14px 24px 8px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <div>
+      <p style="margin:0 0 4px;font:700 12px Pretendard;color:#FF8FB0">Record flow</p>
+      <h2 style="margin:0;font:400 20px Jua,Pretendard;color:#4A3550">EMI · 답변 기록</h2>
+    </div>
+    <div style="text-align:right">
+      <div style="font:700 14px Pretendard;color:#D17097">2 / 3</div>
+      <div style="margin-top:6px;width:110px;height:8px;border-radius:999px;background:#F3DEE9;overflow:hidden"><div style="width:67%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#FF8FB0,#A98BE8)"></div></div>
+    </div>
+  </div>
+  <div style="flex:1;padding:6px 24px 22px;display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h1 style="margin:0;font:400 28px Jua,Pretendard;color:#4A3550">나의 기록</h1><div style="display:flex;align-items:center;gap:6px;background:#fff;padding:8px 14px;border-radius:20px;box-shadow:0 6px 16px -14px rgba(140,100,200,.5)"><span style="font:400 15px Jua,Pretendard">6월</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#9A7FAD" stroke-width="2.2" stroke-linecap="round"/></svg></div></div>
+    <div style="display:flex;background:#F3DEE9;border-radius:18px;padding:4px"><div onClick="location.href='./emotion.html'" style="flex:1;text-align:center;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">EMA</div><div style="flex:1;text-align:center;background:linear-gradient(90deg,#FF8FB0,#A98BE8);color:#fff;font:400 15px Jua,Pretendard;padding:11px 0;border-radius:14px">EMI</div><div onClick="location.href='./baseline.html'" style="flex:1;text-align:center;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">Baseline</div></div>
+    <p style="margin:0;font:500 12px Pretendard;color:#B08FC0">기준일: 6월 12일 · 일기 기록</p>
+    <div style="background:#fff;border-radius:22px;padding:20px 18px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5);display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0E9FB"><span style="font:500 12px Pretendard;color:#B08FC0">선택 감정</span><span style="font:700 12px Pretendard">기쁨 › 안도감</span></div>
+      <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0E9FB"><span style="font:500 12px Pretendard;color:#B08FC0">EMA 유형</span><span style="font:700 12px Pretendard">안도–회복형</span></div>
+      <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font:500 12px Pretendard;color:#B08FC0">접촉경계</span><span style="font:700 12px Pretendard;color:#A98BE8">반전</span></div>
+    </div>
+    <div style="background:#fff;border-radius:22px;padding:16px 18px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5)">
+      <p style="margin:0 0 10px;font:700 12px Pretendard;color:#B08FC0">EMI 답변</p>
+      <textarea placeholder="Q. 그 감정을 남에게 냈다면?
+A. 아마 서로 더 어색해졌을 것 같아.
+
+Q. 나를 탓한 이유는?
+A. 분위기를 망치기 싫어서 그랬어." style="width:100%;min-height:120px;border:none;outline:none;background:#F6F1FA;border-radius:16px;padding:14px 14px;resize:none;font:500 13px/1.6 Pretendard;color:#4A3550"></textarea>
+    </div>
+    <div style="background:linear-gradient(150deg,#A98BE8,#8FA8F0);border-radius:22px;padding:16px 18px;color:#fff"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg><span style="font:400 15px Jua,Pretendard">마음 도사의 코멘트</span></div><p style="margin:0;font:500 14px/1.6 Pretendard">화를 삼키고 스스로를 다독인 하루였네. 다음엔 "나 지금 속상했어" 한마디가 너를 덜 젖게 해줄 거야.</p></div>
+    <div style="flex:1"></div>
+    <button onClick="location.href='./baseline.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">Baseline 보기</button>
+  </div>
+  <div style="display:flex;justify-content:center;padding:8px 0 12px"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
+</div>
+</x-dc>
+</body>
+</html>

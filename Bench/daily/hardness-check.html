@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    font-family: Pretendard, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background: radial-gradient(120% 55% at 50% 0%, #F3E8FF, #FDF3FF 58%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .screen {
+    width: 390px;
+    min-height: 844px;
+    background: radial-gradient(120% 55% at 50% 0%, #F3E8FF, #FDF3FF 58%);
+    border-radius: 46px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 26px 64px -22px rgba(120, 70, 120, .4);
+    display: flex;
+    flex-direction: column;
+    color: #4A3550;
+  }
+  .status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 30px 4px;
+    font: 600 15px Pretendard, sans-serif;
+  }
+  .topbar {
+    padding: 14px 26px 6px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .content {
+    flex: 1;
+    padding: 12px 24px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+  }
+  .choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-height: 0;
+    align-items: stretch;
+  }
+  .choice {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 24px;
+    padding: 13px 14px;
+    display: block;
+    cursor: pointer;
+    text-align: left;
+    appearance: none;
+    -webkit-appearance: none;
+    background: #fff;
+  }
+  .choice[data-active="true"] {
+    border: 3px solid #A98BE8;
+    box-shadow: 0 10px 24px -16px rgba(140,100,200,.6);
+  }
+  .choice[data-active="false"] {
+    border: 2px solid #F0E7FA;
+    box-shadow: 0 10px 24px -18px rgba(140,100,200,.5);
+  }
+  .choice-inner {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+  }
+  .choice-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .ring {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    flex: none;
+  }
+  .pill {
+    font: 700 10px Pretendard, sans-serif;
+    color: #8A72C8;
+    background: #EBE1FB;
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+  .help {
+    width: 24px;
+    height: 24px;
+    font: 700 11px Pretendard, sans-serif;
+    color: #8A72C8;
+    background: #EBE1FB;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .more {
+    border: none;
+    background: none;
+    color: #8A72C8;
+    font: 500 13px Pretendard, sans-serif;
+    cursor: pointer;
+    padding: 0;
+    align-self: flex-start;
+  }
+  .cta {
+    border: none;
+    width: 100%;
+    background: linear-gradient(90deg, #A98BE8, #7FA8F0);
+    color: #fff;
+    font: 400 20px Jua, Pretendard, sans-serif;
+    padding: 16px 0;
+    border-radius: 22px;
+    cursor: pointer;
+    box-shadow: 0 14px 28px -12px rgba(120,100,220,.8);
+  }
+  .safe-gap {
+    flex: 1;
+  }
+  #moreBox {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+  }
+  #helpModal {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(74,53,80,.38);
+    z-index: 20;
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div id="helpModal">
+    <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:0 14px 18px">
+      <div style="width:100%;background:#fff;border-radius:30px 30px 24px 24px;padding:22px 20px 18px;box-shadow:0 -18px 40px -20px rgba(74,53,80,.4)">
+        <div style="width:42px;height:5px;border-radius:3px;background:#EDE4FA;margin:0 auto 16px"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <p style="margin:0 0 6px;font:700 12px Pretendard;color:#A98BE8">도움말</p>
+            <h2 id="helpTitle" style="margin:0;font:400 28px Jua,Pretendard;color:#4A3550">반전</h2>
+          </div>
+          <button id="closeHelp" type="button" class="help" style="width:34px;height:34px;background:#EDE4FA"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#8A76B0" stroke-width="2" stroke-linecap="round"/></svg></button>
+        </div>
+        <p id="helpDesc" style="margin:14px 0 16px;font:500 14px/1.6 Pretendard;color:#9A7FAD">밖으로 향해야 할 감정을, 나 자신에게 돌리는 거야.</p>
+        <div style="background:#F3E9FB;border-radius:18px;padding:16px 16px;margin-bottom:12px">
+          <p style="margin:0 0 6px;font:700 12px Pretendard;color:#7A63C8">정의</p>
+          <p id="helpDefinition" style="margin:0;font:600 14px/1.55 Pretendard;color:#4A3550">타인에게 표현할 감정·행동을 자신에게 향하게 하는 방식.</p>
+        </div>
+        <div style="background:#EAF6FF;border-radius:18px;padding:16px 16px;margin-bottom:18px">
+          <p style="margin:0 0 6px;font:700 12px Pretendard;color:#5AB0E8">예시</p>
+          <p id="helpExample" style="margin:0;font:600 14px/1.55 Pretendard;color:#4A3550">화가 났지만 "내가 예민한 거야"라며 스스로를 탓해.</p>
+        </div>
+        <button id="confirmHelp" type="button" class="cta">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="status">
+    <span>9:41</span>
+    <div style="display:flex;gap:7px;align-items:center">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="#4A3550"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke="#4A3550" stroke-opacity=".4"/><rect x="3" y="3" width="15" height="7" rx="1.5" fill="#4A3550"/></svg>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div style="flex:1;height:10px;border-radius:6px;background:#EDE4FA;overflow:hidden"><div style="width:75%;height:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);border-radius:6px"></div></div>
+    <span style="font:400 15px Jua,Pretendard;color:#7A63C8">STEP 6</span>
+    <button id="helpOpen" type="button" class="help" style="width:34px;height:34px;background:#fff;box-shadow:0 4px 10px -6px rgba(140,100,200,.6)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#8A76B0" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </div>
+
+  <div class="content">
+    <div>
+      <h1 style="margin:0 0 4px;font:400 26px/1.2 Jua,Pretendard;color:#4A3550">그때 너의 마음은<br>어느 쪽이었어?</h1>
+      <p style="margin:0;font:500 14px Pretendard;color:#B08FC0">가장 비슷한 걸 하나 골라줘 · ? 를 누르면 자세히</p>
+    </div>
+
+    <div id="choices" class="choice-list"></div>
+    <button id="more" type="button" class="more">다른 것도 보기</button>
+    <div id="moreBox"></div>
+
+    <div class="safe-gap"></div>
+    <button onClick="location.href='./journal.html'" class="cta">다음</button>
+  </div>
+
+  <div style="display:flex;justify-content:center;padding:8px 0 12px"><div style="width:130px;height:5px;border-radius:3px;background:#4A3550;opacity:.16"></div></div>
+</div>
+
+<script>
+  const helpData = {
+    반전: {
+      title: '반전',
+      desc: '밖으로 향해야 할 감정을, 나 자신에게 돌리는 거야.',
+      definition: '타인에게 표현할 감정·행동을 자신에게 향하게 하는 방식.',
+      example: '화가 났지만 "내가 예민한 거야"라며 스스로를 탓해.'
+    },
+    투사: {
+      title: '투사',
+      desc: '내 안의 감정을 상대가 가진 것처럼 느끼는 방식이야.',
+      definition: '자신의 감정이나 생각을 타인에게 있다고 느끼는 경향.',
+      example: '내가 화난 건데, 상대가 나를 싫어한다고 느껴졌어.'
+    },
+    내사: {
+      title: '내사',
+      desc: '바깥의 기준이나 말을 그대로 안쪽으로 들여오는 거야.',
+      definition: '외부의 기대·규범을 자신 안의 기준으로 흡수하는 방식.',
+      example: '"원래 참아야 해"라는 말을 스스로 반복해.'
+    },
+    편향: {
+      title: '편향',
+      desc: '감정을 직접 마주하기보다 다른 데로 관심이 옮겨가는 거야.',
+      definition: '불편한 감정에서 벗어나기 위해 주의를 다른 곳으로 돌리는 방식.',
+      example: '그냥 딴 데로 관심을 돌리며 감정을 넘겨버렸어.'
+    },
+    회피: {
+      title: '회피',
+      desc: '마주하기 싫은 감정이나 상황에서 거리를 두는 방식이야.',
+      definition: '불편한 대상이나 감정을 피해서 직접 경험하지 않으려는 방식.',
+      example: '그냥 넘기고 싶어서 대화를 미뤘어.'
+    },
+    억제: {
+      title: '억제',
+      desc: '느낌을 알고도 겉으로는 드러내지 않으려는 거야.',
+      definition: '불편한 감정표현을 의식적으로 누르고 참는 방식.',
+      example: '아무것도 아닌 척하며 표정과 말을 눌렀어.'
+    }
+  };
+
+  const options = [
+    { key: '반전', text: '화가 났는데 오히려 나를 탓하게 돼', active: true },
+    { key: '투사', text: '내 감정인데 남 얘기처럼 멀게 느껴져' },
+    { key: '내사', text: '“원래 이래야 해”라는 생각에 눌렸어' },
+    { key: '편향', text: '감정을 흐릿하게 덮어버린 것 같아' },
+    { key: '회피', text: '그냥 넘기고 싶었어', more: true },
+    { key: '억제', text: '아무 일도 아닌 척 지나쳤어', more: true }
+  ];
+
+  const choices = document.getElementById('choices');
+  const moreBox = document.getElementById('moreBox');
+  const more = document.getElementById('more');
+  const helpModal = document.getElementById('helpModal');
+  const helpTitle = document.getElementById('helpTitle');
+  const helpDesc = document.getElementById('helpDesc');
+  const helpDefinition = document.getElementById('helpDefinition');
+  const helpExample = document.getElementById('helpExample');
+
+  function cardMarkup(item) {
+    const active = item.active ? 'true' : 'false';
+    const border = item.active ? '#A98BE8' : '#F0E7FA';
+    const ring = item.active ? '#A98BE8' : '#D8CAE9';
+    const ringWidth = item.active ? '7px' : '3px';
+    return `
+      <button type="button" class="choice" data-key="${item.key}" data-active="${active}" style="border-color:${border}">
+        <div class="choice-inner">
+          <div class="ring" style="border:${ringWidth} solid ${ring}"></div>
+          <div class="choice-body">
+            <p style="margin:1px 0 0;font:600 14px/1.45 Pretendard;color:#4A3550">${item.text}</p>
+            <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+              <span class="pill">${item.key}</span>
+              <button type="button" class="help" data-help="${item.key}">?</button>
+            </div>
+          </div>
+        </div>
+      </button>`;
+  }
+
+  choices.innerHTML = options.filter((item) => !item.more).map(cardMarkup).join('');
+  moreBox.innerHTML = options.filter((item) => item.more).map(cardMarkup).join('');
+
+  function openHelp(name) {
+    const item = helpData[name] || helpData.반전;
+    helpTitle.textContent = item.title;
+    helpDesc.textContent = item.desc;
+    helpDefinition.textContent = item.definition;
+    helpExample.textContent = item.example;
+    helpModal.style.display = 'block';
+  }
+
+  function closeHelpModal() {
+    helpModal.style.display = 'none';
+  }
+
+  document.addEventListener('click', (event) => {
+    const helpButton = event.target.closest('button[data-help]');
+    if (helpButton) {
+      event.stopPropagation();
+      openHelp(helpButton.dataset.help);
+      return;
+    }
+    const choice = event.target.closest('button.choice');
+    if (choice) {
+      const key = choice.dataset.key;
+      document.querySelectorAll('button.choice').forEach((button) => {
+        const active = button.dataset.key === key;
+        button.dataset.active = String(active);
+        button.style.borderColor = active ? '#A98BE8' : '#F0E7FA';
+        const ring = button.querySelector('.ring');
+        if (ring) {
+          ring.style.borderColor = active ? '#A98BE8' : '#D8CAE9';
+          ring.style.borderWidth = active ? '7px' : '3px';
+        }
+      });
+    }
+  });
+
+  more.addEventListener('click', () => {
+    moreBox.style.display = moreBox.style.display === 'none' ? 'flex' : 'none';
+    more.textContent = moreBox.style.display === 'none' ? '다른 것도 보기' : '숨기기';
+  });
+
+  document.getElementById('helpOpen').addEventListener('click', () => openHelp('반전'));
+  document.getElementById('closeHelp').addEventListener('click', closeHelpModal);
+  document.getElementById('confirmHelp').addEventListener('click', closeHelpModal);
+  helpModal.addEventListener('click', (event) => {
+    if (event.target === helpModal) closeHelpModal();
+  });
+</script>
+</body>
+</html>
