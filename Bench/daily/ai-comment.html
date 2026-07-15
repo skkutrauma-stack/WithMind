@@ -21,6 +21,11 @@
     </div>
     <div id="storageDebug" style="margin-top:8px;color:#8a7fa0;font:12px Pretendard;white-space:pre-wrap;display:none"></div>
     <script>
+      function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, function (s) {
+          return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]);
+        });
+      }
       // Show selected strategy from hardness-check (if any)
       try {
         const strat = localStorage.getItem('selectedStrategy');
