@@ -326,9 +326,13 @@
     }
   });
 
-  document.getElementById('helpOpen').addEventListener('click', () => openHelp('반전'));
-  document.getElementById('closeHelp').addEventListener('click', closeHelpModal);
-  document.getElementById('confirmHelp').addEventListener('click', closeHelpModal);
+  const helpOpen = document.getElementById('helpOpen');
+  const closeHelp = document.getElementById('closeHelp');
+  const confirmHelp = document.getElementById('confirmHelp');
+
+  if (helpOpen) helpOpen.addEventListener('click', () => openHelp('반전'));
+  if (closeHelp) closeHelp.addEventListener('click', closeHelpModal);
+  if (confirmHelp) confirmHelp.addEventListener('click', closeHelpModal);
   helpModal.addEventListener('click', (event) => {
     if (event.target === helpModal) closeHelpModal();
   });
