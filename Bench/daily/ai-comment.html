@@ -5,10 +5,19 @@
   <div style="flex:1;padding:14px 24px 22px;display:flex;flex-direction:column;gap:14px">
     <div><p style="margin:0 0 5px;font:700 12px Pretendard;color:#A98BE8">오늘의 기록</p><h1 style="margin:0;font:400 24px/1.35 Jua,Pretendard;color:#4A3550">지우의 오늘,<br>이렇게 읽었어</h1></div>
     <div style="background:#fff;border-radius:20px;padding:16px 16px;box-shadow:0 10px 24px -18px rgba(140,100,200,.5)">
-      <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0E9FB"><span style="font:500 12px Pretendard;color:#B08FC0">선택 감정</span><span id="selectedEmotion" style="font:700 12px Pretendard">기쁨 › 안도감</span></div>
-      <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0E9FB"><span style="font:500 12px Pretendard;color:#B08FC0">EMA 유형</span><span style="font:700 12px Pretendard">안도–회복형</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #F0E9FB;gap:12px">
+        <span style="font:500 12px Pretendard;color:#B08FC0;flex:none">선택 감정</span>
+        <span id="selectedEmotion" style="display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;text-align:right;font:700 12px Pretendard;color:#4A3550"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #F0E9FB;gap:12px">
+        <span style="font:500 12px Pretendard;color:#B08FC0;flex:none">EMA 유형</span>
+        <span id="emaType" style="display:inline-flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;text-align:right;font:700 12px Pretendard;color:#4A3550">안도–회복형</span>
+      </div>
       <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0E9FB"><span style="font:500 12px Pretendard;color:#B08FC0">접촉경계</span><span id="contactBoundary" style="font:700 12px Pretendard;color:#A98BE8">반전</span></div>
-      <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font:500 12px Pretendard;color:#B08FC0">상황</span><span style="font:700 12px Pretendard">발표 뒤 긴장 풀림</span></div>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:16px 16px;box-shadow:0 10px 24px -18px rgba(140,100,200,.5)">
+      <p style="margin:0 0 10px;font:700 12px Pretendard;color:#B08FC0">상황</p>
+      <p id="answeredSituation" style="margin:0;font:700 13px/1.6 Pretendard;color:#4A3550">발표 뒤 긴장 풀림</p>
     </div>
     <div id="storageDebug" style="margin-top:8px;color:#8a7fa0;font:12px Pretendard;white-space:pre-wrap;display:none"></div>
     <script>
@@ -28,9 +37,43 @@
       } catch (e) { /* ignore storage errors */ }
       // Show selected emotion from emotion pages (if any)
       try {
-        const emo = localStorage.getItem('selectedEmotion');
         const emoEl = document.getElementById('selectedEmotion');
-        if (emo && emoEl) emoEl.textContent = emo;
+        const main = localStorage.getItem('selectedEmotionMain');
+        const subListRaw = localStorage.getItem('selectedEmotionSubList');
+        let subList = [];
+        try {
+          subList = subListRaw ? JSON.parse(subListRaw) : [];
+        } catch (e) {
+          subList = [];
+        }
+        const subText = Array.isArray(subList) ? subList.filter(Boolean).join(', ') : '';
+        if (emoEl) {
+          if (main && subText) {
+            emoEl.innerHTML = '<span style="padding:4px 9px;border-radius:999px;background:#F3E9FB;color:#7A63C8">' + escapeHtml(main) + '</span><span style="color:#B08FC0">›</span><span style="padding:4px 9px;border-radius:999px;background:#EAF6FF;color:#4A8FC8">' + escapeHtml(subText) + '</span>';
+          } else if (main) {
+            emoEl.innerHTML = '<span style="padding:4px 9px;border-radius:999px;background:#F3E9FB;color:#7A63C8">' + escapeHtml(main) + '</span>';
+          } else {
+            const emo = localStorage.getItem('selectedEmotion');
+            if (emo) emoEl.textContent = emo;
+          }
+        }
+      } catch (e) { /* ignore */ }
+      // Show selected mood character from mood-character page (if any)
+      try {
+        const emaEl = document.getElementById('emaType');
+        const character = localStorage.getItem('selectedMoodCharacter');
+        if (emaEl) {
+          if (character) {
+            emaEl.innerHTML = '<span style="padding:4px 9px;border-radius:999px;background:#F7EFFC;color:#7A63C8">' + character.replace(/[&<>"']/g, function(s){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s]; }) + '</span>';
+          } else {
+            emaEl.textContent = '';
+          }
+        }
+      } catch (e) { /* ignore */ }
+      try {
+        const situationEl = document.getElementById('answeredSituation');
+        const journalText = localStorage.getItem('journalText') || '';
+        if (situationEl) situationEl.textContent = journalText.trim() ? journalText : '';
       } catch (e) { /* ignore */ }
     </script>
     <div id="answeredBox" style="background:#fff;border-radius:20px;padding:16px 16px;box-shadow:0 10px 24px -18px rgba(140,100,200,.5)">
@@ -74,45 +117,28 @@
           if (!listEl) return;
           if (qs.length === 0 && (!journalText || journalText.trim().length === 0)) {
             listEl.innerHTML = '<p style="margin:0;font:500 13px/1.5 Pretendard;color:#6A5A78">답한 질문이나 일기가 없습니다.</p>';
-            // reveal raw storage for debugging (local and session)
-            const dbg = document.getElementById('storageDebug');
-            if (dbg) {
-              const lq = (()=>{try{return localStorage.getItem('journalSelectedQuestions')}catch(e){return 'err'}})();
-              const lt = (()=>{try{return localStorage.getItem('journalText')}catch(e){return 'err'}})();
-              const sq = (()=>{try{return sessionStorage.getItem('journalSelectedQuestions')}catch(e){return 'err'}})();
-              const st = (()=>{try{return sessionStorage.getItem('journalText')}catch(e){return 'err'}})();
-              dbg.style.display = 'block';
-              dbg.textContent = 'local.journalSelectedQuestions: ' + String(lq) + '\nlocal.journalText: ' + String(lt) + '\nsession.journalSelectedQuestions: ' + String(sq) + '\nsession.journalText: ' + String(st);
-            }
             return;
           }
           const parts = [];
-          if (qs.length === 0) {
-            if (journalText && journalText.trim().length > 0) {
-              parts.push('<p style="margin:0 0 3px;font:700 13px Pretendard;color:#A98BE8'>Q.</p>');
-              parts.push('<p style="margin:0;font:500 13px/1.5 Pretendard;color:#6A5A78'>A. ' + escapeHtml(journalText) + '</p>');
-            } else {
-              parts.push('<p style="margin:0;font:500 13px/1.5 Pretendard;color:#6A5A78'>답한 질문이나 일기가 없습니다.</p>');
-            }
-          } else if (qs.length === 1) {
-            parts.push('<p style="margin:0 0 3px;font:700 13px Pretendard;color:#A98BE8'>Q. ' + escapeHtml(qs[0]) + '</p>');
-            parts.push('<p style="margin:0;font:500 13px/1.5 Pretendard;color:#6A5A78'>A. ' + escapeHtml(journalText) + '</p>');
-          } else {
-            // two or more: show first two questions then a single answer
-            parts.push('<p style="margin:0 0 3px;font:700 13px Pretendard;color:#A98BE8'>Q. ' + escapeHtml(qs[0]) + '</p>');
-            parts.push('<p style="margin:0 0 3px;font:700 13px Pretendard;color:#A98BE8'>Q. ' + escapeHtml(qs[1]) + '</p>');
-            parts.push('<p style="margin:0;font:500 13px/1.5 Pretendard;color:#6A5A78'>A. ' + escapeHtml(journalText) + '</p>');
+          if (qs.length > 0) {
+            qs.slice(0, 2).forEach((q) => {
+              parts.push(`
+                <div style="padding:8px 0;border-bottom:1px solid #F4EEF9">
+                  <p style="margin:0 0 3px;font:700 12px Pretendard;color:#A98BE8">Q.</p>
+                  <p style="margin:0;font:500 13px/1.55 Pretendard;color:#4A3550">${escapeHtml(q)}</p>
+                </div>
+              `);
+            });
+          }
+          if (journalText && journalText.trim().length > 0) {
+            parts.push(`
+              <div style="padding-top:8px">
+                <p style="margin:0 0 3px;font:700 12px Pretendard;color:#7A63C8">A.</p>
+                <p style="margin:0;font:500 13px/1.65 Pretendard;color:#6A5A78">${escapeHtml(journalText)}</p>
+              </div>
+            `);
           }
           listEl.innerHTML = parts.join('');
-          const dbg = document.getElementById('storageDebug');
-          if (dbg) {
-            const lq = (()=>{try{return localStorage.getItem('journalSelectedQuestions')}catch(e){return 'err'}})();
-            const lt = (()=>{try{return localStorage.getItem('journalText')}catch(e){return 'err'}})();
-            const sq = (()=>{try{return sessionStorage.getItem('journalSelectedQuestions')}catch(e){return 'err'}})();
-            const st = (()=>{try{return sessionStorage.getItem('journalText')}catch(e){return 'err'}})();
-            dbg.style.display = 'block';
-            dbg.textContent = 'local.journalSelectedQuestions: ' + String(lq) + '\nlocal.journalText: ' + String(lt) + '\nsession.journalSelectedQuestions: ' + String(sq) + '\nsession.journalText: ' + String(st);
-          }
         } catch (e) { /* ignore */ }
 
         function escapeHtml(str){ return String(str).replace(/[&<>"']/g, function(s){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s]; }); }
