@@ -1,52 +1,52 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="../support.js?v=2"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
-  body{margin:0;width:100%;height:100%;background:radial-gradient(130% 45% at 30% 0%,#F4DDE5,#FDF3FF 55%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center;overflow:hidden}
-  .page-shell{animation:pageIn .24s ease-out both}
-  @keyframes pageIn{from{transform:translateX(18px);opacity:0}to{transform:translateX(0);opacity:1}}
-  .nav-btn{cursor:pointer;user-select:none}
-  .nav-btn.left-out{animation:slideLeft .22s ease-in forwards}
-  @keyframes slideLeft{to{transform:translateX(-18px);opacity:0}}
-  .month-picker{position:relative;width:max-content}
-  .month-select{appearance:none;-webkit-appearance:none;-moz-appearance:none;border:0;background:#fff;padding:10px 38px 10px 16px;border-radius:18px;box-shadow:0 8px 20px rgba(140,100,200,.12);font:400 15px Jua,Pretendard;color:#4A3550;cursor:pointer;outline:none}
-  .month-picker::after{content:"⌄";position:absolute;right:16px;top:50%;transform:translateY(-52%);pointer-events:none;color:#9A7FAD;font:400 15px Jua,Pretendard}
+  html,body{width:100%;height:100%;margin:0;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center;background:radial-gradient(130% 45% at 30% 0%,#F4DDE5,#FDF3FF 55%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .phone{width:390px;height:844px;background:radial-gradient(130% 45% at 30% 0%,#F4DDE5,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550}
+  .nav-item{transition:transform .16s ease, color .16s ease, opacity .16s ease}
+  .nav-item:hover{transform:translateY(-1px)}
+  .nav-item:active{transform:translateY(0) scale(.98)}
+  .nav-item.active span{color:#FF8FB0}
+  .nav-item.active svg{fill:#FF8FB0}
 </style>
-<script>
-  function goWithSlide(el, href, dir){
-    if(!el || el.classList.contains('is-exiting')) return;
-    el.classList.add('is-exiting', dir === 'right' ? 'right-out' : 'left-out');
-    setTimeout(function(){ location.href = href; }, 170);
-  }
-</script>
 </head>
 <body>
-<x-dc>
-<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"></helmet>
-<div class="page-shell" style="width:390px;height:844px;background:radial-gradient(130% 45% at 30% 0%,#F4DDE5,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
+<div class="phone">
   <div aria-hidden="true" style="height:35px;flex:none"></div>
-  <div style="padding:14px 24px 8px;display:flex;align-items:center;justify-content:space-between;gap:10px">
-    <div>
-      <p style="margin:0 0 4px;font:700 12px Pretendard;color:#FF8FB0">Record flow</p>
-      <h2 style="margin:0;font:400 20px Jua,Pretendard;color:#4A3550">EMI · 답변 기록</h2>
+  <div style="flex:1;padding:14px 24px 22px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <p style="margin:0 0 4px;font:700 12px Pretendard;color:#FF8FB0">Record flow</p>
+        <h2 style="margin:0;font:400 20px Jua,Pretendard;color:#4A3550">EMI · 답변 기록</h2>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;background:#fff;padding:8px 14px;border-radius:20px;box-shadow:0 6px 16px -14px rgba(140,100,200,.5)">
+        <span style="font:400 15px Jua,Pretendard">6월</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#9A7FAD" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </div>
     </div>
-  </div>
-  <div style="flex:1;padding:6px 24px 22px;display:flex;flex-direction:column;gap:16px">
-    <div style="display:flex;justify-content:space-between;align-items:center"><h1 style="margin:0;font:400 28px Jua,Pretendard;color:#4A3550">나의 기록</h1><div class="month-picker"><select class="month-select" id="month-select-journal" aria-label="월 선택"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6" selected>6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select></div></div>
-    <div style="display:flex;background:#F3DEE9;border-radius:18px;padding:4px"><a class="nav-btn" href="./emotion.html" onclick="event.preventDefault(); goWithSlide(this,'./emotion.html','left')" style="flex:1;display:block;text-align:center;text-decoration:none;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">EMA</a><a class="nav-btn" href="./journal.html" onclick="event.preventDefault(); goWithSlide(this,'./journal.html','left')" style="flex:1;display:block;text-align:center;background:linear-gradient(90deg,#FF8FB0,#A98BE8);color:#fff;text-decoration:none;font:400 15px Jua,Pretendard;padding:11px 0;border-radius:14px">EMI</a><a class="nav-btn" href="./baseline.html" onclick="event.preventDefault(); goWithSlide(this,'./baseline.html','right')" style="flex:1;display:block;text-align:center;text-decoration:none;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">Baseline</a></div>
+
+    <div style="display:flex;background:#F3DEE9;border-radius:18px;padding:4px">
+      <a class="nav-item" href="./emotion.html" style="flex:1;display:block;text-align:center;text-decoration:none;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">EMA</a>
+      <a class="nav-item active" href="./journal.html" style="flex:1;display:block;text-align:center;background:linear-gradient(90deg,#FF8FB0,#A98BE8);color:#fff;text-decoration:none;font:400 15px Jua,Pretendard;padding:11px 0;border-radius:14px">EMI</a>
+      <a class="nav-item" href="./baseline.html" style="flex:1;display:block;text-align:center;text-decoration:none;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">Baseline</a>
+    </div>
+
     <p style="margin:0;font:500 12px Pretendard;color:#B08FC0">기준일: 6월 12일 · 일기 기록</p>
+
     <div style="background:#fff;border-radius:22px;padding:20px 18px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5);display:flex;flex-direction:column;gap:14px">
       <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0E9FB"><span style="font:500 12px Pretendard;color:#B08FC0">선택 감정</span><span style="font:700 12px Pretendard">기쁨 › 안도감</span></div>
       <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0E9FB"><span style="font:500 12px Pretendard;color:#B08FC0">EMA 유형</span><span style="font:700 12px Pretendard">안도–회복형</span></div>
       <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font:500 12px Pretendard;color:#B08FC0">접촉경계</span><span style="font:700 12px Pretendard;color:#A98BE8">반전</span></div>
     </div>
+
     <div style="background:#fff;border-radius:22px;padding:16px 18px;box-shadow:0 12px 28px -18px rgba(140,100,200,.5)">
       <p style="margin:0 0 10px;font:700 12px Pretendard;color:#B08FC0">EMI 답변</p>
       <textarea placeholder="Q. 그 감정을 남에게 냈다면?
@@ -55,18 +55,19 @@ A. 아마 서로 더 어색해졌을 것 같아.
 Q. 나를 탓한 이유는?
 A. 분위기를 망치기 싫어서 그랬어." style="display:block;width:100%;box-sizing:border-box;min-height:120px;border:none;outline:none;background:#F6F1FA;border-radius:16px;padding:14px 14px;resize:none;font:500 13px/1.6 Pretendard;color:#4A3550"></textarea>
     </div>
+
     <div style="background:linear-gradient(150deg,#A98BE8,#8FA8F0);border-radius:22px;padding:14px 20px 14px;color:#fff;min-height:108px;display:flex;flex-direction:column;justify-content:flex-start;box-shadow:0 12px 28px -18px rgba(120,100,220,.35)">
       <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg><span style="font:400 15px Jua,Pretendard">마음 도사의 코멘트</span></div>
       <p style="margin:0;font:500 14px/1.7 Pretendard;max-width:100%">화를 삼키고 스스로를 다독인 하루였네. 다음엔 "나 지금 속상했어" 한마디가 너를 덜 젖게 해줄 거야.</p>
     </div>
   </div>
+
   <div style="display:flex;justify-content:space-around;align-items:center;padding:12px 16px 8px;background:transparent;border-top:none">
     <a href="../home/home.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-decoration:none;color:inherit"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 11L12 4l8 7M6 10v9h12v-9" stroke="#C6B4D4" stroke-width="1.7" stroke-linejoin="round"/></svg><span style="font:600 10px Pretendard;color:#C6B4D4">홈</span></a>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="#A98BE8"><path d="M6 5h9a2 2 0 0 1 2 2v12H8a2 2 0 0 0-2 2z" opacity=".2"/><path d="M6 5h9a2 2 0 0 1 2 2v12H8a2 2 0 0 0-2 2z" stroke="#A98BE8" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg><span style="font:600 10px Pretendard;color:#A98BE8">기록</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="#FF8FB0"><path d="M6 5h9a2 2 0 0 1 2 2v12H8a2 2 0 0 0-2 2z" opacity=".2"/><path d="M6 5h9a2 2 0 0 1 2 2v12H8a2 2 0 0 0-2 2z" stroke="#FF8FB0" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg><span style="font:600 10px Pretendard;color:#FF8FB0">기록</span></div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:default"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-6l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="#C6B4D4" stroke-width="1.7" stroke-linejoin="round"/><circle cx="9" cy="11" r="1.1" fill="#C6B4D4"/><circle cx="12" cy="11" r="1.1" fill="#C6B4D4"/><circle cx="15" cy="11" r="1.1" fill="#C6B4D4"/></svg><span style="font:600 10px Pretendard;color:#C6B4D4">챗봇</span></div>
     <a href="../safetyplan/home.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-decoration:none;color:inherit"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 20C5 15 4 9 7.5 7.5S12 9 12 9s1-2.6 4.5-1.5S19 15 12 20z" stroke="#C6B4D4" stroke-width="1.7" stroke-linejoin="round"/></svg><span style="font:600 10px Pretendard;color:#C6B4D4">SOS</span></a>
   </div>
 </div>
-</x-dc>
 </body>
 </html>
