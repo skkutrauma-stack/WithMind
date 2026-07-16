@@ -12,11 +12,22 @@
   body{margin:0;background:radial-gradient(130% 45% at 30% 0%,#E7DFFF,#FDF3FF 55%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center;min-height:100vh}
   .page-shell{animation:pageIn .24s ease-out both}
   @keyframes pageIn{from{transform:translateX(18px);opacity:0}to{transform:translateX(0);opacity:1}}
+  .nav-btn{cursor:pointer;user-select:none}
+  .nav-btn.left-out{animation:slideLeft .22s ease-in forwards}
+  @keyframes slideLeft{to{transform:translateX(-18px);opacity:0}}
+  .nav-btn.is-exiting{pointer-events:none}
   .nav-item{transition:transform .16s ease, color .16s ease, opacity .16s ease;outline:none;-webkit-tap-highlight-color:transparent}
   .nav-item:hover{transform:translateY(-1px)}
   .nav-item:active{transform:translateY(0) scale(.98)}
   .nav-item svg,.nav-item span{pointer-events:none}
 </style>
+<script>
+  function goWithSlide(el, href){
+    if(!el || el.classList.contains('is-exiting')) return;
+    el.classList.add('is-exiting', 'left-out');
+    setTimeout(function(){ location.href = href; }, 170);
+  }
+</script>
 </head>
 <body>
 <x-dc>
@@ -38,7 +49,7 @@
   </div>
   <div style="flex:1;padding:6px 24px 22px;display:flex;flex-direction:column;gap:16px">
     <div style="display:flex;justify-content:space-between;align-items:center"><h1 style="margin:0;font:400 28px Jua,Pretendard;color:#4A3550">나의 기록</h1><div style="display:flex;align-items:center;gap:6px;background:#fff;padding:8px 14px;border-radius:20px;box-shadow:0 6px 16px -14px rgba(140,100,200,.5)"><span style="font:400 15px Jua,Pretendard">6월</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#9A7FAD" stroke-width="2.2" stroke-linecap="round"/></svg></div></div>
-    <div style="display:flex;background:#EDE4FA;border-radius:18px;padding:4px"><div style="flex:1;text-align:center;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 15px Jua,Pretendard;padding:11px 0;border-radius:14px">EMA</div><div onClick="location.href='./journal.html'" style="flex:1;text-align:center;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">EMI</div><div onClick="location.href='./baseline.html'" style="flex:1;text-align:center;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">Baseline</div></div>
+    <div style="display:flex;background:#EDE4FA;border-radius:18px;padding:4px"><a class="nav-btn" href="./emotion.html" onclick="event.preventDefault(); goWithSlide(this,'./emotion.html')" style="flex:1;display:block;text-align:center;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;text-decoration:none;font:400 15px Jua,Pretendard;padding:11px 0;border-radius:14px">EMA</a><a class="nav-btn" href="./journal.html" onclick="event.preventDefault(); goWithSlide(this,'./journal.html')" style="flex:1;display:block;text-align:center;text-decoration:none;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer;pointer-events:auto">EMI</a><a class="nav-btn" href="./baseline.html" onclick="event.preventDefault(); goWithSlide(this,'./baseline.html')" style="flex:1;display:block;text-align:center;text-decoration:none;color:#9A7FAD;font:400 15px Jua,Pretendard;padding:11px 0;cursor:pointer">Baseline</a></div>
     <p style="margin:0;font:500 12px Pretendard;color:#B08FC0">기준일: 6월 12일 · 지난 7일</p>
     <div style="display:flex;justify-content:space-between;gap:5px">
       <div style="flex:1;text-align:center;padding:9px 0;border-radius:14px;background:#fff;box-shadow:0 4px 10px -12px rgba(140,100,200,.5);font:600 12px Pretendard;color:#9A7FAD">6</div>
