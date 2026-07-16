@@ -2650,8 +2650,8 @@ create table if not exists public.emi_sessions (
   question_5 text,
   selected_question_1_no smallint
     check (selected_question_1_no between 1 and 5),
-  selected_question_2_no smallint
-    check (selected_question_2_no between 1 and 5),
+  selected_question_2_no smallint not null default 0
+    check (selected_question_2_no between 0 and 5),
   combined_response text,
   questions_generated_at timestamptz,
   submitted_at timestamptz,
@@ -2665,8 +2665,8 @@ create table if not exists public.emi_sessions (
   foreign key (source_reflection_flow_id, user_id, source_ema_flow_id)
     references public.ema_reflection_sessions(flow_id, user_id, source_ema_flow_id) on delete restrict,
   constraint emi_selected_questions_distinct_ck check (
-    selected_question_1_no is null
-    or selected_question_2_no is null
+    selected_question_2_no = 0
+    or selected_question_1_no is null
     or selected_question_1_no <> selected_question_2_no
   ),
   constraint emi_questions_all_or_none_ck check (
@@ -2819,6 +2819,7 @@ begin
   end;
 
   v_selected_q2 := case v_emi.selected_question_2_no
+    when 0 then '선택 안함'
     when 1 then v_emi.question_1
     when 2 then v_emi.question_2
     when 3 then v_emi.question_3
@@ -3003,20 +3004,19 @@ begin
     raise exception 'selected question 1 must be between 1 and 5';
   end if;
 
-  if p_selected_question_2_no is not null
-     and p_selected_question_2_no not between 1 and 5 then
-    raise exception 'selected question 2 must be between 1 and 5';
+  if coalesce(p_selected_question_2_no, 0) not between 0 and 5 then
+    raise exception 'selected question 2 must be between 0 and 5';
   end if;
 
   if p_selected_question_1_no is not null
-     and p_selected_question_2_no is not null
+     and coalesce(p_selected_question_2_no, 0) <> 0
      and p_selected_question_1_no = p_selected_question_2_no then
     raise exception 'two different EMI questions must be selected';
   end if;
 
   update public.emi_sessions
      set selected_question_1_no = p_selected_question_1_no,
-         selected_question_2_no = p_selected_question_2_no,
+         selected_question_2_no = coalesce(p_selected_question_2_no, 0),
          combined_response = coalesce(p_combined_response, '')
    where flow_id = p_flow_id
      and user_id = v_flow.user_id;
@@ -3059,9 +3059,13 @@ begin
   end if;
 
   if v_emi.selected_question_1_no is null
-     or v_emi.selected_question_2_no is null
-     or v_emi.selected_question_1_no = v_emi.selected_question_2_no then
-    raise exception 'two distinct question numbers must be selected';
+     or v_emi.selected_question_1_no not between 1 and 5
+     or v_emi.selected_question_2_no not between 0 and 5
+     or (
+       v_emi.selected_question_2_no <> 0
+       and v_emi.selected_question_1_no = v_emi.selected_question_2_no
+     ) then
+    raise exception 'one or two distinct question numbers must be selected';
   end if;
 
   if nullif(btrim(v_emi.combined_response), '') is null then
