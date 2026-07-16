@@ -100,6 +100,10 @@ if ($hasGuide) {
   Require-Match $guide 'ema_session_emotions' 'guide multi-detail emotions'
   Require-Match $guide 'weekly_feedback' 'guide weekly feedback'
   Require-Match $guide 'save_emi_response' 'guide EMI save order'
+  Require-Match $guide 'region_name' 'guide profile region'
+  Require-Match $guide 'baseline_assessment\.html' 'guide onboarding baseline screen'
+  Require-Match $guide 'q004' 'guide family-satisfaction EMA slot'
+  Require-Match $guide 'selected_question_2_no = 0' 'guide EMI unselected sentinel'
 }
 
 if ($hasScreen) {
@@ -107,6 +111,10 @@ if ($hasScreen) {
   Require-Match $screen 'q001.*q031' 'screen list EMA 31-item mapping'
   Require-Match $screen 'education_code' 'screen list education input'
   Require-Match $screen 'API.*SQL' 'screen list intentional no-op'
+  Require-Match $screen 'region_name' 'screen list profile region mapping'
+  Require-Match $screen 'baseline_assessment\.html' 'screen list onboarding baseline screen'
+  Require-Match $screen 'selected_question_2_no = 0' 'screen list one-question EMI mapping'
+  Require-Match $screen 'app_lock_settings\.lock_method' 'screen list deferred app-lock method'
 }
 
 if ($hasProfile) {
