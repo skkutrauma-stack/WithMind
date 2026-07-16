@@ -157,7 +157,7 @@
     </script>
     <div style="background:linear-gradient(150deg,#A98BE8,#8FA8F0);border-radius:22px;padding:20px 20px;color:#fff">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg><span style="font:400 16px Jua,Pretendard">마음 도사의 코멘트</span></div>
-      <p style="margin:0;font:500 15px/1.65 Pretendard">화를 삼키고 스스로를 다독인 하루였네. 참은 게 나빴다는 뜻은 아니야. 다음엔 "나 지금 좀 속상했어" 한마디가 너를 덜 젖게 해줄 거야.</p>
+      <p id="aiCommentText" data-fallback-text="화를 삼키고 스스로를 다독인 하루였네. 참은 게 나빴다는 뜻은 아니야. 다음엔 &quot;나 지금 좀 속상했어&quot; 한마디가 너를 덜 젖게 해줄 거야." aria-live="polite" style="margin:0;font:500 15px/1.65 Pretendard">화를 삼키고 스스로를 다독인 하루였네. 참은 게 나빴다는 뜻은 아니야. 다음엔 "나 지금 좀 속상했어" 한마디가 너를 덜 젖게 해줄 거야.</p>
     </div>
     <div style="padding-top:2px">
       <button id="finishButton" class="finish-btn" type="button" style="width:100%;border:none;border-radius:20px;padding:15px 18px;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 18px Jua,Pretendard;box-shadow:0 14px 28px -12px rgba(120,100,220,.55);cursor:pointer">완료하고 홈으로</button>
@@ -173,4 +173,5 @@
       });
     }
   </script>
+  <script type="module" src="../js/entry.js"></script>
   </div></body></html>

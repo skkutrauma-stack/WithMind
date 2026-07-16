@@ -6,7 +6,7 @@
 
 - EMA 활성 문항은 31개이며, 원본 응답은 `ema_sessions.q001`~`q031`에 저장합니다. `q032`~`q100`은 이후 도구 버전을 위한 예비 슬롯입니다.
 - 사용자가 고른 세부감정은 `ema_session_emotions`에 1~3개까지 선택 순서와 함께 저장합니다.
-- 프로필은 `education_code`(최종학력)와 `region_name`(거주지역)을 저장합니다. 학력은 화면의 5개 선택지와 동일합니다.
+- 프로필은 `gender_code`(male/female/private), `education_code`(최종학력)와 `region_name`(거주지역)을 저장합니다. 학력은 화면의 5개 선택지와 동일합니다.
 - EMA 결과 유형은 화면의 임의 유형이 아니라 `classification_types`와 `ema_classifications`를 기준으로 표시합니다.
 - baseline은 기분, 버거움, 연결감 3개 점수로 저장합니다.
 - 알림 시각은 사용자가 설정한 `time` 값을 그대로 저장합니다.
@@ -43,6 +43,7 @@ select public.complete_registration(
   p_nickname       := '마음이',
   p_birth_date     := date '2000-01-01',
   p_education_code := 4,
+  p_gender_code    := 'female',
   p_region_name    := '서울특별시'
 );
 ```
@@ -57,7 +58,7 @@ select public.complete_registration(
 | 4 | 대학교 | 2 |
 | 5 | 대학원 이상 | 2 |
 
-`region_name`은 `profile.html`에서 선택한 광역시·도 이름을 그대로 전달합니다. 초안 프로필에서는 비어 있을 수 있지만 가입 완료 시 학력과 거주지역이 모두 필요합니다.
+`gender_code`는 `profile.html`에서 선택한 `male`, `female`, `private` 값을 그대로 전달합니다. `region_name`은 `profile.html`에서 선택한 광역시·도 이름을 그대로 전달합니다. 초안 프로필에서는 비어 있을 수 있지만 가입 완료 시 성별, 학력, 거주지역이 모두 필요합니다.
 
 가입·동의 다음에는 `Bench/onboarding/baseline_assessment.html`에서 초기 baseline을 입력합니다. 화면 흐름은 `agreement.html → baseline_assessment.html → safety_contact.html → alert.html`입니다. 서버는 baseline 활동을 만든 뒤 세 점수를 저장하고 제출합니다.
 
@@ -251,7 +252,7 @@ select public.save_weekly_feedback(
 
 | 목적 | 테이블 |
 |---|---|
-| 사용자 기본정보·학력·거주지역 | `profiles`, `education_levels` |
+| 사용자 기본정보·성별·학력·거주지역 | `profiles`, `education_levels` |
 | 기분·버거움·연결감 baseline | `baseline_assessments` |
 | 안전 연락처 문자열 | `safety_plans.contact_text` |
 | 사용자 알림 시각 | `notification_settings` |
@@ -273,7 +274,7 @@ select public.save_weekly_feedback(
 - Edge Function에서 로그인 사용자와 `p_user_id`/flow 소유자가 같은지 확인합니다.
 - EMA 화면이 활성 instrument의 31문항을 모두 렌더링하고 누락 응답을 막는지 확인합니다.
 - `q004`가 가정생활 만족도이고 4점 문항 응답이 `0~3`으로 저장되는지 확인합니다.
-- 가입 완료 시 `education_code`와 `region_name`이 모두 저장되는지 확인합니다.
+- 가입 완료 시 `gender_code`, `education_code`와 `region_name`이 모두 저장되는지 확인합니다.
 - EMI 질문을 하나만 고르면 두 번째 선택 번호가 `0`으로 저장되는지 확인합니다.
 - 결과 화면이 `ema_classifications.type_id`를 기준으로 유형·캐릭터를 표시하는지 확인합니다.
 - 세부감정 네 번째 선택을 화면에서 막고 DB 오류도 사용자 친화적으로 처리합니다.

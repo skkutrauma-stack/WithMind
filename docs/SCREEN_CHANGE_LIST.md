@@ -4,8 +4,8 @@
 
 ## 2026-07-16 반영 완료
 
-- [x] `profile.html`에 거주지역 아래 5단계 최종학력 드롭다운 추가
-- [x] `profiles.region_name`과 5단계 `education_levels` 추가
+- [x] `profile.html`에 성별, 거주지역 아래 5단계 최종학력 드롭다운 추가
+- [x] `profiles.gender_code`, `profiles.region_name`과 5단계 `education_levels` 추가
 - [x] `baseline_assessment.html` 신규 생성 및 약관→Baseline→안전계획 흐름 연결
 - [x] EMA 가정생활 만족도 q004 추가, 총 31문항 정렬
 - [x] EMA 4점 문항을 화면·DB 모두 0~3으로 통일
@@ -32,8 +32,8 @@
    - 저장값은 `emotion_detail_id` 배열이 아니라 `ema_session_emotions`의 행 1~3개로 전송합니다.
 
 3. **가입/프로필 입력을 학력 기준으로 변경**
-   - `profile.html`에서 초등학교, 중학교, 고등학교, 대학교, 대학원 이상을 선택합니다.
-   - 학력은 `education_code`, 거주지역은 `region_name`으로 각각 저장합니다.
+   - `profile.html`에서 성별과 초등학교, 중학교, 고등학교, 대학교, 대학원 이상을 선택합니다.
+   - 성별은 `gender_code`, 학력은 `education_code`, 거주지역은 `region_name`으로 각각 저장합니다.
    - 유형 분류는 코드 대소 비교가 아니라 `education_levels.classification_group`을 사용합니다.
 
 4. **기분 유형 화면을 DB 유형 기준으로 변경**

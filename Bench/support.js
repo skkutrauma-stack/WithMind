@@ -1822,7 +1822,9 @@
     else document.addEventListener("DOMContentLoaded", () => api.__dcBoot());
   }
   hideRawTemplate();
-  loadReactUmd().then(init).catch((err) => {
+loadReactUmd().then(() => {
+    init();
+  }).catch((err) => {
     console.error("[dc] failed to load React or boot:", err);
     throw err;
   });

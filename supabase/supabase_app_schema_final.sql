@@ -84,6 +84,7 @@ create table if not exists public.profiles (
   user_id uuid primary key references auth.users(id) on delete restrict,
   user_no bigint generated always as identity unique,
   email citext not null unique,
+  gender_code text check (gender_code in ('male', 'female', 'private')),
   nickname citext unique,
   birth_date date,
   education_code smallint references public.education_levels(education_code),
@@ -99,7 +100,8 @@ create table if not exists public.profiles (
   constraint profiles_registration_complete_ck check (
     registration_status = 'draft'
     or (
-      nickname is not null
+      gender_code is not null
+      and nickname is not null
       and birth_date is not null
       and education_code is not null
       and region_name is not null
@@ -137,6 +139,7 @@ begin
   insert into public.profiles (
     user_id,
     email,
+    gender_code,
     nickname,
     birth_date,
     education_code,
@@ -147,6 +150,7 @@ begin
   values (
     new.id,
     new.email,
+    nullif(new.raw_user_meta_data ->> 'gender_code', ''),
     nullif(new.raw_user_meta_data ->> 'nickname', ''),
     nullif(new.raw_user_meta_data ->> 'birth_date', '')::date,
     nullif(new.raw_user_meta_data ->> 'education_code', '')::smallint,
@@ -155,6 +159,7 @@ begin
       when nullif(new.raw_user_meta_data ->> 'nickname', '') is not null
        and nullif(new.raw_user_meta_data ->> 'birth_date', '') is not null
        and nullif(new.raw_user_meta_data ->> 'education_code', '') is not null
+       and nullif(new.raw_user_meta_data ->> 'gender_code', '') is not null
        and nullif(new.raw_user_meta_data ->> 'region_name', '') is not null
       then 'completed'
       else 'draft'
@@ -163,6 +168,7 @@ begin
       when nullif(new.raw_user_meta_data ->> 'nickname', '') is not null
        and nullif(new.raw_user_meta_data ->> 'birth_date', '') is not null
        and nullif(new.raw_user_meta_data ->> 'education_code', '') is not null
+       and nullif(new.raw_user_meta_data ->> 'gender_code', '') is not null
        and nullif(new.raw_user_meta_data ->> 'region_name', '') is not null
       then now()
       else null
@@ -205,14 +211,16 @@ create trigger on_auth_user_email_updated
 after update of email on auth.users
 for each row execute function public.sync_auth_user_email();
 
-drop function if exists public.complete_registration(uuid, text, date, smallint);
+drop function if exists public.complete_registration(uuid, text, date, smallint, text);
+drop function if exists public.complete_registration(uuid, text, date, smallint, text, text);
 
 create or replace function public.complete_registration(
   p_user_id uuid,
   p_nickname text,
   p_birth_date date,
   p_education_code smallint,
-  p_region_name text
+  p_region_name text,
+  p_gender_code text
 )
 returns void
 language plpgsql
@@ -228,11 +236,20 @@ begin
     raise exception 'region_name is required';
   end if;
 
+  if nullif(btrim(p_gender_code), '') is null then
+    raise exception 'gender_code is required';
+  end if;
+
+  if p_gender_code not in ('male', 'female', 'private') then
+    raise exception 'gender_code is invalid';
+  end if;
+
   update public.profiles
      set nickname = p_nickname,
          birth_date = p_birth_date,
          education_code = p_education_code,
          region_name = btrim(p_region_name),
+         gender_code = p_gender_code,
          registration_status = 'completed',
          registration_completed_at = coalesce(registration_completed_at, now()),
          updated_at = now()
@@ -3146,6 +3163,7 @@ select
   p.user_no,
   ('U' || lpad(p.user_no::text, 8, '0')) as user_code,
   p.email,
+  p.gender_code,
   p.nickname,
   p.birth_date,
   p.education_code,
@@ -3384,7 +3402,7 @@ end
 $$;
 
 -- Functions exposed only to server-side service_role, except is_app_admin used by RLS.
-revoke all on function public.complete_registration(uuid, text, date, smallint, text)
+revoke all on function public.complete_registration(uuid, text, date, smallint, text, text)
   from public, anon, authenticated;
 revoke all on function public.grant_app_admin_by_email(text, text)
   from public, anon, authenticated;
@@ -3424,7 +3442,7 @@ revoke all on function public.save_emi_ai_result(uuid, bigint, text)
   from public, anon, authenticated;
 
 grant execute on function public.is_app_admin(uuid) to authenticated;
-grant execute on function public.complete_registration(uuid, text, date, smallint, text) to service_role;
+grant execute on function public.complete_registration(uuid, text, date, smallint, text, text) to service_role;
 grant execute on function public.grant_app_admin_by_email(text, text) to service_role;
 grant execute on function public.start_activity_flow(uuid, text, uuid) to service_role;
 grant execute on function public.submit_baseline(uuid) to service_role;
@@ -3456,7 +3474,7 @@ commit;
 -- AFTER RUNNING THIS SCRIPT
 -- 1) Create the actual Supabase Auth administrator user using
 --    Authentication > Users or the server-side Admin API.
--- 2) Provide profile metadata: nickname, birth_date, education_code.
+-- 2) Provide profile metadata: gender_code, nickname, birth_date, education_code.
 -- 3) Assign the application admin role:
 --
 --    select public.grant_app_admin_by_email(
