@@ -3,38 +3,43 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="../support.js?v=2"></script>
-</head>
-<body>
-<x-dc>
-<helmet data-dc-atomics>
-<meta name="design_doc_mode" content="canvas">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
-  body{margin:0;background:#E7E9ED;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
-  .frame{padding:0}
+  html,body{width:100%;height:100%;margin:0;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center;background:#E7E9ED;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .phone{width:390px;height:844px;background:linear-gradient(180deg,#6E76A8,#565D8A);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(70,74,110,.5);display:flex;flex-direction:column;color:#fff}
+  .nav-item{transition:transform .16s ease, color .16s ease, opacity .16s ease}
+  .nav-item:hover{transform:translateY(-1px)}
+  .nav-item:active{transform:translateY(0) scale(.98)}
 </style>
-</helmet>
-<section class="frame">
-  <div style="width:390px;min-height:844px;background:linear-gradient(180deg,#6E76A8,#565D8A);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(70,74,110,.5);display:flex;flex-direction:column;color:#fff">
-    <div aria-hidden="true" style="height:35px;flex:none"></div>
-    <div style="padding:14px 28px 0;display:flex;justify-content:flex-end"><div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div></div>
-    <div style="flex:1;padding:20px 34px 30px;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center">
-      <svg width="76" height="76" viewBox="0 0 24 24" fill="none" style="margin-bottom:36px"><path d="M12 20C5 15 3.5 9.5 7 7.2 9.4 5.6 12 8.2 12 8.2s2.6-2.6 5-1C20.5 9.5 19 15 12 20z" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
-      <h1 style="margin:0 0 18px;font:400 28px/1.4 Jua,Pretendard;color:#fff">지우야,<br>지금 많이 힘들구나</h1>
-      <p style="margin:0 0 auto;font:500 16px/1.7 Pretendard;color:rgba(255,255,255,.9);max-width:280px">혼자 견디지 않아도 돼.<br>지금 할 수 있는 걸 같이 해보자.</p>
-      <div style="width:100%;display:flex;flex-direction:column;gap:12px;margin-top:44px">
-        <button style="border:none;width:100%;background:#fff;color:#4A5185;font:400 19px Jua,Pretendard;padding:18px 0;border-radius:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" stroke="#4A5185" stroke-width="1.8" stroke-linejoin="round"/></svg>지금 통화하기 · 109</button>
-        <button onClick="location.href='./plan.html'" style="border:1.5px solid rgba(255,255,255,.5);background:none;color:#fff;font:700 16px Pretendard;padding:17px 0;border-radius:22px;cursor:pointer">나의 안전 계획 열기</button>
-      </div>
-      <a href="../home/home.html" style="margin-top:26px;font:500 14px Pretendard;color:rgba(255,255,255,.7);text-decoration:none">지금은 괜찮아, 하던 걸 계속할래</a>
+</head>
+<body>
+<div class="phone">
+  <div aria-hidden="true" style="height:35px;flex:none"></div>
+  <div style="padding:14px 28px 0;display:flex;justify-content:flex-end">
+    <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
     </div>
   </div>
-</section>
-</x-dc>
+
+  <div style="flex:1;padding:20px 34px 30px;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center">
+    <svg width="76" height="76" viewBox="0 0 24 24" fill="none" style="margin-bottom:36px"><path d="M12 20C5 15 3.5 9.5 7 7.2 9.4 5.6 12 8.2 12 8.2s2.6-2.6 5-1C20.5 9.5 19 15 12 20z" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    <h1 style="margin:0 0 18px;font:400 28px/1.4 Jua,Pretendard;color:#fff">지우아,<br>지금 많이 힘들구나</h1>
+    <p style="margin:0 0 auto;font:500 16px/1.7 Pretendard;color:rgba(255,255,255,.9);max-width:280px">혼자 견디지 않아도 돼.<br>지금 할 수 있는 걸 같이 해보자.</p>
+
+    <div style="width:100%;display:flex;flex-direction:column;gap:12px;margin-top:44px">
+      <button style="border:none;width:100%;background:#fff;color:#4A5185;font:400 19px Jua,Pretendard;padding:18px 0;border-radius:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" stroke="#4A5185" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        지금 통화하기 · 109
+      </button>
+      <button onClick="location.href='./plan.html'" style="border:1.5px solid rgba(255,255,255,.5);background:none;color:#fff;font:700 16px Pretendard;padding:17px 0;border-radius:22px;cursor:pointer">나의 안전 계획 열기</button>
+    </div>
+
+    <a href="../home/home.html" style="margin-top:26px;font:500 14px Pretendard;color:rgba(255,255,255,.7);text-decoration:none">지금은 괜찮아, 하던 걸 계속할래</a>
+  </div>
+</div>
 </body>
 </html>
