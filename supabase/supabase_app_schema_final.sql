@@ -1065,38 +1065,41 @@ insert into public.ema_response_option_sets (
   option_set_version_id, option_set_key, version_no, option_set_name, active
 )
 values
-  (1, 'loneliness_1_4', 1, '외로움 1–4점', true),
-  (2, 'family_stress_1_4', 1, '가정 스트레스 1–4점', true),
+  (1, 'loneliness_0_3', 1, '외로움 0–3점', true),
+  (2, 'family_stress_0_3', 1, '가정 스트레스 0–3점', true),
   (3, 'phq15_0_2', 1, 'PHQ-15 0–2점', true),
-  (4, 'coping_1_4', 1, '대처 1–4점', true)
+  (4, 'coping_0_3', 1, '대처 0–3점', true)
 on conflict (option_set_version_id) do update
 set option_set_key = excluded.option_set_key,
     version_no = excluded.version_no,
     option_set_name = excluded.option_set_name,
     active = excluded.active;
 
+delete from public.ema_response_options
+where option_set_version_id in (1, 2, 4);
+
 insert into public.ema_response_options (
   option_set_version_id, score_value, option_label, display_order
 )
 values
-  (1, 1, '전혀 아니다', 1),
-  (1, 2, '드물지만 있다', 2),
-  (1, 3, '가끔 있다', 3),
-  (1, 4, '항상 그렇다', 4),
+  (1, 0, '전혀 아니다', 1),
+  (1, 1, '드물지만 있다', 2),
+  (1, 2, '가끔 있다', 3),
+  (1, 3, '항상 그렇다', 4),
 
-  (2, 1, '만족', 1),
-  (2, 2, '대체로 만족', 2),
-  (2, 3, '대체로 불만족', 3),
-  (2, 4, '불만족', 4),
+  (2, 0, '만족', 1),
+  (2, 1, '대체로 만족', 2),
+  (2, 2, '대체로 불만족', 3),
+  (2, 3, '불만족', 4),
 
   (3, 0, '전혀 시달리지 않음', 1),
   (3, 1, '약간 시달림', 2),
   (3, 2, '대단히 시달림', 3),
 
-  (4, 1, '전혀', 1),
-  (4, 2, '조금', 2),
-  (4, 3, '보통', 3),
-  (4, 4, '많이', 4)
+  (4, 0, '전혀', 1),
+  (4, 1, '조금', 2),
+  (4, 2, '보통', 3),
+  (4, 3, '많이', 4)
 on conflict (option_set_version_id, score_value) do update
 set option_label = excluded.option_label,
     display_order = excluded.display_order;
@@ -1106,10 +1109,10 @@ insert into public.ema_scale_versions (
   scoring_method, theoretical_min, theoretical_max, active
 )
 values
-  (1, 'loneliness', 1, '외로움', 'sum', 3, 12, true),
-  (2, 'family_stress', 1, '가정 스트레스', 'sum', 1, 4, true),
+  (1, 'loneliness', 1, '외로움', 'sum', 0, 9, true),
+  (2, 'family_stress', 1, '가정 스트레스', 'sum', 0, 3, true),
   (3, 'somatization_phq15', 1, '신체화 PHQ-15', 'sum', 0, 30, true),
-  (4, 'dysfunctional_coping', 1, '역기능적 대처', 'sum', 12, 48, true)
+  (4, 'dysfunctional_coping', 1, '역기능적 대처', 'sum', 0, 36, true)
 on conflict (scale_version_id) do update
 set scale_key = excluded.scale_key,
     version_no = excluded.version_no,
@@ -1126,10 +1129,10 @@ insert into public.ema_question_versions (
   option_set_version_id, min_score, max_score, active
 )
 values
-  (1, 'loneliness_01', 1, 1, 1, '지금 현재, 자신이 동료의식이 없다고 느끼나요?', '지금 현재', 1, 1, 4, true),
-  (2, 'loneliness_02', 1, 1, 2, '지금 현재, 자신이 따돌림을 당한다고 느끼나요?', '지금 현재', 1, 1, 4, true),
-  (3, 'loneliness_03', 1, 1, 3, '지금 현재, 자신이 다른 사람들과 고립되어 있다고 느끼나요?', '지금 현재', 1, 1, 4, true),
-  (4, 'family_stress_01', 1, 2, 25, '지금 현재, 가정생활에 얼마나 만족하십니까?', '지금 현재', 2, 1, 4, true),
+  (1, 'loneliness_01', 1, 1, 1, '지금 현재, 자신이 동료의식이 없다고 느끼나요?', '지금 현재', 1, 0, 3, true),
+  (2, 'loneliness_02', 1, 1, 2, '지금 현재, 자신이 따돌림을 당한다고 느끼나요?', '지금 현재', 1, 0, 3, true),
+  (3, 'loneliness_03', 1, 1, 3, '지금 현재, 자신이 다른 사람들과 고립되어 있다고 느끼나요?', '지금 현재', 1, 0, 3, true),
+  (4, 'family_stress_01', 1, 2, 25, '지금 현재, 가정생활에 얼마나 만족하십니까?', '지금 현재', 2, 0, 3, true),
   (5, 'phq15_01', 1, 3, 1, '지금 현재, 위통으로 얼마나 시달리고 있습니까?', '지금 현재', 3, 0, 2, true),
   (6, 'phq15_02', 1, 3, 2, '지금 현재, 허리 통증으로 얼마나 시달리고 있습니까?', '지금 현재', 3, 0, 2, true),
   (7, 'phq15_03', 1, 3, 3, '지금 현재, 팔, 다리, 관절(예: 무릎, 고관절 등)의 통증으로 얼마나 시달리고 있습니까?', '지금 현재', 3, 0, 2, true),
@@ -1145,18 +1148,18 @@ values
   (17, 'phq15_13', 1, 3, 13, '지금 현재, 메스꺼움, 방귀 또는 소화 불량으로 얼마나 시달리고 있습니까?', '지금 현재', 3, 0, 2, true),
   (18, 'phq15_14', 1, 3, 14, '지금 현재, 피로감 또는 기운 없음으로 얼마나 시달리고 있습니까?', '지금 현재', 3, 0, 2, true),
   (19, 'phq15_15', 1, 3, 15, '지금 현재, 수면의 어려움으로 얼마나 시달리고 있습니까?', '지금 현재', 3, 0, 2, true),
-  (20, 'dysfunctional_coping_01', 1, 4, 1, '지금 현재 겪고 있는 어려움에 대해, 나는 마음을 분산시키기 위해 일을 하거나 다른 활동을 한다.', '지금 현재', 4, 1, 4, true),
-  (21, 'dysfunctional_coping_02', 1, 4, 3, '지금 현재 겪고 있는 어려움에 대해, 나는 ‘그것은 사실일 리가 없어’라고 나 자신에게 말한다.', '지금 현재', 4, 1, 4, true),
-  (22, 'dysfunctional_coping_03', 1, 4, 4, '지금 현재 겪고 있는 어려움에 대해, 나는 기분이 나아지기 위해 술을 마신다.', '지금 현재', 4, 1, 4, true),
-  (23, 'dysfunctional_coping_04', 1, 4, 6, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움에 대처하기 위해 노력하는 것을 포기한다.', '지금 현재', 4, 1, 4, true),
-  (24, 'dysfunctional_coping_05', 1, 4, 8, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움이 실제로 일어났다는 사실을 믿기를 거부한다.', '지금 현재', 4, 1, 4, true),
-  (25, 'dysfunctional_coping_06', 1, 4, 9, '지금 현재 겪고 있는 어려움에 대해, 나는 괴로운 감정에서 벗어나기 위해 무슨 말이든 한다.', '지금 현재', 4, 1, 4, true),
-  (26, 'dysfunctional_coping_07', 1, 4, 11, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움을 극복하기 위해 술을 마신다.', '지금 현재', 4, 1, 4, true),
-  (27, 'dysfunctional_coping_08', 1, 4, 13, '지금 현재 겪고 있는 어려움에 대해, 나는 자신을 비난한다.', '지금 현재', 4, 1, 4, true),
-  (28, 'dysfunctional_coping_09', 1, 4, 16, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움에 대처하기 위해 무엇인가 시도하는 것을 포기한다.', '지금 현재', 4, 1, 4, true),
-  (29, 'dysfunctional_coping_10', 1, 4, 19, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움에 대해 덜 생각하기 위해 영상 시청, 독서, 수면 등 다른 활동을 한다.', '지금 현재', 4, 1, 4, true),
-  (30, 'dysfunctional_coping_11', 1, 4, 21, '지금 현재 겪고 있는 어려움에 대해, 나는 부정적인 감정을 표현한다.', '지금 현재', 4, 1, 4, true),
-  (31, 'dysfunctional_coping_12', 1, 4, 26, '지금 현재 겪고 있는 어려움에 대해, 나는 문제가 발생한 것에 대하여 스스로를 자책한다.', '지금 현재', 4, 1, 4, true)
+  (20, 'dysfunctional_coping_01', 1, 4, 1, '지금 현재 겪고 있는 어려움에 대해, 나는 마음을 분산시키기 위해 일을 하거나 다른 활동을 한다.', '지금 현재', 4, 0, 3, true),
+  (21, 'dysfunctional_coping_02', 1, 4, 3, '지금 현재 겪고 있는 어려움에 대해, 나는 ‘그것은 사실일 리가 없어’라고 나 자신에게 말한다.', '지금 현재', 4, 0, 3, true),
+  (22, 'dysfunctional_coping_03', 1, 4, 4, '지금 현재 겪고 있는 어려움에 대해, 나는 기분이 나아지기 위해 술을 마신다.', '지금 현재', 4, 0, 3, true),
+  (23, 'dysfunctional_coping_04', 1, 4, 6, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움에 대처하기 위해 노력하는 것을 포기한다.', '지금 현재', 4, 0, 3, true),
+  (24, 'dysfunctional_coping_05', 1, 4, 8, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움이 실제로 일어났다는 사실을 믿기를 거부한다.', '지금 현재', 4, 0, 3, true),
+  (25, 'dysfunctional_coping_06', 1, 4, 9, '지금 현재 겪고 있는 어려움에 대해, 나는 괴로운 감정에서 벗어나기 위해 무슨 말이든 한다.', '지금 현재', 4, 0, 3, true),
+  (26, 'dysfunctional_coping_07', 1, 4, 11, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움을 극복하기 위해 술을 마신다.', '지금 현재', 4, 0, 3, true),
+  (27, 'dysfunctional_coping_08', 1, 4, 13, '지금 현재 겪고 있는 어려움에 대해, 나는 자신을 비난한다.', '지금 현재', 4, 0, 3, true),
+  (28, 'dysfunctional_coping_09', 1, 4, 16, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움에 대처하기 위해 무엇인가 시도하는 것을 포기한다.', '지금 현재', 4, 0, 3, true),
+  (29, 'dysfunctional_coping_10', 1, 4, 19, '지금 현재 겪고 있는 어려움에 대해, 나는 현재의 어려움에 대해 덜 생각하기 위해 영상 시청, 독서, 수면 등 다른 활동을 한다.', '지금 현재', 4, 0, 3, true),
+  (30, 'dysfunctional_coping_11', 1, 4, 21, '지금 현재 겪고 있는 어려움에 대해, 나는 부정적인 감정을 표현한다.', '지금 현재', 4, 0, 3, true),
+  (31, 'dysfunctional_coping_12', 1, 4, 26, '지금 현재 겪고 있는 어려움에 대해, 나는 문제가 발생한 것에 대하여 스스로를 자책한다.', '지금 현재', 4, 0, 3, true)
 on conflict (question_version_id) do update
 set question_key = excluded.question_key,
     version_no = excluded.version_no,
@@ -1720,12 +1723,12 @@ values
   '{
     "scale_slots":{"loneliness":1,"family_stress":2,"somatization":3,"dysfunctional_coping":4},
     "rules":[
-      {"type_id":1,"when":"loneliness <= 5 and family_stress <= 2"},
-      {"type_id":2,"when":"loneliness <= 5 and family_stress > 2 and education_group = 1"},
-      {"type_id":3,"when":"loneliness <= 5 and family_stress > 2 and education_group = 2"},
-      {"type_id":4,"when":"loneliness > 5 and somatization <= 3"},
-      {"type_id":5,"when":"loneliness > 5 and somatization > 3 and dysfunctional_coping <= 15"},
-      {"type_id":6,"when":"loneliness > 5 and somatization > 3 and dysfunctional_coping > 15"}
+      {"type_id":1,"when":"loneliness <= 2 and family_stress <= 1"},
+      {"type_id":2,"when":"loneliness <= 2 and family_stress > 1 and education_group = 1"},
+      {"type_id":3,"when":"loneliness <= 2 and family_stress > 1 and education_group = 2"},
+      {"type_id":4,"when":"loneliness > 2 and somatization <= 3"},
+      {"type_id":5,"when":"loneliness > 2 and somatization > 3 and dysfunctional_coping <= 3"},
+      {"type_id":6,"when":"loneliness > 2 and somatization > 3 and dysfunctional_coping > 3"}
     ],
     "age_exception_rule_applied":false
   }'::jsonb,
@@ -2032,12 +2035,12 @@ begin
 
   v_type_id :=
     case
-      when v_loneliness <= 5 and v_family_stress <= 2 then 1
-      when v_loneliness <= 5 and v_family_stress > 2 and v_education_group = 1 then 2
-      when v_loneliness <= 5 and v_family_stress > 2 and v_education_group = 2 then 3
-      when v_loneliness > 5 and v_somatization <= 3 then 4
-      when v_loneliness > 5 and v_somatization > 3 and v_coping <= 15 then 5
-      when v_loneliness > 5 and v_somatization > 3 and v_coping > 15 then 6
+      when v_loneliness <= 2 and v_family_stress <= 1 then 1
+      when v_loneliness <= 2 and v_family_stress > 1 and v_education_group = 1 then 2
+      when v_loneliness <= 2 and v_family_stress > 1 and v_education_group = 2 then 3
+      when v_loneliness > 2 and v_somatization <= 3 then 4
+      when v_loneliness > 2 and v_somatization > 3 and v_coping <= 3 then 5
+      when v_loneliness > 2 and v_somatization > 3 and v_coping > 3 then 6
       else null
     end;
 
