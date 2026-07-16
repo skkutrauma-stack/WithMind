@@ -42,7 +42,7 @@
   document.documentElement.dataset.scHoverScope = 'off';
   function go(url){ location.href = url; }
   function fitScreen(){
-    const scale = Math.min(window.innerWidth / 390, window.innerHeight / 844, 1);
+    const scale = Math.min(window.innerWidth / 390, window.innerHeight / 844, 1) * 0.92;
     document.documentElement.style.setProperty('--screen-scale', scale.toFixed(4));
   }
   window.addEventListener('resize', fitScreen);
