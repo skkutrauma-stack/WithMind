@@ -96,15 +96,14 @@ Input:
 ```json
 {
   "source_reflection_flow_id": "uuid",
-  "reflection_response": "non-empty string",
   "gestalt_type_ids": [1]
 }
 ```
 
-The function verifies reflection-flow ownership, stores the user's response with
-`save_ema_reflection_response`, completes the reflection with
-`submit_ema_reflection`, creates or resumes the EMI flow with `start_emi_flow`,
-and loads `get_emi_llm_context`. It then uses the active
+The function verifies reflection-flow ownership and requires the user's response
+to have already been saved by the authenticated application API. It completes
+the reflection with `submit_ema_reflection`, creates or resumes the EMI flow with
+`start_emi_flow`, and loads `get_emi_llm_context`. It then uses the active
 `emi_question_generation` prompt to generate exactly five questions and saves
 them with `save_emi_questions`.
 
