@@ -17,6 +17,37 @@ async function parseResponse(response) {
   }
 }
 
+const SESSION_KEY = 'withmind:supabase-session';
+
+function persistSession(session) {
+  try {
+    if (session?.access_token) localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    else localStorage.removeItem(SESSION_KEY);
+  } catch {
+    // Storage can be unavailable in private browsing; the in-memory response still works.
+  }
+}
+
+async function authRequest(config, path, body) {
+  if (!config.configured) throw new Error('Supabase is not configured');
+  const response = await fetch(`${config.authUrl}/${path}`, {
+    method: 'POST',
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${config.anonKey}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await parseResponse(response);
+  if (!response.ok) {
+    const message = data?.msg || data?.message || data?.error_description || data?.error || response.statusText;
+    throw new Error(String(message));
+  }
+  return data;
+}
+
 async function request(config, path, options = {}) {
   if (!config.configured) {
     return {
@@ -42,6 +73,37 @@ export function createSupabaseClient(overrides = {}) {
   return {
     config,
     isConfigured: config.configured,
+    auth: {
+      async signUp({ email, password, nickname }) {
+        const data = await authRequest(config, 'signup', {
+          email,
+          password,
+          data: { nickname },
+        });
+        if (data?.access_token) persistSession(data);
+        return data;
+      },
+      async signInWithPassword({ email, password }) {
+        const data = await authRequest(config, 'token?grant_type=password', { email, password });
+        persistSession(data);
+        return data;
+      },
+      async signOut() {
+        const token = (() => {
+          try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null')?.access_token || ''; } catch { return ''; }
+        })();
+        if (token) {
+          await fetch(`${config.authUrl}/logout`, {
+            method: 'POST',
+            headers: { apikey: config.anonKey, Authorization: `Bearer ${token}` },
+          }).catch(() => null);
+        }
+        persistSession(null);
+      },
+      getSession() {
+        try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; }
+      },
+    },
     request(path, options = {}) {
       return request(config, path, options);
     },

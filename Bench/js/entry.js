@@ -16,6 +16,26 @@ const globalKey = '__withmindEntryLoaded';
 if (!globalThis[globalKey]) {
   globalThis[globalKey] = true;
 
+  const bindLegacyNavigation = (doc) => {
+    for (const element of doc.querySelectorAll('[onclick]')) {
+      if (element.dataset.withmindLegacyNav === 'true') continue;
+      const source = element.getAttribute('onclick') || '';
+      const hrefMatch = source.match(/location\.href\s*=\s*['"]([^'"]+)['"]/i);
+      const assignMatch = source.match(/location\.(?:assign|replace)\(\s*['"]([^'"]+)['"]\s*\)/i);
+      const shouldGoBack = /history\.back\(\s*\)/i.test(source);
+      const destination = hrefMatch?.[1] || assignMatch?.[1] || '';
+      if (!destination && !shouldGoBack) continue;
+      element.addEventListener('click', (event) => {
+        if (element.dataset.withmindBound === 'true') return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (shouldGoBack) history.back();
+        else location.href = destination;
+      }, { capture: true });
+      element.dataset.withmindLegacyNav = 'true';
+    }
+  };
+
   const boot = () => {
     const page = describePage(typeof location !== 'undefined' ? location.pathname : '');
     applyPageStatus(document, page);
@@ -36,6 +56,7 @@ if (!globalThis[globalKey]) {
       };
       return state;
     });
+    bindLegacyNavigation(document);
 
     if (page.section === 'onboarding') {
       bindOnboardingPage(document);

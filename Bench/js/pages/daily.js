@@ -1,252 +1,265 @@
-import { getEmiAiResult } from '../app-api.js';
-import { getFlowId, setFlowId, updateDailyState } from '../flow-state.js';
+import {
+  getEmaResult,
+  getEmi,
+  getEmiAiResult,
+  getReflection,
+  invokeWorkflow,
+  saveEmaAnswers,
+  saveEmaReflectionResponse,
+  saveEmiResponse,
+  startEma,
+  startEmaReflectionFlow,
+  startEmiFlow,
+  submitEma,
+  submitEmaReflection,
+  submitEmi,
+} from '../app-api.js';
+import { getFlowId, readFlowState, setFlowId, updateDailyState } from '../flow-state.js';
+import { getSupabaseClient } from '../supabase-client.js';
 
-const DEFAULT_AI_COMMENT = '화를 삼키고 스스로를 다독인 하루였네. 참은 게 나빴다는 뜻은 아니야. 다음엔 "나 지금 좀 속상했어" 한마디가 너를 덜 젖게 해줄 거야.';
+const GESTALT_IDS = Object.freeze({ 반전: 1, 투사: 2, 내사: 3, 편향: 4, 자의식: 5, 융합: 6 });
 
-function safeTrim(value) {
-  return String(value || '').trim();
+function text(value) {
+  return String(value ?? '').trim();
 }
 
 function readJson(storage, key) {
-  try {
-    const raw = storage?.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
+  try { return JSON.parse(storage?.getItem(key) || 'null'); } catch { return null; }
 }
 
-function writeState(section, patch) {
-  updateDailyState({
-    [section]: patch,
-  });
+function dataOf(response) {
+  if (!response?.ok) throw new Error(response?.reason || response?.error || '서버 요청에 실패했어요.');
+  return response.data ?? response;
 }
 
-function syncEmotionMain(doc) {
-  const cards = [...doc.querySelectorAll('button[data-slug][data-route]')];
-  const nextButton = doc.querySelector('#mainNext');
-  if (!cards.length || !nextButton) return;
-
-  const sync = () => {
-    const active = cards.find((card) => card.dataset.active === 'true') || null;
-    writeState('emotionMain', {
-      slug: active?.dataset.slug || '',
-      label: safeTrim(active?.textContent),
-      route: active?.dataset.route || '',
-    });
-  };
-
-  cards.forEach((card) => card.addEventListener('click', () => queueMicrotask(sync)));
-  nextButton.addEventListener('click', () => queueMicrotask(sync));
-  sync();
+function setBusy(button, busy, label = '처리 중...') {
+  if (!button) return;
+  if (!button.dataset.idleText) button.dataset.idleText = text(button.textContent);
+  button.disabled = busy;
+  button.textContent = busy ? label : button.dataset.idleText;
+  button.style.opacity = busy ? '.65' : '1';
 }
 
-function syncEmotionSubcategory(doc) {
-  const grid = doc.querySelector('#optionGrid');
-  const nextButton = doc.querySelector('#subNext');
-  if (!grid || !nextButton) return;
-
-  const sync = () => {
-    const labels = [...grid.querySelectorAll('.option.is-active .label')].map((node) => safeTrim(node.textContent));
-    writeState('emotionSubcategory', {
-      main: safeTrim(doc.querySelector('#mainEmotionPill')?.textContent),
-      label: safeTrim(doc.querySelector('#mainEmotionTitle')?.textContent),
-      selectedLabels: labels,
-    });
-  };
-
-  grid.addEventListener('click', () => queueMicrotask(sync));
-  nextButton.addEventListener('click', () => queueMicrotask(sync));
-  sync();
+function showError(error) {
+  globalThis.alert?.(error instanceof Error ? error.message : String(error));
 }
 
-function syncCheckin(doc) {
-  const nextButton = doc.querySelector('#nextButton');
-  if (!nextButton) return;
-  const sync = () => {
-    const answers = readJson(sessionStorage, 'checkinAnswers') || readJson(localStorage, 'checkinAnswers') || {};
-    writeState('checkin', { answers });
-  };
-  nextButton.addEventListener('click', () => queueMicrotask(sync));
-  sync();
-}
-
-function syncMoodCharacter(doc) {
-  const characterName = safeTrim(doc.querySelector('#characterName')?.textContent);
-  if (!characterName) return;
-  writeState('moodCharacter', {
-    name: characterName,
-  });
-}
-
-function syncMoodType(doc) {
-  const nextButton = doc.querySelector('#nextBtn');
-  const input = doc.querySelector('#situationInput');
-  if (!nextButton || !input) return;
-  const sync = () => {
-    writeState('moodType', {
-      characterName: safeTrim(doc.querySelector('#moodCharacterName')?.textContent),
-      situation: safeTrim(input.value),
-    });
-  };
-  input.addEventListener('input', sync);
-  input.addEventListener('change', sync);
-  nextButton.addEventListener('click', sync);
-  sync();
-}
-
-function syncHardnessCheck(doc) {
-  const nextButton = doc.querySelector('#nextBtn');
-  const strategy = safeTrim(localStorage.getItem('selectedStrategy'));
-  if (strategy) {
-    writeState('hardness', { strategy });
-  }
-  if (!nextButton) return;
-  const sync = () => {
-    const activeChecks = [...doc.querySelectorAll('.check-item[data-active="true"]')].map((node) => safeTrim(node.textContent));
-    writeState('hardness', {
-      strategy: safeTrim(localStorage.getItem('selectedStrategy')),
-      selectedChecks: activeChecks,
-    });
-  };
-  nextButton.addEventListener('click', () => queueMicrotask(sync));
-  sync();
-}
-
-function syncJournal(doc) {
-  const doneButton = doc.querySelector('#doneBtn');
-  const input = doc.querySelector('#journalInput');
-  if (!doneButton || !input) return;
-  const sync = () => {
-    const selectedChecks = [...doc.querySelectorAll('.check-item[data-active="true"]')].map((node) => safeTrim(node.textContent));
-    writeState('journal', {
-      checks: selectedChecks,
-      text: safeTrim(input.value),
-    });
-  };
-  input.addEventListener('input', sync);
-  input.addEventListener('change', sync);
-  doneButton.addEventListener('click', sync);
-  sync();
-}
-
-function syncAiComment(doc) {
-  const textEl = doc.querySelector('#aiCommentText');
-  if (!textEl) return;
-
-  const fallbackText = safeTrim(textEl.dataset.fallbackText) || safeTrim(textEl.textContent) || DEFAULT_AI_COMMENT;
-  const query = typeof location !== 'undefined' ? new URLSearchParams(location.search) : null;
-  const queryFlowId = safeTrim(query?.get('flowId') || query?.get('flow_id'));
-  const storedFlowId = safeTrim(getFlowId('emi'));
-  const candidates = [queryFlowId, storedFlowId].filter((value, index, list) => value && list.indexOf(value) === index);
-
-  const baseState = {
-    selectedEmotion: safeTrim(localStorage.getItem('selectedEmotion')),
-    strategy: safeTrim(localStorage.getItem('selectedStrategy')),
-    journalText: safeTrim(localStorage.getItem('journalText')),
-    journalSelectedQuestions: readJson(localStorage, 'journalSelectedQuestions') || readJson(sessionStorage, 'journalSelectedQuestions') || [],
-  };
-
-  writeState('aiComment', {
-    ...baseState,
-    flowId: candidates[0] || '',
-    status: 'loading',
-  });
-
-  const attemptLoad = async (payload) => {
+function captureClick(button, handler) {
+  if (!button || button.dataset.withmindBound === 'true') return;
+  button.addEventListener('click', async (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
     try {
-      const response = await getEmiAiResult(payload);
-      const data = response?.data || {};
-      const result = data?.result || null;
-      if (response?.ok && data?.found && result?.ai_comment) {
-        return result;
-      }
-    } catch {
-      // fall through to the next candidate and final fallback
+      await handler();
+    } catch (error) {
+      setBusy(button, false);
+      showError(error);
     }
-    return null;
+  }, { capture: true });
+  button.dataset.withmindBound = 'true';
+}
+
+function bindEmotionMain(doc) {
+  const cards = [...doc.querySelectorAll('button[data-slug][data-route]')];
+  const button = doc.querySelector('#mainNext');
+  const sync = () => {
+    const active = cards.find((card) => card.dataset.active === 'true');
+    updateDailyState({ emotionMain: { slug: active?.dataset.slug || '', label: text(active?.textContent), route: active?.dataset.route || '' } });
   };
+  cards.forEach((card) => card.addEventListener('click', () => queueMicrotask(sync)));
+  button?.addEventListener('click', sync);
+  sync();
+}
 
-  (async () => {
-    let result = null;
-    for (const flowId of candidates) {
-      result = await attemptLoad({ flowId });
-      if (result) break;
-    }
-    if (!result) {
-      result = await attemptLoad({});
-    }
+function bindEmotionSubcategory(doc) {
+  const grid = doc.querySelector('#optionGrid');
+  const button = doc.querySelector('#subNext');
+  captureClick(button, async () => {
+    const selectedLabels = [...grid.querySelectorAll('.option.is-active .label')].map((node) => text(node.textContent));
+    const categoryKey = text(readFlowState().daily?.emotionMain?.slug) || text(location.pathname.match(/subcategory-([a-z-]+)/)?.[1]);
+    if (!categoryKey || selectedLabels.length < 1 || selectedLabels.length > 3) throw new Error('감정을 1개에서 3개까지 선택해 주세요.');
+    setBusy(button, true, '저장 중...');
+    const result = dataOf(await startEma({ categoryKey, detailNames: selectedLabels }));
+    const flowId = result?.flow_id || result;
+    if (!flowId) throw new Error('EMA 흐름을 만들지 못했어요.');
+    setFlowId('ema', flowId);
+    updateDailyState({ emotionSubcategory: { categoryKey, selectedLabels } });
+    location.href = './checkin.html';
+  });
+}
 
-    if (result?.ai_comment) {
-      const comment = safeTrim(result.ai_comment) || fallbackText;
-      const resolvedFlowId = safeTrim(result.flow_id) || candidates[0] || '';
-      textEl.textContent = comment;
-      if (resolvedFlowId) {
-        setFlowId('emi', resolvedFlowId);
-      }
-      writeState('aiComment', {
-        ...baseState,
-        flowId: resolvedFlowId,
-        status: 'loaded',
-        source: 'db',
-        comment,
-        loadedAt: new Date().toISOString(),
-      });
-      return;
-    }
-
-    textEl.textContent = fallbackText;
-    writeState('aiComment', {
-      ...baseState,
-      flowId: candidates[0] || '',
-      status: 'fallback',
-      source: 'fallback',
-      comment: fallbackText,
-      loadedAt: new Date().toISOString(),
+function bindCheckin(doc) {
+  const button = doc.querySelector('#nextButton');
+  const list = doc.querySelector('#questionList');
+  let draftTimer = null;
+  const readAnswers = () => {
+    const stored = readJson(sessionStorage, 'checkinAnswers');
+    if (Array.isArray(stored) && stored.length === 31) return stored;
+    return [...doc.querySelectorAll('.qcard')].map((card) => {
+      const dots = [...card.querySelectorAll('.dot')];
+      const active = dots.findIndex((dot) => dot.dataset.active === 'true');
+      return active >= 0 ? active : null;
     });
-  })();
+  };
+  list?.addEventListener('click', () => {
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(async () => {
+      const flowId = getFlowId('ema');
+      if (!flowId) return;
+      await saveEmaAnswers({ flowId, answers: readAnswers(), partial: true }).catch(() => null);
+    }, 700);
+  });
+  captureClick(button, async () => {
+    const flowId = getFlowId('ema');
+    const answers = readAnswers();
+    if (!flowId) throw new Error('EMA 흐름 정보가 없어요. 감정 선택부터 다시 시작해 주세요.');
+    if (answers.length !== 31 || answers.some((value) => value == null)) throw new Error('31개 문항에 모두 답해 주세요.');
+    clearTimeout(draftTimer);
+    setBusy(button, true, '마음 분석 중...');
+    dataOf(await saveEmaAnswers({ flowId, answers }));
+    dataOf(await submitEma({ flowId }));
+    const interpretation = await invokeWorkflow('ema-interpret', { flowId });
+    if (!interpretation?.ok) throw new Error(interpretation?.error || 'EMA AI 분석에 실패했어요.');
+    const reflectionResult = dataOf(await startEmaReflectionFlow({ sourceEmaFlowId: flowId }));
+    const reflectionFlowId = reflectionResult?.flow_id || reflectionResult;
+    setFlowId('emaReflection', reflectionFlowId);
+    const reflection = await invokeWorkflow('ema-reflection-question', { flowId: reflectionFlowId });
+    if (!reflection?.ok) throw new Error(reflection?.error || '성찰 질문 생성에 실패했어요.');
+    updateDailyState({ checkin: { completedAt: new Date().toISOString() } });
+    location.href = './mood-character.html';
+  });
+}
+
+async function bindMoodCharacter(doc) {
+  const flowId = getFlowId('ema');
+  if (!flowId) return;
+  try {
+    const result = dataOf(await getEmaResult({ flowId }));
+    const name = text(result?.type?.character_name);
+    const comment = text(result?.analysis?.ai_comment);
+    const nameEl = doc.querySelector('#characterName');
+    const imageEl = doc.querySelector('.character-panel img');
+    const commentEl = doc.querySelector('.comment-scroll');
+    if (name && nameEl) nameEl.textContent = name;
+    if (comment && commentEl) commentEl.textContent = comment;
+    if (result?.type?.image_bucket && result?.type?.image_path && imageEl) {
+      const base = getSupabaseClient().config.storageUrl;
+      imageEl.src = `${base}/object/public/${encodeURIComponent(result.type.image_bucket)}/${String(result.type.image_path).split('/').map(encodeURIComponent).join('/')}`;
+      imageEl.alt = name || imageEl.alt;
+    }
+    if (name) localStorage.setItem('selectedMoodCharacter', name);
+    updateDailyState({ moodCharacter: { ...result, name } });
+  } catch (error) {
+    showError(error);
+  }
+}
+
+async function bindMoodType(doc) {
+  const button = doc.querySelector('#nextBtn');
+  const input = doc.querySelector('#situationInput');
+  const flowId = getFlowId('emaReflection');
+  if (flowId) {
+    try {
+      const result = dataOf(await getReflection({ flowId }));
+      const question = text(result?.reflection?.reflection_question);
+      const questionEl = doc.querySelector('.input-card p:nth-of-type(2)');
+      if (question && questionEl) questionEl.textContent = question;
+      if (result?.reflection?.user_response && input) input.value = result.reflection.user_response;
+    } catch (error) {
+      showError(error);
+    }
+  }
+  captureClick(button, async () => {
+    const response = text(input?.value);
+    if (!flowId) throw new Error('성찰 흐름 정보가 없어요. EMA부터 다시 진행해 주세요.');
+    if (!response) throw new Error('질문에 대한 답을 적어 주세요.');
+    setBusy(button, true, '저장 중...');
+    dataOf(await saveEmaReflectionResponse({ flowId, userResponse: response }));
+    dataOf(await submitEmaReflection({ flowId }));
+    updateDailyState({ moodType: { response, savedAt: new Date().toISOString() } });
+    location.href = './hardness-check.html';
+  });
+}
+
+function bindHardness(doc) {
+  const button = doc.querySelector('#nextBtn');
+  captureClick(button, async () => {
+    const active = doc.querySelector('.choice[data-active="true"]');
+    const strategy = text(active?.dataset.key);
+    const gestaltTypeId = GESTALT_IDS[strategy];
+    const reflectionFlowId = getFlowId('emaReflection');
+    if (!reflectionFlowId) throw new Error('성찰 흐름 정보가 없어요.');
+    if (!gestaltTypeId) throw new Error('가장 가까운 접촉경계 유형을 선택해 주세요.');
+    setBusy(button, true, '질문 만드는 중...');
+    localStorage.setItem('selectedStrategy', strategy);
+    const result = dataOf(await startEmiFlow({ sourceReflectionFlowId: reflectionFlowId, gestaltTypeIds: [gestaltTypeId] }));
+    const flowId = result?.flow_id || result;
+    setFlowId('emi', flowId);
+    const generated = await invokeWorkflow('emi-generate-questions', { flowId });
+    if (!generated?.ok) throw new Error(generated?.error || 'EMI 질문 생성에 실패했어요.');
+    updateDailyState({ hardness: { strategy, gestaltTypeId } });
+    location.href = './journal.html';
+  });
+}
+
+async function bindJournal(doc) {
+  const button = doc.querySelector('#doneBtn');
+  const input = doc.querySelector('#journalInput');
+  const items = [...doc.querySelectorAll('.check-item')];
+  const flowId = getFlowId('emi');
+  if (flowId) {
+    try {
+      const result = dataOf(await getEmi({ flowId }));
+      const questions = [1, 2, 3, 4, 5].map((index) => text(result?.emi?.[`question_${index}`]));
+      items.forEach((item, index) => {
+        const label = item.querySelector('span');
+        if (label && questions[index]) label.textContent = questions[index];
+      });
+    } catch (error) {
+      showError(error);
+    }
+  }
+  captureClick(button, async () => {
+    const selectedNumbers = items.map((item, index) => item.dataset.active === 'true' ? index + 1 : 0).filter(Boolean);
+    const combinedResponse = text(input?.value);
+    if (!flowId) throw new Error('EMI 흐름 정보가 없어요.');
+    if (!selectedNumbers.length || !combinedResponse) throw new Error('질문을 선택하고 답을 적어 주세요.');
+    setBusy(button, true, 'AI 코멘트 생성 중...');
+    dataOf(await saveEmiResponse({
+      flowId,
+      selectedQuestion1No: selectedNumbers[0],
+      selectedQuestion2No: selectedNumbers[1] || 0,
+      combinedResponse,
+    }));
+    dataOf(await submitEmi({ flowId }));
+    const comment = await invokeWorkflow('emi-comment', { flowId });
+    if (!comment?.ok) throw new Error(comment?.error || 'AI 코멘트 생성에 실패했어요.');
+    updateDailyState({ journal: { selectedNumbers, completedAt: new Date().toISOString() } });
+    location.href = './ai-comment.html';
+  });
+}
+
+async function bindAiComment(doc) {
+  const target = doc.querySelector('#aiCommentText');
+  const flowId = getFlowId('emi');
+  if (!target || !flowId) return;
+  try {
+    const result = dataOf(await getEmiAiResult({ flowId }));
+    const comment = text(result?.result?.ai_comment);
+    if (comment) target.textContent = comment;
+  } catch (error) {
+    showError(error);
+  }
 }
 
 export function bindDailyPage(doc = document) {
   const pageKey = doc?.documentElement?.dataset?.pageKey || '';
-  if (!pageKey) return;
-
-  if (pageKey === 'emotion-card-main') {
-    syncEmotionMain(doc);
-    return;
-  }
-
-  if (pageKey.startsWith('emotion-subcategory-')) {
-    syncEmotionSubcategory(doc);
-    return;
-  }
-
-  if (pageKey === 'checkin') {
-    syncCheckin(doc);
-    return;
-  }
-
-  if (pageKey === 'mood-character') {
-    syncMoodCharacter(doc);
-    return;
-  }
-
-  if (pageKey === 'mood-type') {
-    syncMoodType(doc);
-    return;
-  }
-
-  if (pageKey === 'hardness-check') {
-    syncHardnessCheck(doc);
-    return;
-  }
-
-  if (pageKey === 'journal') {
-    syncJournal(doc);
-    return;
-  }
-
-  if (pageKey === 'ai-comment') {
-    syncAiComment(doc);
-  }
+  if (pageKey === 'emotion-card-main') return bindEmotionMain(doc);
+  if (pageKey.startsWith('emotion-subcategory-')) return bindEmotionSubcategory(doc);
+  if (pageKey === 'checkin') return bindCheckin(doc);
+  if (pageKey === 'mood-character') return void bindMoodCharacter(doc);
+  if (pageKey === 'mood-type') return void bindMoodType(doc);
+  if (pageKey === 'hardness-check') return bindHardness(doc);
+  if (pageKey === 'journal') return void bindJournal(doc);
+  if (pageKey === 'ai-comment') return void bindAiComment(doc);
 }

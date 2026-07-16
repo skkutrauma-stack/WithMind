@@ -450,6 +450,26 @@
     return () => raw;
   }
 
+  function compileDomEvent(raw) {
+    if (raw.includes("{{")) return compileAttr(raw);
+    const href = raw.match(/location\.href\s*=\s*['"]([^'"]+)['"]/i);
+    const assign = raw.match(/location\.(assign|replace)\(\s*['"]([^'"]+)['"]\s*\)/i);
+    const goBack = /history\.back\(\s*\)/i.test(raw);
+    if (href || assign || goBack) {
+      return () => (event) => {
+        event?.preventDefault?.();
+        if (goBack) {
+          history.back();
+        } else if (assign) {
+          location[assign[1]](assign[2]);
+        } else if (href) {
+          location.href = href[1];
+        }
+      };
+    }
+    return () => void 0;
+  }
+
   // src/compile.ts
   function collectProps(node, kind, host) {
     const propGetters = [];
@@ -474,8 +494,11 @@
       } else {
         if (key === "class") key = "className";
         else if (key === "for") key = "htmlFor";
-        else if (key.startsWith("on"))
+        else if (key.startsWith("on")) {
           key = EVENT_MAP[key] || "on" + key[2].toUpperCase() + key.slice(3);
+          propGetters.push([key, compileDomEvent(value)]);
+          continue;
+        }
       }
       propGetters.push([key, compileAttr(value)]);
     }

@@ -74,6 +74,16 @@ export function readSupabaseConfig(overrides = {}) {
 }
 
 export function readSupabaseAuthToken() {
+  for (const storage of [typeof localStorage !== 'undefined' ? localStorage : null, typeof sessionStorage !== 'undefined' ? sessionStorage : null]) {
+    if (!storage) continue;
+    try {
+      const parsed = JSON.parse(storage.getItem('withmind:supabase-session') || 'null');
+      const token = parsed?.access_token || parsed?.session?.access_token || '';
+      if (typeof token === 'string' && token.trim()) return token.trim();
+    } catch {
+      // continue with the standard Supabase storage keys
+    }
+  }
   const candidates = [];
   const storages = [];
   if (typeof localStorage !== 'undefined') storages.push(localStorage);

@@ -33,6 +33,48 @@ export async function completeRegistration(payload, options = {}) {
   return call('complete_registration', payload, options);
 }
 
+export async function getOnboardingStatus(payload = {}, options = {}) {
+  return call('onboarding_status', payload, options);
+}
+
+export async function acceptConsent(payload = { accepted: true }, options = {}) {
+  return call('accept_consent', payload, options);
+}
+
+export async function submitBaselineValues(payload, options = {}) {
+  return call('submit_baseline_values', payload, options);
+}
+
+export async function saveSafetyPlan(payload, options = {}) {
+  return call('save_safety_plan', payload, options);
+}
+
+export async function startEma(payload, options = {}) {
+  return call('start_ema', payload, options);
+}
+
+export async function saveEmaAnswers(payload, options = {}) {
+  return call('save_ema_answers', payload, options);
+}
+
+export async function getEmaResult(payload, options = {}) {
+  return call('get_ema_result', payload, options);
+}
+
+export async function getReflection(payload, options = {}) {
+  return call('get_reflection', payload, options);
+}
+
+export async function getEmi(payload, options = {}) {
+  return call('get_emi', payload, options);
+}
+
+export async function invokeWorkflow(functionName, payload, options = {}) {
+  const client = getSupabaseClient(options.config || {});
+  if (!client.isConfigured) throw new Error('Supabase is not configured');
+  return client.invoke(functionName, payload, options);
+}
+
 export async function startActivityFlow(payload, options = {}) {
   return call('start_activity_flow', payload, options);
 }

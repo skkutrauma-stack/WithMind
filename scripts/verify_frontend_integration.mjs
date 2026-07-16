@@ -1,0 +1,80 @@
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, join, relative, resolve } from 'node:path';
+
+const root = resolve(import.meta.dirname, '..');
+const bench = join(root, 'Bench');
+const failures = [];
+
+function walk(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    return entry.isDirectory() ? walk(path) : [path];
+  });
+}
+
+const htmlFiles = walk(bench).filter((path) => path.endsWith('.html'));
+for (const file of htmlFiles) {
+  const source = readFileSync(file, 'utf8');
+  const candidates = [
+    ...source.matchAll(/(?:href|src)=["']([^"']+)["']/gi),
+    ...source.matchAll(/(?:location\.href|location\.assign|location\.replace)\s*(?:=|\()\s*["']([^"']+)["']/gi),
+  ].map((match) => match[1]);
+  for (const candidate of candidates) {
+    if (!candidate || /^(?:https?:|data:|#|javascript:|\{\{)/i.test(candidate)) continue;
+    const clean = candidate.split(/[?#]/)[0];
+    if (!clean || !/\.(?:html|js|css)$/i.test(clean)) continue;
+    const target = resolve(dirname(file), clean);
+    if (!existsSync(target)) failures.push(`${relative(root, file)} -> ${candidate}`);
+  }
+}
+
+const requiredEntryPages = [
+  'onboarding/account.html',
+  'onboarding/login.html',
+  'onboarding/profile.html',
+  'onboarding/agreement.html',
+  'onboarding/baseline_assessment.html',
+  'onboarding/safety_contact.html',
+  'daily/emotion-card-main.html',
+  'daily/checkin.html',
+  'daily/mood-character.html',
+  'daily/mood-type.html',
+  'daily/hardness-check.html',
+  'daily/journal.html',
+  'daily/ai-comment.html',
+];
+
+for (const page of requiredEntryPages) {
+  const source = readFileSync(join(bench, page), 'utf8');
+  if (!source.includes('js/entry.js')) failures.push(`${page} is missing js/entry.js`);
+}
+
+const runtime = readFileSync(join(bench, 'runtime-config.js'), 'utf8');
+if (!runtime.includes("functionsUrl: '/api'")) failures.push('runtime-config.js must target the authenticated Vercel API proxy');
+
+const daily = readFileSync(join(bench, 'js/pages/daily.js'), 'utf8');
+for (const workflow of ['ema-interpret', 'ema-reflection-question', 'emi-generate-questions', 'emi-comment']) {
+  if (!daily.includes(`'${workflow}'`)) failures.push(`daily.js does not invoke ${workflow}`);
+}
+
+const appApi = readFileSync(join(root, 'supabase/functions/app-api/index.ts'), 'utf8');
+for (const action of ['accept_consent', 'submit_baseline_values', 'save_safety_plan', 'start_ema', 'save_ema_answers']) {
+  if (!appApi.includes(`case '${action}'`)) failures.push(`app-api is missing ${action}`);
+}
+
+for (const name of ['ema-interpret', 'ema-reflection-question', 'emi-generate-questions', 'emi-comment']) {
+  const source = readFileSync(join(root, `supabase/functions/${name}/index.ts`), 'utf8');
+  if (!source.includes('assertFlowOwner')) failures.push(`${name} is missing ownership validation`);
+}
+
+for (const name of ['ema-interpret', 'ema-reflection-question', 'emi-generate-questions', 'emi-comment']) {
+  if (!existsSync(join(root, `api/${name}.js`))) failures.push(`Vercel API proxy is missing ${name}`);
+}
+
+if (failures.length) {
+  console.error('Frontend integration verification failed:');
+  failures.forEach((failure) => console.error(`- ${failure}`));
+  process.exit(1);
+}
+
+console.log(`Frontend integration verification passed (${htmlFiles.length} HTML files checked).`);

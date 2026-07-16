@@ -1,7 +1,7 @@
 import { requireUser } from '../_shared/auth.ts';
 import { corsHeaders, handleCors } from '../_shared/cors.ts';
 import { HttpError, jsonResponse, toErrorMessage, toHttpError } from '../_shared/errors.ts';
-import { getActivePromptTemplate, rpc } from '../_shared/supabase.ts';
+import { assertFlowOwner, getActivePromptTemplate, rpc } from '../_shared/supabase.ts';
 import { renderPromptTemplate, stringifyPromptValue } from '../_shared/prompts.ts';
 import { runJsonCompletion } from '../_shared/openai.ts';
 import type { SupabaseEnv } from '../_shared/types.ts';
@@ -31,6 +31,7 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const flowId = readFlowId(body);
     if (!flowId) throw new HttpError(400, 'flowId is required');
+    await assertFlowOwner(runtime, flowId, user.id, 'ema');
 
     const context = await rpc<any>(runtime, 'get_ema_llm_context', { p_flow_id: flowId });
     const template = await getActivePromptTemplate(runtime, 'ema_interpretation');
