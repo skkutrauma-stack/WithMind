@@ -13,7 +13,16 @@
   html,body{width:100%;height:100%;margin:0;overflow:hidden}
   body{background:radial-gradient(120% 40% at 50% 0%,#E7DFFF,#FDF3FF 52%);font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;justify-content:center;align-items:center}
   button,select{font:inherit}
-  .screen{width:100%;height:100%;background:radial-gradient(120% 40% at 50% 0%,#E7DFFF,#FDF3FF 52%);border-radius:0;overflow:hidden;position:relative;box-shadow:none;display:flex;flex-direction:column;color:#4A3550}
+  .viewport{width:100vw;height:100vh;display:flex;justify-content:center;align-items:center;overflow:hidden}
+  .screen{
+    width:390px;height:844px;
+    transform:scale(var(--screen-scale, 1));
+    transform-origin:center center;
+    background:radial-gradient(120% 40% at 50% 0%,#E7DFFF,#FDF3FF 52%);
+    border-radius:46px;overflow:hidden;position:relative;
+    box-shadow:0 26px 64px -22px rgba(120,70,120,.4);
+    display:flex;flex-direction:column;color:#4A3550;
+  }
   .content{flex:1;padding:14px 24px 16px;display:flex;flex-direction:column;gap:18px;min-height:0}
   .setting-card{background:#fff;border-radius:22px;box-shadow:0 10px 24px -20px rgba(140,100,200,.6);overflow:hidden}
   .setting-row{width:100%;border:0;background:#fff;color:#4A3550;display:flex;align-items:center;justify-content:space-between;padding:17px 18px;cursor:pointer;text-align:left}
@@ -32,6 +41,13 @@
 <script>
   document.documentElement.dataset.scHoverScope = 'off';
   function go(url){ location.href = url; }
+  function fitScreen(){
+    const scale = Math.min(window.innerWidth / 390, window.innerHeight / 844, 1);
+    document.documentElement.style.setProperty('--screen-scale', scale.toFixed(4));
+  }
+  window.addEventListener('resize', fitScreen);
+  window.addEventListener('orientationchange', fitScreen);
+  fitScreen();
 </script>
 </head>
 <body>
@@ -40,6 +56,7 @@
 <meta name="design_doc_mode" content="canvas">
 </helmet>
 
+<div class="viewport">
 <div class="screen">
   <div aria-hidden="true" style="height:35px;flex:none"></div>
   <div class="content">
@@ -112,6 +129,7 @@
     <div class="nav-item" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:default"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-6l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" stroke="#C6B4D4" stroke-width="1.7" stroke-linejoin="round"/><circle cx="9" cy="11" r="1.1" fill="#C6B4D4"/><circle cx="12" cy="11" r="1.1" fill="#C6B4D4"/><circle cx="15" cy="11" r="1.1" fill="#C6B4D4"/></svg><span style="font:600 10px Pretendard;color:#C6B4D4">챗봇</span></div>
     <a class="nav-item" href="../safetyplan/home.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-decoration:none;color:inherit"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 20C5 15 4 9 7.5 7.5S12 9 12 9s1-2.6 4.5-1.5S19 15 12 20z" stroke="#C6B4D4" stroke-width="1.7" stroke-linejoin="round"/></svg><span style="font:600 10px Pretendard;color:#C6B4D4">SOS</span></a>
   </div>
+</div>
 </div>
 </x-dc>
 </body>
