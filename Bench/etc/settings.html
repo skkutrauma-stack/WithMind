@@ -45,12 +45,12 @@
   .time-select:focus{border-color:#A98BE8}
   .toast{position:absolute;z-index:30;left:50%;bottom:42px;display:none;transform:translateX(-50%);min-width:190px;padding:14px 20px;border-radius:18px;background:rgba(74,53,80,.94);color:#fff;text-align:center;font:700 14px Pretendard;box-shadow:0 12px 30px -14px rgba(50,35,55,.65)}
   .nav-item{transition:transform .16s ease, opacity .16s ease, color .16s ease;outline:none;-webkit-tap-highlight-color:transparent;background:transparent;border:0;box-shadow:none;appearance:none;-webkit-appearance:none;user-select:none}
-  .nav-item:hover{transform:translateY(-1px);background:transparent;box-shadow:none}
   .nav-item:active{transform:translateY(0) scale(.98)}
   .nav-item:focus,.nav-item:focus-visible{outline:none;box-shadow:none;background:transparent}
   .nav-item svg,.nav-item span{pointer-events:none}
 </style>
 <script>
+  document.documentElement.dataset.scHoverScope = 'off';
   function go(url){ location.href = url; }
 </script>
 </helmet>
