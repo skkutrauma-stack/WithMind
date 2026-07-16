@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;min-height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;display:flex;align-items:flex-start;justify-content:flex-start;background:#DED6CE}
+  .screen{width:390px;height:844px;border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);background:radial-gradient(120% 45% at 70% 0%,#DDEEFB,#FDF3FF 52%);color:#4A3550;display:flex;flex-direction:column}
+  .topbar{padding:14px 30px 6px;display:flex;align-items:center;gap:8px;flex:none}
+  .back-btn{border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center;transition:transform .16s ease,filter .16s ease}
+  .back-btn:hover{transform:translateY(-2px);filter:brightness(1.04)}
+  .content{flex:1;min-height:0;padding:12px 24px 26px;display:flex;flex-direction:column}
+  .eyebrow{margin:0 0 6px;font:700 12px Pretendard;color:#A98BE8}
+  h1{margin:0;font:400 29px/1.2 Jua,Pretendard;color:#4A3550}
+  .intro{margin:7px 0 16px;font:500 13px/1.5 Pretendard;color:#9A7FAD}
+  .assessment-list{display:flex;flex-direction:column;gap:11px}
+  .assessment-card{background:#fff;border-radius:22px;padding:15px 16px 14px;box-shadow:0 10px 24px -18px rgba(140,100,200,.5)}
+  .assessment-card h2{margin:0 0 13px;font:400 17px/1.35 Jua,Pretendard;color:#4A3550}
+  .scale{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 2px}
+  .scale-button{width:42px;height:42px;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer;border-radius:50%;transition:transform .14s ease,filter .14s ease}
+  .scale-button:hover{transform:translateY(-2px) scale(1.08);filter:saturate(1.08)}
+  .scale-button:focus-visible{outline:3px solid rgba(169,139,232,.35);outline-offset:2px}
+  .dot{display:block;border-radius:50%;background:#E5D7F3;transition:width .14s ease,height .14s ease,background .14s ease,box-shadow .14s ease}
+  .scale-button:nth-child(1) .dot{width:16px;height:16px}
+  .scale-button:nth-child(2) .dot{width:20px;height:20px}
+  .scale-button:nth-child(3) .dot{width:24px;height:24px}
+  .scale-button:nth-child(4) .dot{width:28px;height:28px}
+  .scale-button:nth-child(5) .dot{width:32px;height:32px}
+  .scale-button[aria-checked="true"] .dot{background:linear-gradient(135deg,#A98BE8,#7FA8F0);box-shadow:0 0 0 5px #E7DCF8,0 9px 18px -8px rgba(122,99,200,.75)}
+  .scale-labels{display:flex;justify-content:space-between;margin-top:10px;font:600 10px Pretendard;color:#B08FC0}
+  .footer{margin-top:auto;padding-top:14px}
+  .next-btn{border:none;width:100%;background:#D8C7F2;color:#fff;font:400 20px Jua,Pretendard;padding:15px 0;border-radius:22px;cursor:not-allowed;box-shadow:none;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease,background .16s ease}
+  .next-btn:not(:disabled):hover{transform:translateY(-2px) scale(1.012);filter:brightness(1.03);box-shadow:0 14px 28px -12px rgba(120,100,220,.8)}
+</style>
+</head>
+<body>
+<main class="screen">
+  <div aria-hidden="true" style="height:35px;flex:none"></div>
+  <div class="topbar">
+    <button class="back-btn" type="button" aria-label="약관 동의 화면으로 돌아가기" onClick="location.href='./agreement.html'">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="content">
+    <p class="eyebrow">처음 마음 상태 확인</p>
+    <h1>요즘의 나를<br>가볍게 알려줘</h1>
+    <p class="intro">정답은 없어. 지금 떠오르는 느낌에 가까운 점을 골라줘.</p>
+
+    <div class="assessment-list">
+      <section class="assessment-card" data-key="mood_score" data-value="">
+        <h2>지금 기분은 어때?</h2>
+        <div class="scale" role="radiogroup" aria-label="기분 점수">
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="기분 1점" data-value="1"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="기분 2점" data-value="2"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="기분 3점" data-value="3"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="기분 4점" data-value="4"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="기분 5점" data-value="5"><span class="dot"></span></button>
+        </div>
+        <div class="scale-labels"><span>매우 불편함</span><span>매우 편안함</span></div>
+      </section>
+
+      <section class="assessment-card" data-key="burden_score" data-value="">
+        <h2>요즘 얼마나 버겁게 느껴져?</h2>
+        <div class="scale" role="radiogroup" aria-label="버거움 점수">
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="버거움 1점" data-value="1"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="버거움 2점" data-value="2"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="버거움 3점" data-value="3"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="버거움 4점" data-value="4"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="버거움 5점" data-value="5"><span class="dot"></span></button>
+        </div>
+        <div class="scale-labels"><span>전혀 버겁지 않음</span><span>매우 버거움</span></div>
+      </section>
+
+      <section class="assessment-card" data-key="connection_score" data-value="">
+        <h2>사람들과 얼마나 연결되어 있다고 느껴?</h2>
+        <div class="scale" role="radiogroup" aria-label="연결감 점수">
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="연결감 1점" data-value="1"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="연결감 2점" data-value="2"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="연결감 3점" data-value="3"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="연결감 4점" data-value="4"><span class="dot"></span></button>
+          <button class="scale-button" type="button" role="radio" aria-checked="false" aria-label="연결감 5점" data-value="5"><span class="dot"></span></button>
+        </div>
+        <div class="scale-labels"><span>매우 혼자인 느낌</span><span>매우 연결된 느낌</span></div>
+      </section>
+    </div>
+
+    <div class="footer">
+      <button id="nextButton" class="next-btn" type="button" disabled>다음</button>
+    </div>
+  </div>
+</main>
+<script>
+  const cards = [...document.querySelectorAll('.assessment-card')];
+  const nextButton = document.getElementById('nextButton');
+
+  function syncNextButton() {
+    const complete = cards.every((card) => card.dataset.value !== '');
+    nextButton.disabled = !complete;
+    nextButton.style.background = complete ? 'linear-gradient(90deg,#A98BE8,#7FA8F0)' : '#D8C7F2';
+    nextButton.style.cursor = complete ? 'pointer' : 'not-allowed';
+    nextButton.style.boxShadow = complete ? '0 14px 28px -12px rgba(120,100,220,.8)' : 'none';
+  }
+
+  cards.forEach((card) => {
+    const buttons = [...card.querySelectorAll('.scale-button')];
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        card.dataset.value = button.dataset.value;
+        buttons.forEach((candidate) => {
+          candidate.setAttribute('aria-checked', String(candidate === button));
+        });
+        syncNextButton();
+      });
+    });
+  });
+
+  nextButton.addEventListener('click', () => {
+    if (nextButton.disabled) return;
+    const payload = {
+      mood_score: Number(document.querySelector('[data-key="mood_score"]').dataset.value),
+      burden_score: Number(document.querySelector('[data-key="burden_score"]').dataset.value),
+      connection_score: Number(document.querySelector('[data-key="connection_score"]').dataset.value)
+    };
+    try {
+      localStorage.setItem('baselineAssessment', JSON.stringify(payload));
+    } catch (error) {}
+    location.href = './safety_contact.html';
+  });
+
+  syncNextButton();
+</script>
+</body>
+</html>
