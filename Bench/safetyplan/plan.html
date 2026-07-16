@@ -17,6 +17,13 @@
   body{margin:0;background:#E7E9ED;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
   a{color:inherit}
   .frame{padding:0}
+  /* --- responsive fit (added to prevent clipping on Vercel/phones) --- */
+  html,body{margin:0;min-height:100%}
+  body{display:flex;justify-content:center;align-items:flex-start;overflow-x:hidden;overflow-y:auto}
+  @media (min-width:441px){body{padding:24px 0}}
+  @media (max-width:440px){
+    .page-shell,.frame>div,x-dc>section>div,x-dc>div{width:100vw!important;min-height:100dvh!important;height:auto!important;border-radius:0!important;box-shadow:none!important}
+  }
 </style>
 </helmet>
 <section class="frame">

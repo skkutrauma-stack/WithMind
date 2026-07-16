@@ -20,6 +20,13 @@
   .nav-item:hover{transform:translateY(-1px)}
   .nav-item:active{transform:translateY(0) scale(.98)}
   .nav-item svg,.nav-item span{pointer-events:none}
+  /* --- responsive fit (added to prevent clipping on Vercel/phones) --- */
+  html,body{margin:0;min-height:100%}
+  body{display:flex;justify-content:center;align-items:flex-start;overflow-x:hidden;overflow-y:auto}
+  @media (min-width:441px){body{padding:24px 0}}
+  @media (max-width:440px){
+    .page-shell,.frame>div,x-dc>section>div,x-dc>div{width:100vw!important;min-height:100dvh!important;height:auto!important;border-radius:0!important;box-shadow:none!important}
+  }
 </style>
 <script>
   function goWithSlide(el, href){
@@ -41,6 +48,10 @@
     <div>
       <p style="margin:0 0 4px;font:700 12px Pretendard;color:#A98BE8">Record flow</p>
       <h2 style="margin:0;font:400 20px Jua,Pretendard;color:#4A3550">EMA · 시작 화면</h2>
+    </div>
+    <div style="text-align:right">
+      <div style="font:700 14px Pretendard;color:#7A63C8">1 / 3</div>
+      <div style="margin-top:6px;width:110px;height:8px;border-radius:999px;background:#EDE4FA;overflow:hidden"><div style="width:34%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#A98BE8,#7FA8F0)"></div></div>
     </div>
   </div>
   <div style="flex:1;padding:6px 24px 22px;display:flex;flex-direction:column;gap:16px">

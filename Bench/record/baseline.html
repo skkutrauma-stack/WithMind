@@ -23,6 +23,13 @@
   .month-picker{position:relative;width:max-content}
   .month-select{appearance:none;-webkit-appearance:none;-moz-appearance:none;border:0;background:#fff;padding:10px 38px 10px 16px;border-radius:18px;box-shadow:0 8px 20px rgba(140,100,200,.12);font:400 15px Jua,Pretendard;color:#4A3550;cursor:pointer;outline:none}
   .month-picker::after{content:"⌄";position:absolute;right:16px;top:50%;transform:translateY(-52%);pointer-events:none;color:#9A7FAD;font:400 15px Jua,Pretendard}
+  /* --- responsive fit (added to prevent clipping on Vercel/phones) --- */
+  html,body{margin:0;min-height:100%}
+  body{display:flex;justify-content:center;align-items:flex-start;overflow-x:hidden;overflow-y:auto}
+  @media (min-width:441px){body{padding:24px 0}}
+  @media (max-width:440px){
+    .page-shell,.frame>div,x-dc>section>div,x-dc>div{width:100vw!important;min-height:100dvh!important;height:auto!important;border-radius:0!important;box-shadow:none!important}
+  }
 </style>
 <script>
   function goWithSlide(el, href){
