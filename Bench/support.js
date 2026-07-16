@@ -773,6 +773,26 @@
         if ((k === "value" || k === "checked") && v === void 0) {
           v = k === "checked" ? false : "";
         }
+        if (typeof v === "string" && k.startsWith("on")) {
+          const source = v.trim();
+          if (source) {
+            try {
+              // Preserve legacy inline handlers such as `location.href = ...`.
+              const inlineHandler = new Function(
+                "event",
+                "with (event && event.currentTarget ? event.currentTarget : window) { " + source + " }"
+              );
+              v = function(event) {
+                return inlineHandler(event);
+              };
+            } catch (e) {
+              console.error("[dc-runtime] failed to compile inline handler for", k, e);
+              v = void 0;
+            }
+          } else {
+            v = void 0;
+          }
+        }
         props[k] = v;
       }
       if (pseudoClasses.length) {

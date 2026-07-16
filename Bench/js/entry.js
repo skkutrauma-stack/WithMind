@@ -5,7 +5,13 @@ import { bindDailyPage } from './pages/daily.js';
 
 const runtimeConfigReady = import('../runtime-config.js')
   .catch(() => null)
-  .then(() => import('../runtime-config.local.js').catch(() => null));
+  .then(() => {
+    const host = typeof location !== 'undefined' ? String(location.hostname || '') : '';
+    const protocol = typeof location !== 'undefined' ? String(location.protocol || '') : '';
+    const isLocalHost = /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(host);
+    if (!isLocalHost && protocol !== 'file:') return null;
+    return import('../runtime-config.local.js').catch(() => null);
+  });
 const globalKey = '__withmindEntryLoaded';
 if (!globalThis[globalKey]) {
   globalThis[globalKey] = true;

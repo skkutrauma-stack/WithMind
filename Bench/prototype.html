@@ -61,19 +61,41 @@
       './etc/settings.html',
       './etc/feedback.html'
     ];
-    const frame = document.getElementById('frame');
-    let current = 0;
+  const frame = document.getElementById('frame');
+  let current = 0;
+  const resolvedFlow = flow.map((path) => new URL(path, document.baseURI).pathname.replace(/\\/g, '/'));
 
-    function setScreen(index) {
-      current = Math.max(0, Math.min(index, flow.length - 1));
-      frame.src = flow[current];
-    }
-
-    frame.addEventListener('load', () => {
+  function getFramePath() {
+    try {
+      return new URL(frame.contentWindow.location.href).pathname.replace(/\\/g, '/');
+    } catch (error) {
       try {
-        const doc = frame.contentDocument;
-        if (!doc || !doc.documentElement || !doc.body) return;
-        const isOnboarding = flow[current].includes('/onboarding/');
+        return new URL(frame.src, document.baseURI).pathname.replace(/\\/g, '/');
+      } catch (innerError) {
+        return '';
+      }
+    }
+  }
+
+  function syncCurrentFromFrame() {
+    const framePath = getFramePath();
+    const matchIndex = resolvedFlow.findIndex((path) => framePath.endsWith(path));
+    if (matchIndex >= 0) {
+      current = matchIndex;
+    }
+  }
+
+  function setScreen(index) {
+    current = Math.max(0, Math.min(index, flow.length - 1));
+    frame.src = flow[current];
+  }
+
+  frame.addEventListener('load', () => {
+    try {
+      syncCurrentFromFrame();
+      const doc = frame.contentDocument;
+      if (!doc || !doc.documentElement || !doc.body) return;
+      const isOnboarding = flow[current].includes('/onboarding/');
         doc.documentElement.style.margin = '0';
         doc.documentElement.style.padding = '0';
         doc.documentElement.style.width = '100%';
