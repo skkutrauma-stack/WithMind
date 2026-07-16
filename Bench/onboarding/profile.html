@@ -24,15 +24,15 @@
     background: #F3E9FB;
     color: #9A7FAD;
   }
-  .gender, .birth-trigger, .region-trigger, .next-btn {
+  .gender, .birth-trigger, .region-trigger, .education-trigger, .next-btn {
     transition: transform .16s ease, box-shadow .16s ease, filter .16s ease, background .16s ease, color .16s ease;
   }
-  .gender:hover, .birth-trigger:hover, .region-trigger:hover, .next-btn:hover, .back-btn:hover {
+  .gender:hover, .birth-trigger:hover, .region-trigger:hover, .education-trigger:hover, .next-btn:hover, .back-btn:hover {
     transform: translateY(-2px);
     filter: brightness(1.03);
     box-shadow: 0 16px 28px -18px rgba(120,90,180,.45);
   }
-  .gender:active, .birth-trigger:active, .region-trigger:active, .next-btn:active, .back-btn:active {
+  .gender:active, .birth-trigger:active, .region-trigger:active, .education-trigger:active, .next-btn:active, .back-btn:active {
     transform: translateY(0) scale(.995);
     filter: brightness(.99);
   }
@@ -141,11 +141,12 @@
     cursor: pointer;
   }
   .birth-option:hover { background: #F3E9FB; color: #7A63C8; transform: translateX(2px); }
-  .region-group {
+  .region-group, .education-group {
     position: relative;
-    margin-bottom: 16px;
   }
-  .region-trigger {
+  .region-group { margin-bottom: 22px; }
+  .education-group { margin-bottom: 16px; }
+  .region-trigger, .education-trigger {
     width: 100%;
     border: none;
     outline: none;
@@ -162,7 +163,7 @@
     justify-content: space-between;
     gap: 10px;
   }
-  .region-trigger::after {
+  .region-trigger::after, .education-trigger::after {
     content: "";
     width: 7px;
     height: 7px;
@@ -172,10 +173,11 @@
     flex:none;
     transition: transform .16s ease;
   }
-  .region-group[data-open="true"] .region-trigger::after {
+  .region-group[data-open="true"] .region-trigger::after,
+  .education-group[data-open="true"] .education-trigger::after {
     transform: rotate(-135deg) translateY(2px);
   }
-  .region-menu {
+  .region-menu, .education-menu {
     position: absolute;
     left: 0;
     right: 0;
@@ -190,8 +192,9 @@
     max-height: 240px;
     overflow: auto;
   }
-  .region-group[data-open="true"] .region-menu { display: block; }
-  .region-option {
+  .region-group[data-open="true"] .region-menu,
+  .education-group[data-open="true"] .education-menu { display: block; }
+  .region-option, .education-option {
     width: 100%;
     border: none;
     background: transparent;
@@ -202,7 +205,7 @@
     color: #4A3550;
     cursor: pointer;
   }
-  .region-option:hover { background: #F3E9FB; color: #7A63C8; transform: translateX(2px); }
+  .region-option:hover, .education-option:hover { background: #F3E9FB; color: #7A63C8; transform: translateX(2px); }
 </style>
 </head>
 <body>
@@ -355,6 +358,18 @@
       </div>
     </div>
 
+    <label style="font:600 12px Pretendard;color:#A98BE8;margin-bottom:10px">최종 학력</label>
+    <div class="education-group" data-open="false" data-value="">
+      <button class="education-trigger" type="button" aria-label="최종 학력 선택"><span class="education-display">최종 학력</span></button>
+      <div class="education-menu" role="listbox" aria-label="최종 학력 목록">
+        <button class="education-option" type="button" data-value="1">초등학교</button>
+        <button class="education-option" type="button" data-value="2">중학교</button>
+        <button class="education-option" type="button" data-value="3">고등학교</button>
+        <button class="education-option" type="button" data-value="4">대학교</button>
+        <button class="education-option" type="button" data-value="5">대학원 이상</button>
+      </div>
+    </div>
+
     <div style="flex:1"></div>
     <button class="next-btn" onClick="location.href='./agreement.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 21px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">다음</button>
   </div>
@@ -388,25 +403,42 @@
   });
 
   const regionGroup = document.querySelector('.region-group');
-  if (regionGroup) {
-    const regionTrigger = regionGroup.querySelector('.region-trigger');
-    const regionDisplay = regionGroup.querySelector('.region-display');
-    const regionOptions = [...regionGroup.querySelectorAll('.region-option')];
-    regionTrigger.addEventListener('click', (event) => {
+  const educationGroup = document.querySelector('.education-group');
+
+  function setupSingleSelect(group, selectors, fallback) {
+    if (!group) return;
+    const trigger = group.querySelector(selectors.trigger);
+    const display = group.querySelector(selectors.display);
+    const options = [...group.querySelectorAll(selectors.option)];
+    trigger.addEventListener('click', (event) => {
       event.stopPropagation();
-      regionGroup.dataset.open = String(regionGroup.dataset.open !== 'true');
+      const willOpen = group.dataset.open !== 'true';
+      closeAllBirthMenus();
+      if (regionGroup) regionGroup.dataset.open = 'false';
+      if (educationGroup) educationGroup.dataset.open = 'false';
+      group.dataset.open = String(willOpen);
     });
-    regionOptions.forEach((option) => {
+    options.forEach((option) => {
       option.addEventListener('click', (event) => {
         event.stopPropagation();
-        regionDisplay.textContent = option.dataset.value || '지역';
-        regionGroup.dataset.open = 'false';
+        group.dataset.value = option.dataset.value || '';
+        display.textContent = option.textContent.trim() || fallback;
+        group.dataset.open = 'false';
       });
     });
   }
+
+  setupSingleSelect(regionGroup, {
+    trigger: '.region-trigger', display: '.region-display', option: '.region-option'
+  }, '지역');
+  setupSingleSelect(educationGroup, {
+    trigger: '.education-trigger', display: '.education-display', option: '.education-option'
+  }, '최종 학력');
+
   document.addEventListener('click', () => {
     closeAllBirthMenus();
     if (regionGroup) regionGroup.dataset.open = 'false';
+    if (educationGroup) educationGroup.dataset.open = 'false';
   });
 </script>
 </x-dc>

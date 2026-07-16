@@ -71,9 +71,11 @@ create table if not exists public.education_levels (
 
 insert into public.education_levels (education_code, education_name, classification_group)
 values
-  (1, '중학교·고등학교 졸업', 1),
-  (2, '대학교 졸업', 2),
-  (3, '대학원 졸업', 2)
+  (1, '초등학교', 1),
+  (2, '중학교', 1),
+  (3, '고등학교', 1),
+  (4, '대학교', 2),
+  (5, '대학원 이상', 2)
 on conflict (education_code) do update
 set education_name = excluded.education_name,
     classification_group = excluded.classification_group;
@@ -85,6 +87,7 @@ create table if not exists public.profiles (
   nickname citext unique,
   birth_date date,
   education_code smallint references public.education_levels(education_code),
+  region_name text,
   registration_status text not null default 'draft'
     check (registration_status in ('draft', 'completed')),
   registration_completed_at timestamptz,
@@ -99,6 +102,7 @@ create table if not exists public.profiles (
       nickname is not null
       and birth_date is not null
       and education_code is not null
+      and region_name is not null
       and registration_completed_at is not null
     )
   ),
@@ -136,6 +140,7 @@ begin
     nickname,
     birth_date,
     education_code,
+    region_name,
     registration_status,
     registration_completed_at
   )
@@ -145,10 +150,12 @@ begin
     nullif(new.raw_user_meta_data ->> 'nickname', ''),
     nullif(new.raw_user_meta_data ->> 'birth_date', '')::date,
     nullif(new.raw_user_meta_data ->> 'education_code', '')::smallint,
+    nullif(new.raw_user_meta_data ->> 'region_name', ''),
     case
       when nullif(new.raw_user_meta_data ->> 'nickname', '') is not null
        and nullif(new.raw_user_meta_data ->> 'birth_date', '') is not null
        and nullif(new.raw_user_meta_data ->> 'education_code', '') is not null
+       and nullif(new.raw_user_meta_data ->> 'region_name', '') is not null
       then 'completed'
       else 'draft'
     end,
@@ -156,6 +163,7 @@ begin
       when nullif(new.raw_user_meta_data ->> 'nickname', '') is not null
        and nullif(new.raw_user_meta_data ->> 'birth_date', '') is not null
        and nullif(new.raw_user_meta_data ->> 'education_code', '') is not null
+       and nullif(new.raw_user_meta_data ->> 'region_name', '') is not null
       then now()
       else null
     end
@@ -197,11 +205,14 @@ create trigger on_auth_user_email_updated
 after update of email on auth.users
 for each row execute function public.sync_auth_user_email();
 
+drop function if exists public.complete_registration(uuid, text, date, smallint);
+
 create or replace function public.complete_registration(
   p_user_id uuid,
   p_nickname text,
   p_birth_date date,
-  p_education_code smallint
+  p_education_code smallint,
+  p_region_name text
 )
 returns void
 language plpgsql
@@ -213,10 +224,15 @@ begin
     raise exception 'nickname is required';
   end if;
 
+  if nullif(btrim(p_region_name), '') is null then
+    raise exception 'region_name is required';
+  end if;
+
   update public.profiles
      set nickname = p_nickname,
          birth_date = p_birth_date,
          education_code = p_education_code,
+         region_name = btrim(p_region_name),
          registration_status = 'completed',
          registration_completed_at = coalesce(registration_completed_at, now()),
          updated_at = now()
@@ -1705,8 +1721,8 @@ values
     "scale_slots":{"loneliness":1,"family_stress":2,"somatization":3,"dysfunctional_coping":4},
     "rules":[
       {"type_id":1,"when":"loneliness <= 5 and family_stress <= 2"},
-      {"type_id":2,"when":"loneliness <= 5 and family_stress > 2 and education_code <= 1"},
-      {"type_id":3,"when":"loneliness <= 5 and family_stress > 2 and education_code > 1"},
+      {"type_id":2,"when":"loneliness <= 5 and family_stress > 2 and education_group = 1"},
+      {"type_id":3,"when":"loneliness <= 5 and family_stress > 2 and education_group = 2"},
       {"type_id":4,"when":"loneliness > 5 and somatization <= 3"},
       {"type_id":5,"when":"loneliness > 5 and somatization > 3 and dysfunctional_coping <= 15"},
       {"type_id":6,"when":"loneliness > 5 and somatization > 3 and dysfunctional_coping > 15"}
@@ -1814,7 +1830,7 @@ declare
   v_total numeric;
   v_scoring_version_id bigint;
   v_algorithm_version_id bigint;
-  v_education_code smallint;
+  v_education_group smallint;
   v_loneliness numeric;
   v_family_stress numeric;
   v_somatization numeric;
@@ -1991,13 +2007,15 @@ begin
   v_somatization := v_scores.scale03;
   v_coping := v_scores.scale04;
 
-  select education_code
-    into v_education_code
-    from public.profiles
-   where user_id = v_flow.user_id;
+  select el.classification_group
+    into v_education_group
+    from public.profiles p
+    join public.education_levels el
+      on el.education_code = p.education_code
+   where p.user_id = v_flow.user_id;
 
-  if v_education_code is null then
-    raise exception 'education_code is required for classification';
+  if v_education_group is null then
+    raise exception 'education classification group is required for classification';
   end if;
 
   select algorithm_version_id
@@ -2015,8 +2033,8 @@ begin
   v_type_id :=
     case
       when v_loneliness <= 5 and v_family_stress <= 2 then 1
-      when v_loneliness <= 5 and v_family_stress > 2 and v_education_code <= 1 then 2
-      when v_loneliness <= 5 and v_family_stress > 2 and v_education_code > 1 then 3
+      when v_loneliness <= 5 and v_family_stress > 2 and v_education_group = 1 then 2
+      when v_loneliness <= 5 and v_family_stress > 2 and v_education_group = 2 then 3
       when v_loneliness > 5 and v_somatization <= 3 then 4
       when v_loneliness > 5 and v_somatization > 3 and v_coping <= 15 then 5
       when v_loneliness > 5 and v_somatization > 3 and v_coping > 15 then 6
@@ -3359,7 +3377,7 @@ end
 $$;
 
 -- Functions exposed only to server-side service_role, except is_app_admin used by RLS.
-revoke all on function public.complete_registration(uuid, text, date, smallint)
+revoke all on function public.complete_registration(uuid, text, date, smallint, text)
   from public, anon, authenticated;
 revoke all on function public.grant_app_admin_by_email(text, text)
   from public, anon, authenticated;
@@ -3399,7 +3417,7 @@ revoke all on function public.save_emi_ai_result(uuid, bigint, text)
   from public, anon, authenticated;
 
 grant execute on function public.is_app_admin(uuid) to authenticated;
-grant execute on function public.complete_registration(uuid, text, date, smallint) to service_role;
+grant execute on function public.complete_registration(uuid, text, date, smallint, text) to service_role;
 grant execute on function public.grant_app_admin_by_email(text, text) to service_role;
 grant execute on function public.start_activity_flow(uuid, text, uuid) to service_role;
 grant execute on function public.submit_baseline(uuid) to service_role;
