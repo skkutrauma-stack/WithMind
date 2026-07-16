@@ -77,7 +77,7 @@ if ($hasSql) {
 
   $instrumentRows = [regex]::Matches(
     $sql,
-    '(?m)^\s*\(1,\s*(?:[1-9]|[12][0-9]|3[01]),\s*(?:[1-9]|[12][0-9]|3[01]),\s*(?:[1-9]|[12][0-9]|3[01]),\s*true\)[,;]?$'
+    '(?m)^\s*\(1,\s*(?:[1-9]|[12][0-9]|3[01]),\s*(?:[1-9]|[12][0-9]|3[01]),\s*(?:[1-9]|[12][0-9]|3[01]),\s*true\)[,;]?\r?$'
   ).Count
   if ($instrumentRows -ne 31) {
     $failures.Add("Expected 31 active EMA instrument rows; found $instrumentRows")
