@@ -75,13 +75,25 @@ export function createSupabaseClient(overrides = {}) {
     isConfigured: config.configured,
     auth: {
       async signUp({ email, password, nickname }) {
-        const data = await authRequest(config, 'signup', {
-          email,
-          password,
-          data: { nickname },
+        if (!config.configured) throw new Error('Supabase is not configured');
+        const response = await fetch(resolveUrl(config.functionsUrl, 'auth-signup'), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ email, password, nickname }),
         });
-        if (data?.access_token) persistSession(data);
-        return data;
+        const data = await parseResponse(response);
+        if (!response.ok) {
+          const message = data?.error || data?.message || response.statusText;
+          const error = new Error(String(message));
+          error.code = data?.code || 'signup_failed';
+          throw error;
+        }
+        const session = data?.session || data;
+        if (session?.access_token) persistSession(session);
+        return session;
       },
       async signInWithPassword({ email, password }) {
         const data = await authRequest(config, 'token?grant_type=password', { email, password });

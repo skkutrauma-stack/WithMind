@@ -71,6 +71,12 @@ for (const name of ['ema-interpret', 'ema-reflection-question', 'emi-generate-qu
   if (!existsSync(join(root, `api/${name}.js`))) failures.push(`Vercel API proxy is missing ${name}`);
 }
 
+if (!existsSync(join(root, 'api/auth-signup.js'))) failures.push('Vercel API proxy is missing auth-signup');
+const supabaseClient = readFileSync(join(bench, 'js/supabase-client.js'), 'utf8');
+if (!supabaseClient.includes("resolveUrl(config.functionsUrl, 'auth-signup')")) {
+  failures.push('supabase-client.js must use the server-side auth-signup endpoint');
+}
+
 if (failures.length) {
   console.error('Frontend integration verification failed:');
   failures.forEach((failure) => console.error(`- ${failure}`));

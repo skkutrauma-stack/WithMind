@@ -29,6 +29,21 @@ function showError(doc, message) {
   globalThis.alert?.(message);
 }
 
+function friendlyAuthError(error) {
+  const code = String(error?.code || '').toLowerCase();
+  const message = String(error?.message || error || '');
+  if (code === 'email_already_registered' || /already registered|already exists/i.test(message)) {
+    return '이미 가입된 이메일이야. 로그인 화면에서 로그인해 줘.';
+  }
+  if (/rate limit|too many requests/i.test(message)) {
+    return '가입 요청이 잠시 몰렸어. 잠깐 기다린 뒤 다시 눌러 줘.';
+  }
+  if (/failed to fetch|networkerror|network request failed/i.test(message)) {
+    return '서버에 연결하지 못했어. 인터넷 연결을 확인하고 다시 시도해 줘.';
+  }
+  return message || '계정을 만들지 못했어. 잠시 후 다시 시도해 줘.';
+}
+
 function successful(response) {
   if (!response?.ok) throw new Error(response?.reason || response?.error || '저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
   return response.data ?? response;
@@ -42,7 +57,7 @@ function captureClick(button, handler) {
     try {
       await handler(event);
     } catch (error) {
-      showError(button.ownerDocument, error instanceof Error ? error.message : String(error));
+      showError(button.ownerDocument, friendlyAuthError(error));
       setBusy(button, false);
     }
   }, { capture: true });
@@ -57,14 +72,14 @@ function bindAccountPage(doc) {
     const email = text(emailInput?.value);
     const password = String(passwordInput?.value || '');
     const nickname = text(nicknameInput?.value);
-    if (!email || !password || !nickname) throw new Error('이메일, 비밀번호, 별명을 모두 입력해 주세요.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('이메일 형식을 확인해 주세요.');
-    if (password.length < 8) throw new Error('비밀번호는 8자 이상이어야 해요.');
+    if (!email || !password || !nickname) throw new Error('이메일, 비밀번호, 별명을 모두 입력해 줘.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('이메일 형식을 확인해 줘.');
+    if (password.length < 8) throw new Error('비밀번호는 8자 이상이어야 해.');
     setBusy(button, true, '계정 만드는 중...');
     updateOnboardingState({ account: { email, nickname } });
     const result = await getSupabaseClient().auth.signUp({ email, password, nickname });
     if (!result?.access_token) {
-      throw new Error('확인 메일을 보냈어요. 이메일 인증 후 로그인해 주세요.');
+      throw new Error('로그인 세션을 만들지 못했어. 다시 시도해 줘.');
     }
     location.href = './profile.html';
   });
