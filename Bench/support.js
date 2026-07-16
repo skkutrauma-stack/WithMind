@@ -204,6 +204,11 @@
       const s = doc.createElement("style");
       s.textContent = FULL_PAGE_CSS;
       doc.head.appendChild(s);
+      if (rootName === "settings") {
+        const t = doc.createElement("style");
+        t.textContent = `html,body{width:100%;height:100%;margin:0;overflow:hidden}#dc-root{position:fixed;inset:0;width:100vw;height:100vh}#dc-root>.sc-host{position:relative;width:100%;height:100%}`;
+        doc.head.appendChild(t);
+      }
     }
     const Root = runtime.getDC(rootName);
     const entry = runtime.registry.get(rootName);
