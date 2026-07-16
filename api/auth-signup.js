@@ -23,6 +23,24 @@ function isRegisteredUserError(error) {
   return Number(error?.status) === 422 || /already (?:been )?registered|already exists|user.*exists/i.test(message);
 }
 
+function isUnconfirmedUserError(error) {
+  return /email_not_confirmed|email not confirmed/i.test(String(error?.message || ''));
+}
+
+async function confirmExistingUser(env, email) {
+  const profiles = await requestJson(
+    env,
+    `/rest/v1/profiles?select=user_id&email=eq.${encodeURIComponent(email)}&limit=1`,
+    { method: 'GET' },
+  );
+  const userId = profiles?.[0]?.user_id;
+  if (!userId) throw httpError(409, '가입 정보를 찾지 못했어요. 다른 이메일로 다시 시도해 주세요.', 'unconfirmed_user_not_found');
+  await requestJson(env, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+    method: 'PUT',
+    body: JSON.stringify({ email_confirm: true }),
+  });
+}
+
 module.exports = async function authSignup(req, res) {
   if (req.method === 'OPTIONS') return sendJson(res, 204, {});
   if (req.method !== 'POST') return sendJson(res, 405, { ok: false, code: 'method_not_allowed', error: 'POST 요청만 지원합니다.' });
@@ -48,8 +66,15 @@ module.exports = async function authSignup(req, res) {
     try {
       const session = await createSession(env, email, password);
       return sendJson(res, 200, { ok: true, existing: true, session });
-    } catch {
-      // Continue when the credentials do not belong to an active account.
+    } catch (error) {
+      if (isUnconfirmedUserError(error)) {
+        // GoTrue checks the password before returning email_not_confirmed.
+        // Complete the interrupted confirmation, then issue the normal session.
+        await confirmExistingUser(env, email);
+        const session = await createSession(env, email, password);
+        return sendJson(res, 200, { ok: true, existing: true, recovered: true, session });
+      }
+      // Continue when the credentials do not belong to an existing account.
     }
 
     let user;
