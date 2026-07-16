@@ -1762,7 +1762,7 @@ insert into public.classification_types (
   type_id, node_code, internal_type_name, character_name, image_bucket, image_path
 )
 values
-  (1, 'Node 4', '평시관리형', '별 모으는 조약돌', 'character-images', 'types/type_01.png'),
+  (1, 'Node 4', '평시관리형', '볕 모으는 조약돌', 'character-images', 'types/type_01.png'),
   (2, 'Node 9', '가족압박형', '눌린 구름쿠션', 'character-images', 'types/type_02.png'),
   (3, 'Node 10', '가족부담형', '물 머금은 화분', 'character-images', 'types/type_03.png'),
   (4, 'Node 12', '고립중심형', '신호 찾는 라디오', 'character-images', 'types/type_04.png'),
