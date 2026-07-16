@@ -6,7 +6,7 @@
 
 - EMA 활성 문항은 31개이며, 원본 응답은 `ema_sessions.q001`~`q031`에 저장합니다. `q032`~`q100`은 이후 도구 버전을 위한 예비 슬롯입니다.
 - 사용자가 고른 세부감정은 `ema_session_emotions`에 1~3개까지 선택 순서와 함께 저장합니다.
-- 프로필의 인구통계 값은 성별/지역이 아니라 `education_code`(학력)입니다.
+- 프로필은 `education_code`(최종학력)와 `region_name`(거주지역)을 저장합니다. 학력은 화면의 5개 선택지와 동일합니다.
 - EMA 결과 유형은 화면의 임의 유형이 아니라 `classification_types`와 `ema_classifications`를 기준으로 표시합니다.
 - baseline은 기분, 버거움, 연결감 3개 점수로 저장합니다.
 - 알림 시각은 사용자가 설정한 `time` 값을 그대로 저장합니다.
@@ -42,13 +42,24 @@ select public.complete_registration(
   p_user_id        := 'AUTH_USER_UUID',
   p_nickname       := '마음이',
   p_birth_date     := date '2000-01-01',
-  p_education_code := 4
+  p_education_code := 4,
+  p_region_name    := '서울특별시'
 );
 ```
 
-`education_code`는 `education_levels` 기준정보의 값을 사용합니다. 화면은 이 목록을 조회해 선택지로 표시해야 합니다.
+`education_code`는 `education_levels` 기준정보의 값을 사용합니다.
 
-초기 baseline 활동을 만든 뒤 세 점수를 저장하고 제출합니다.
+| education_code | 화면 표시 | 분류 그룹 |
+|---:|---|---:|
+| 1 | 초등학교 | 1 |
+| 2 | 중학교 | 1 |
+| 3 | 고등학교 | 1 |
+| 4 | 대학교 | 2 |
+| 5 | 대학원 이상 | 2 |
+
+`region_name`은 `profile.html`에서 선택한 광역시·도 이름을 그대로 전달합니다. 초안 프로필에서는 비어 있을 수 있지만 가입 완료 시 학력과 거주지역이 모두 필요합니다.
+
+가입·동의 다음에는 `Bench/onboarding/baseline_assessment.html`에서 초기 baseline을 입력합니다. 화면 흐름은 `agreement.html → baseline_assessment.html → safety_contact.html → alert.html`입니다. 서버는 baseline 활동을 만든 뒤 세 점수를 저장하고 제출합니다.
 
 ```sql
 select public.start_activity_flow('AUTH_USER_UUID', 'baseline', null);
@@ -61,7 +72,7 @@ values ('BASELINE_FLOW_UUID', 'AUTH_USER_UUID', 4, 3, 2);
 select public.submit_baseline('BASELINE_FLOW_UUID');
 ```
 
-세 값은 모두 1~5입니다.
+세 값은 모두 1~5이며 화면 키와 DB 컬럼 이름은 동일합니다. 기분과 연결감은 점수가 높을수록 긍정 방향이고, 버거움은 점수가 높을수록 더 버거운 상태입니다.
 
 ## 5. 안전 계획과 알림 설정
 
@@ -118,17 +129,17 @@ select public.start_activity_flow('AUTH_USER_UUID', 'ema', null);
 
 ### 6.2 감정과 31문항 저장
 
-대분류 하나를 `ema_sessions.emotion_category_id`에, 세부감정 1~3개를 `ema_session_emotions`에 저장합니다.
+대분류 하나를 `ema_sessions.emotion_category_id`에, 세부감정 1~3개를 `ema_session_emotions`에 저장합니다. `q004`는 가정생활 만족도이며 최종학력은 EMA 응답이 아니라 `profiles.education_code`에서 별도로 가져옵니다.
 
 ```sql
 insert into public.ema_sessions (
   flow_id, user_id, instrument_version_id, emotion_category_id,
-  q001, q002, q003
+  q001, q002, q003, q004
   -- 같은 방식으로 q031까지 열을 추가
 )
 values (
   'EMA_FLOW_UUID', 'AUTH_USER_UUID', 1, 6,
-  2, 4, 1
+  2, 3, 1, 0
   -- 같은 방식으로 q031까지 값을 추가
 );
 
@@ -145,6 +156,8 @@ values
 
 모든 세부감정은 선택한 대분류에 속해야 합니다. 제출 시 필수 31문항, 척도 점수, 세부감정 1~3개를 다시 검증합니다.
 
+화면의 원형 선택 인덱스를 그대로 저장합니다. 외로움·가정생활 만족도·역기능적 대처 4점 문항은 `0~3`, PHQ-15 3점 문항은 `0~2`입니다. 척도 합계 범위는 외로움 `0~9`, 가정 스트레스 `0~3`, 신체화 `0~30`, 역기능적 대처 `0~36`입니다.
+
 ### 6.3 척도 점수와 제출
 
 현재 화면에서 산출한 척도 합계를 `ema_scale_scores`에 저장합니다. 서버의 `submit_ema`는 문항 응답으로 같은 점수를 다시 계산해 불일치를 거부하고, 6개 유형 중 하나를 `ema_classifications`에 저장합니다.
@@ -160,7 +173,7 @@ values (
 );
 ```
 
-실제 합계는 `ema_scoring_items`의 역채점과 가중치를 적용해 계산해야 하며, 위 숫자는 호출 형태를 보여주는 예시일 뿐입니다.
+실제 합계는 활성 instrument의 문항-척도 매핑에 따라 단순 합산하며, 위 숫자는 호출 형태를 보여주는 예시일 뿐입니다.
 
 ```sql
 select public.submit_ema('EMA_FLOW_UUID');
@@ -202,7 +215,7 @@ LLM 결과는 검증 후 `save_ema_ai_result`로 저장합니다. 과거 flow나
 8. `start_emi_flow(user_id, source_reflection_flow_id, gestalt_type_ids)` 호출
 9. `get_emi_llm_context`로 현재 EMA+성찰+선택 유형을 가져와 질문 5개 생성
 10. `save_emi_questions`로 질문 5개 저장
-11. 사용자가 질문 최대 2개를 선택하고 하나의 통합 응답을 작성
+11. 사용자가 질문 1개 또는 서로 다른 질문 2개를 선택하고 하나의 통합 응답을 작성
 12. `save_emi_response`로 선택 번호와 응답 저장
 13. `submit_emi` 후 AI 코멘트를 생성해 `save_emi_ai_result`로 저장
 
@@ -212,14 +225,14 @@ LLM 결과는 검증 후 `save_ema_ai_result`로 저장합니다. 과거 flow나
 select public.save_emi_response(
   p_flow_id := 'EMI_FLOW_UUID',
   p_selected_question_1_no := 1,
-  p_selected_question_2_no := 4,
-  p_combined_response := '두 질문을 함께 생각하며 작성한 사용자의 성찰 내용'
+  p_selected_question_2_no := null,
+  p_combined_response := '선택한 질문을 생각하며 작성한 사용자의 성찰 내용'
 );
 
 select public.submit_emi('EMI_FLOW_UUID');
 ```
 
-두 번째 질문을 고르지 않은 임시 저장은 가능하지만, 최종 제출에는 서로 다른 질문 2개와 비어 있지 않은 통합 응답이 필요합니다.
+두 번째 질문을 고르지 않으면 `save_emi_response`가 `selected_question_2_no = 0`을 자동 저장합니다. `0`은 “선택 안함”을 뜻합니다. 최종 제출에는 첫 번째 질문 1개와 비어 있지 않은 통합 응답이 필요하며, 두 번째 질문을 고른 경우 첫 번째와 달라야 합니다.
 
 ## 8. 주간 만족도와 의견
 
@@ -238,7 +251,7 @@ select public.save_weekly_feedback(
 
 | 목적 | 테이블 |
 |---|---|
-| 사용자 기본정보·학력 | `profiles`, `education_levels` |
+| 사용자 기본정보·학력·거주지역 | `profiles`, `education_levels` |
 | 기분·버거움·연결감 baseline | `baseline_assessments` |
 | 안전 연락처 문자열 | `safety_plans.contact_text` |
 | 사용자 알림 시각 | `notification_settings` |
@@ -259,6 +272,9 @@ select public.save_weekly_feedback(
 - 프런트엔드 번들에 `service_role` 키가 없는지 확인합니다.
 - Edge Function에서 로그인 사용자와 `p_user_id`/flow 소유자가 같은지 확인합니다.
 - EMA 화면이 활성 instrument의 31문항을 모두 렌더링하고 누락 응답을 막는지 확인합니다.
+- `q004`가 가정생활 만족도이고 4점 문항 응답이 `0~3`으로 저장되는지 확인합니다.
+- 가입 완료 시 `education_code`와 `region_name`이 모두 저장되는지 확인합니다.
+- EMI 질문을 하나만 고르면 두 번째 선택 번호가 `0`으로 저장되는지 확인합니다.
 - 결과 화면이 `ema_classifications.type_id`를 기준으로 유형·캐릭터를 표시하는지 확인합니다.
 - 세부감정 네 번째 선택을 화면에서 막고 DB 오류도 사용자 친화적으로 처리합니다.
 - 알림 시간이 사용자가 고른 값 그대로 재조회되는지 확인합니다.
