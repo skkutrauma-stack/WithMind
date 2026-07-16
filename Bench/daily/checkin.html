@@ -3,7 +3,7 @@
   <div aria-hidden="true" style="height:35px;flex:none"></div>
   <div class="content">
     <div class="topline" style="margin-bottom:8px">
-      <button onClick="location.href='./emotion-subcategory.html'" class="back" type="button" aria-label="뒤로 가기"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.5 2.5L4 7l4.5 4.5" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button onClick="history.back()" class="back" type="button" aria-label="뒤로 가기"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.5 2.5L4 7l4.5 4.5" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
   <div style="padding-top:0;padding-bottom:8px">
       <p style="margin:0 0 5px;font:700 12px Pretendard;color:#A98BE8">오늘의 EMA</p>
@@ -75,6 +75,34 @@
   const selectedAnswers = [];
   const nextButton = document.getElementById('nextButton');
 
+  const storageKey = 'checkinAnswers';
+  const navType = performance.getEntriesByType('navigation')[0]?.type || 'navigate';
+
+  if (navType !== 'back_forward') {
+    try {
+      sessionStorage.removeItem(storageKey);
+    } catch (e) {}
+  }
+
+  function persistAnswers() {
+    try {
+      sessionStorage.setItem(storageKey, JSON.stringify(selectedAnswers));
+    } catch (e) {}
+  }
+
+  function loadSavedAnswers() {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
+      if (Array.isArray(saved)) {
+        saved.forEach((value, index) => {
+          if (typeof value === 'number') {
+            selectedAnswers[index] = value;
+          }
+        });
+      }
+    } catch (e) {}
+  }
+
   function styleDot(dot, active) {
     const card = dot.closest('.qcard');
     const points = card ? Number(card.dataset.points) : 4;
@@ -83,16 +111,29 @@
     dot.style.boxShadow = active ? conf.shadow : 'none';
   }
 
+  function syncNextButtonState() {
+    const cards = [...questionList.querySelectorAll('.qcard')];
+    const answeredCount = cards.filter((card) => card.querySelector('.dot[data-active="true"]')).length;
+    const allAnswered = answeredCount === questions.length;
+    nextButton.disabled = !allAnswered;
+    nextButton.style.background = allAnswered ? 'linear-gradient(90deg,#A98BE8,#7FA8F0)' : '#D8C7F2';
+    nextButton.style.cursor = allAnswered ? 'pointer' : 'not-allowed';
+    nextButton.style.boxShadow = allAnswered ? '0 14px 28px -12px rgba(120,100,220,.8)' : 'none';
+  }
+
   function renderAllQuestions() {
     const total = questions.length;
     questionList.innerHTML = questions.map((q, index) => renderQuestionCard(q, index, total)).join('');
     const cards = [...questionList.querySelectorAll('.qcard')];
 
+    loadSavedAnswers();
+
     cards.forEach((card, index) => {
       const dots = [...card.querySelectorAll('.dot')];
       dots.forEach((dot) => {
-        dot.dataset.active = 'false';
-        styleDot(dot, false);
+        const isActive = selectedAnswers[index] === dots.indexOf(dot);
+        dot.dataset.active = String(isActive);
+        styleDot(dot, isActive);
         dot.addEventListener('click', () => {
           const wasSelected = dot.dataset.active === 'true';
           dots.forEach((d) => {
@@ -100,31 +141,22 @@
             styleDot(d, d === dot);
           });
           selectedAnswers[index] = wasSelected ? null : dots.indexOf(dot);
+          persistAnswers();
           const nextCard = cards[index + 1];
           if (nextCard && !wasSelected) {
             nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-          const allAnswered = selectedAnswers.filter((v) => v !== undefined && v !== null).length === questions.length;
-          nextButton.disabled = !allAnswered;
-          nextButton.style.background = allAnswered ? 'linear-gradient(90deg,#A98BE8,#7FA8F0)' : '#D8C7F2';
-          nextButton.style.cursor = allAnswered ? 'pointer' : 'not-allowed';
-          nextButton.style.boxShadow = allAnswered ? '0 14px 28px -12px rgba(120,100,220,.8)' : 'none';
+          syncNextButtonState();
         });
       });
     });
-
-    nextButton.disabled = true;
-    nextButton.style.background = '#D8C7F2';
-    nextButton.style.cursor = 'not-allowed';
-    nextButton.style.boxShadow = 'none';
+    syncNextButtonState();
   }
 
   nextButton.addEventListener('click', () => {
     const allAnswered = selectedAnswers.filter((v) => v !== undefined && v !== null).length === questions.length;
     if (!allAnswered) return;
-    try {
-      localStorage.setItem('checkinAnswers', JSON.stringify(selectedAnswers));
-    } catch (e) {}
+    persistAnswers();
     location.href = './mood-character.html';
   });
 

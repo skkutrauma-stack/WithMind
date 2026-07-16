@@ -76,8 +76,10 @@
       } catch (e) { /* ignore */ }
       try {
         const situationEl = document.getElementById('answeredSituation');
+        const selectedSituation = localStorage.getItem('selectedSituation') || '';
         const journalText = localStorage.getItem('journalText') || '';
-        if (situationEl) situationEl.textContent = journalText.trim() ? journalText : '';
+        const situationText = selectedSituation.trim() ? selectedSituation : journalText;
+        if (situationEl) situationEl.textContent = situationText.trim() ? situationText : '';
       } catch (e) { /* ignore */ }
     </script>
     <div id="answeredBox" style="background:#fff;border-radius:20px;padding:16px 16px;box-shadow:0 10px 24px -18px rgba(140,100,200,.5)">
@@ -92,6 +94,7 @@
           const listEl = document.getElementById('answeredList');
           // prefer URL params, then localStorage, then sessionStorage
           let qJson = null;
+          let selectedSituation = '';
           let journalText = '';
           try {
             const urlParams = new URLSearchParams(window.location.search);
@@ -104,16 +107,20 @@
               try { if ((!qJson || qJson === 'null') && sessionStorage.getItem('journalSelectedQuestions')) qJson = sessionStorage.getItem('journalSelectedQuestions'); } catch (e) {}
             }
             if (paramT !== null) {
-              journalText = paramT;
+              selectedSituation = paramT;
             } else {
+              selectedSituation = localStorage.getItem('selectedSituation') || '';
               journalText = localStorage.getItem('journalText') || '';
+              try { if ((!selectedSituation || selectedSituation === 'null') && sessionStorage.getItem('selectedSituation')) selectedSituation = sessionStorage.getItem('selectedSituation'); } catch (e) {}
               try { if ((!journalText || journalText === 'null') && sessionStorage.getItem('journalText')) journalText = sessionStorage.getItem('journalText'); } catch (e) {}
             }
           } catch (e) {
             // fallback to storage only
             qJson = localStorage.getItem('journalSelectedQuestions');
+            selectedSituation = localStorage.getItem('selectedSituation') || '';
             journalText = localStorage.getItem('journalText') || '';
             try { if ((!qJson || qJson === 'null') && sessionStorage.getItem('journalSelectedQuestions')) qJson = sessionStorage.getItem('journalSelectedQuestions'); } catch (e) {}
+            try { if ((!selectedSituation || selectedSituation === 'null') && sessionStorage.getItem('selectedSituation')) selectedSituation = sessionStorage.getItem('selectedSituation'); } catch (e) {}
             try { if ((!journalText || journalText === 'null') && sessionStorage.getItem('journalText')) journalText = sessionStorage.getItem('journalText'); } catch (e) {}
           }
           let qs = [];

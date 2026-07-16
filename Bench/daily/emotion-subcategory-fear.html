@@ -30,7 +30,6 @@ body{display:flex;justify-content:center;align-items:center;box-sizing:border-bo
 .option.is-active .dot{background:rgba(255,255,255,.22);box-shadow:inset 0 0 0 2px rgba(255,255,255,.5);color:#fff}
 .label{font:400 15px Jua,Pretendard;color:var(--accent-strong);transition:color .18s ease}
 .option.is-active .label{color:#fff}
-.option.wide{grid-column:1 / -1}
 .summary{background:rgba(255,255,255,.58);border-radius:16px;padding:13px 16px;margin-top:16px;font:400 15px Jua,Pretendard;color:#6A5A78;text-align:center;box-shadow:0 8px 18px -18px rgba(140,100,200,.5);min-height:24px}
 .summary strong{color:var(--accent-strong)}
 .footer{flex:1;display:flex;align-items:flex-end;padding-top:14px}
@@ -109,7 +108,7 @@ function renderOptions() {
   page.options.forEach((label, index) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'option' + (index === page.options.length - 1 ? ' wide' : '');
+    button.className = 'option';
     button.dataset.label = label;
     button.style.setProperty('--accent', page.accent);
     button.style.setProperty('--accent-strong', page.accentStrong);

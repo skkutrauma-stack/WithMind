@@ -1,13 +1,13 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet"><style>html,body{margin:0;width:100%;height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff;overflow:hidden}body{display:flex;justify-content:center;align-items:center;box-sizing:border-box}.back{transition:transform .14s ease,box-shadow .14s ease,filter .14s ease}.back:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 10px 18px -8px rgba(140,100,200,.7);filter:saturate(1.05)}.back:active{transform:translateY(0) scale(.98);box-shadow:0 6px 12px -8px rgba(140,100,200,.55)}.character-card{transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}.character-card:hover{transform:translateY(-2px);box-shadow:0 18px 36px -18px rgba(140,100,200,.7);filter:saturate(1.03)}.input-card{transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}.input-card:hover{transform:translateY(-1px);box-shadow:0 18px 34px -18px rgba(140,100,200,.66);filter:saturate(1.02)}.next-btn{transition:transform .14s ease,box-shadow .14s ease,filter .14s ease,opacity .14s ease}.next-btn:hover:not(:disabled){transform:translateY(-2px) scale(1.02);filter:saturate(1.05);box-shadow:0 18px 34px -12px rgba(120,100,220,.88)}.next-btn:active:not(:disabled){transform:translateY(0) scale(.99);box-shadow:0 12px 22px -12px rgba(120,100,220,.7)}</style></head><body>
+﻿<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet"><style>html,body{margin:0;width:100%;height:100%;font-family:Pretendard,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#f8f2ff;overflow:hidden}body{display:flex;justify-content:center;align-items:center;box-sizing:border-box}.back{transition:transform .14s ease,box-shadow .14s ease,filter .14s ease}.back:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 10px 18px -8px rgba(140,100,200,.7);filter:saturate(1.05)}.back:active{transform:translateY(0) scale(.98);box-shadow:0 6px 12px -8px rgba(140,100,200,.55)}.character-card{transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}.character-card:hover{transform:translateY(-2px);box-shadow:0 18px 36px -18px rgba(140,100,200,.7);filter:saturate(1.03)}.input-card{transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}.input-card:hover{transform:translateY(-1px);box-shadow:0 18px 34px -18px rgba(140,100,200,.66);filter:saturate(1.02)}.next-btn{transition:transform .14s ease,box-shadow .14s ease,filter .14s ease,opacity .14s ease}.next-btn:hover:not(:disabled){transform:translateY(-2px) scale(1.02);filter:saturate(1.05);box-shadow:0 18px 34px -12px rgba(120,100,220,.88)}.next-btn:active:not(:disabled){transform:translateY(0) scale(.99);box-shadow:0 12px 22px -12px rgba(120,100,220,.7)}</style></head><body>
 <div style="width:390px;height:844px;background:radial-gradient(120% 50% at 70% 4%,#FFD9E4,#FDF3FF 55%);border-radius:46px;overflow:hidden;position:relative;box-shadow:0 26px 64px -22px rgba(120,70,120,.4);display:flex;flex-direction:column;color:#4A3550">
   <div aria-hidden="true" style="height:35px;flex:none"></div>
 
   <div style="flex:1;padding:14px 26px 22px;display:flex;flex-direction:column;gap:16px">
     <div class="topline" style="margin-bottom:8px">
-      <button onClick="location.href='./emotion-subcategory.html'" class="back" style="width:34px;height:34px;border:none;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -6px rgba(140,100,200,.6);cursor:pointer;flex:none" type="button" aria-label="뒤로 가기"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.5 2.5L4 7l4.5 4.5" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button onClick="history.back()" class="back" style="width:34px;height:34px;border:none;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -6px rgba(140,100,200,.6);cursor:pointer;flex:none" type="button" aria-label="뒤로 가기"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.5 2.5L4 7l4.5 4.5" stroke="#9A7FAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
     <div><p style="margin:0 0 5px;font:700 12px Pretendard;color:#A98BE8">마음 유형</p><h1 style="margin:0;font:400 25px/1.3 Jua,Pretendard;color:#4A3550">이런 마음에 가까웠어</h1><p style="margin:6px 0 0;font:500 13px Pretendard;color:#9A7FAD">맞으면 그대로, 아니면 상황을 적어줘</p></div>
-    <div class="character-card" style="background:#fff;border-radius:26px;padding:20px 20px;box-shadow:0 14px 30px -20px rgba(140,100,200,.6)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="#FF7A9C"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg><span style="font:700 11px Pretendard;color:#B08FC0">감지된 유형</span></div><h2 id="moodCharacterName" style="margin:0 0 6px;font:400 22px Jua,Pretendard;color:#7A63C8">안도–회복형</h2><p style="margin:0;font:500 13px/1.55 Pretendard;color:#9A7FAD">긴장이 풀리며 마음이 가라앉는 결. 큰 일을 넘긴 뒤 찾아오는 편이야.</p></div>
+    <div class="character-card" style="background:#fff;border-radius:26px;padding:20px 20px;box-shadow:0 14px 30px -20px rgba(140,100,200,.6)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="#FF7A9C"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg><span style="font:700 11px Pretendard;color:#B08FC0">감지된 유형</span></div><div style="animation:floaty 4s ease-in-out infinite;display:flex;justify-content:center;align-items:center;margin-bottom:8px"><img src="../assets/02_characters/transparent_1024/character_sun_pebble_1024.png" alt="별 모으는 조약돌" style="width:132px;height:132px;object-fit:contain;display:block"></div><h2 id="moodCharacterName" style="margin:0 0 6px;font:400 22px Jua,Pretendard;color:#7A63C8">별 모으는 조약돌</h2><p style="margin:0;font:500 13px/1.55 Pretendard;color:#9A7FAD">조용히 빛을 모으고 있다가,<br>필요할 때 따뜻하게 건네주는 캐릭터예요.</p></div>
     <div class="input-card" style="background:#fff;border-radius:26px;padding:18px 18px;box-shadow:0 14px 30px -20px rgba(140,100,200,.6)"><p style="margin:0 0 5px;font:700 12px Pretendard;color:#B08FC0">상황</p><p style="margin:0 0 12px;font:400 17px Jua,Pretendard;color:#4A3550">무슨 일이 있었길래 그랬을까?</p><textarea id="situationInput" placeholder="예) 발표가 끝나고 나서야 겨우 숨이 쉬어졌어…" style="width:100%;min-height:120px;border:none;outline:none;background:#F7F1FC;border-radius:16px;padding:15px 15px;box-sizing:border-box;resize:none;font:500 13px/1.6 Pretendard;color:#4A3550"></textarea></div>
     <div style="flex:1"></div>
     <button id="nextBtn" class="next-btn" disabled style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 20px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:not-allowed;opacity:0.6;box-shadow:0 14px 28px -12px rgba(120,100,220,.8)">다음</button>
@@ -33,8 +33,30 @@
         btn.style.opacity = ok ? '1' : '0.6';
       }
     }
-    if(ta){ ta.addEventListener('input', update); update(); }
-    if(btn){ btn.addEventListener('click', ()=>{ if(!btn.disabled) location.href='./hardness-check.html'; }); }
+    if(ta){
+      try {
+        const savedSituation = localStorage.getItem('selectedSituation');
+        if (savedSituation) ta.value = savedSituation;
+      } catch (e) { /* ignore */ }
+      ta.addEventListener('input', () => {
+        try {
+          localStorage.setItem('selectedSituation', ta.value);
+        } catch (e) { /* ignore */ }
+        update();
+      });
+      update();
+    }
+    if(btn){
+      btn.addEventListener('click', ()=>{
+        if(!btn.disabled) {
+          try {
+            localStorage.setItem('selectedSituation', ta ? ta.value : '');
+          } catch (e) { /* ignore */ }
+          location.href='./hardness-check.html';
+        }
+      });
+    }
   })();
 </script>
 </body></html>
+
