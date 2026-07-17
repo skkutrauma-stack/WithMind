@@ -203,10 +203,17 @@ function bindSafetyContactPage(doc) {
       contactText: text(fields[2]?.value),
     };
     if (!payload.warningSigns || !payload.calmingMethods) throw new Error('위험 신호와 진정 방법을 입력해 주세요.');
+    updateOnboardingState({ safetyPlan: { ...payload, updatedAt: new Date().toISOString() } });
+
+    const session = getSupabaseClient().auth.getSession();
+    if (!session?.access_token) {
+      location.href = destination;
+      return;
+    }
+
     setBusy(saveButton, true, '저장 중...');
     const data = successful(await saveSafetyPlan(payload));
     updateFlowIds({ safetyPlan: data.flow_id });
-    updateOnboardingState({ safetyPlan: { ...payload, updatedAt: new Date().toISOString() } });
     location.href = destination;
   });
   captureClick(skipButton, async () => {

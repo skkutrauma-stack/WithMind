@@ -71,6 +71,10 @@ const safetyPlanPage = readFileSync(join(bench, 'safetyplan/plan.html'), 'utf8')
 for (const field of ['warningSigns', 'calmingMethods', 'contactText']) {
   if (!safetyPlanPage.includes(`data-safety-value="${field}"`)) failures.push(`safetyplan/plan.html is missing ${field}`);
 }
+const onboardingPageLogic = readFileSync(join(bench, 'js/pages/onboarding.js'), 'utf8');
+if (!onboardingPageLogic.includes('if (!session?.access_token)')) {
+  failures.push('safety_contact must preserve local safety-plan edits without an auth session');
+}
 
 for (const name of ['ema-interpret', 'ema-reflection-question', 'emi-generate-questions', 'emi-comment']) {
   const source = readFileSync(join(root, `supabase/functions/${name}/index.ts`), 'utf8');
