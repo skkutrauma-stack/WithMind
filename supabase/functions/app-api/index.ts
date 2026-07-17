@@ -88,6 +88,14 @@ async function handleAction(action: string, payload: Record<string, unknown>, us
       return { profile };
     }
 
+    case 'get_safety_plan': {
+      const safetyPlan = await selectOne<Record<string, unknown>>(
+        runtime,
+        `/rest/v1/safety_plans?select=flow_id,warning_signs,calming_methods,contact_text,created_at,updated_at&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
+      );
+      return { safety_plan: safetyPlan };
+    }
+
     case 'accept_consent': {
       const accepted = pick(payload, 'accepted');
       if (accepted !== true) throw new HttpError(400, 'all consent items must be accepted');
@@ -153,9 +161,14 @@ async function handleAction(action: string, payload: Record<string, unknown>, us
         warning_signs: warningSigns,
         calming_methods: calmingMethods,
         contact_text: contactText,
-      }, { returning: false });
+      }, { upsert: true, onConflict: 'user_id', returning: false });
       await completeFlow(runtime, flowId, userId);
-      return { flow_id: flowId };
+      return {
+        flow_id: flowId,
+        warning_signs: warningSigns,
+        calming_methods: calmingMethods,
+        contact_text: contactText,
+      };
     }
 
     case 'start_ema': {

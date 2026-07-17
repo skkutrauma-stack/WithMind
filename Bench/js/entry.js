@@ -2,6 +2,7 @@ import { applyPageStatus, describePage, renderStatusText } from './page-status.j
 import { patchFlowState, updatePageState } from './flow-state.js';
 import { bindOnboardingPage } from './pages/onboarding.js';
 import { bindDailyPage } from './pages/daily.js';
+import { bindSafetyPlanPage } from './pages/safetyplan.js';
 
 const runtimeConfigReady = import('../runtime-config.js')
   .catch(() => null)
@@ -65,6 +66,11 @@ if (!globalThis[globalKey]) {
 
     if (page.section === 'daily') {
       bindDailyPage(document);
+      return;
+    }
+
+    if (page.section === 'safetyplan') {
+      bindSafetyPlanPage(document);
     }
   };
 

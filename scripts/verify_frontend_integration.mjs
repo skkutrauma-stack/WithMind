@@ -35,6 +35,7 @@ const requiredEntryPages = [
   'onboarding/agreement.html',
   'onboarding/baseline_assessment.html',
   'onboarding/safety_contact.html',
+  'safetyplan/plan.html',
   'daily/emotion-card-main.html',
   'daily/checkin.html',
   'daily/mood-character.html',
@@ -58,8 +59,17 @@ for (const workflow of ['ema-interpret', 'ema-reflection-question', 'emi-generat
 }
 
 const appApi = readFileSync(join(root, 'supabase/functions/app-api/index.ts'), 'utf8');
-for (const action of ['accept_consent', 'submit_baseline_values', 'save_safety_plan', 'start_ema', 'save_ema_answers']) {
+for (const action of ['accept_consent', 'submit_baseline_values', 'get_safety_plan', 'save_safety_plan', 'start_ema', 'save_ema_answers']) {
   if (!appApi.includes(`case '${action}'`)) failures.push(`app-api is missing ${action}`);
+}
+
+const vercelAppApi = readFileSync(join(root, 'api/app-api.js'), 'utf8');
+if (!vercelAppApi.includes("if (action === 'get_safety_plan')")) failures.push('Vercel app-api is missing get_safety_plan');
+if (!vercelAppApi.includes("{ upsert: true, onConflict: 'user_id' }")) failures.push('Vercel app-api must upsert safety plans by user_id');
+
+const safetyPlanPage = readFileSync(join(bench, 'safetyplan/plan.html'), 'utf8');
+for (const field of ['warningSigns', 'calmingMethods', 'contactText']) {
+  if (!safetyPlanPage.includes(`data-safety-value="${field}"`)) failures.push(`safetyplan/plan.html is missing ${field}`);
 }
 
 for (const name of ['ema-interpret', 'ema-reflection-question', 'emi-generate-questions', 'emi-comment']) {

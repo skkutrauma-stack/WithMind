@@ -1,6 +1,7 @@
 import {
   acceptConsent,
   completeRegistration,
+  getSafetyPlan,
   saveSafetyPlan,
   submitBaselineValues,
 } from '../app-api.js';
@@ -152,8 +153,50 @@ function bindBaselinePage(doc) {
 function bindSafetyContactPage(doc) {
   const saveButton = doc.querySelector('.primary-btn');
   const skipButton = doc.querySelector('.ghost-btn');
+  const backButton = doc.querySelector('.back-btn');
+  const fields = [...doc.querySelectorAll('textarea, input')];
+  const params = new URLSearchParams(location.search);
+  const editing = params.get('mode') === 'edit' || params.get('return') === 'safetyplan';
+  const destination = editing ? '../safetyplan/plan.html' : './alert.html';
+  let dirty = false;
+
+  const normalizePlan = (value = {}) => ({
+    warningSigns: text(value.warningSigns ?? value.warning_signs),
+    calmingMethods: text(value.calmingMethods ?? value.calming_methods),
+    contactText: text(value.contactText ?? value.contact_text),
+  });
+  const fillFields = (value) => {
+    const plan = normalizePlan(value);
+    const values = [plan.warningSigns, plan.calmingMethods, plan.contactText];
+    fields.forEach((field, index) => {
+      if (field) field.value = values[index] || '';
+    });
+    return plan;
+  };
+
+  fillFields(readFlowState().onboarding?.safetyPlan || {});
+  fields.forEach((field) => field.addEventListener('input', () => { dirty = true; }));
+
+  if (editing) {
+    const title = doc.querySelector('[data-safety-title]');
+    const description = doc.querySelector('[data-safety-description]');
+    if (title) title.innerHTML = '안전 계획을<br>수정해보자';
+    if (description) description.textContent = '바꾼 내용은 안전 계획 화면에 바로 반영돼';
+    if (saveButton) saveButton.textContent = '수정 내용 저장';
+    if (skipButton) skipButton.textContent = '수정 취소';
+    captureClick(backButton, async () => { location.href = destination; });
+  }
+
+  getSafetyPlan()
+    .then((response) => successful(response))
+    .then((data) => {
+      if (!data?.safety_plan || dirty) return;
+      const plan = fillFields(data.safety_plan);
+      updateOnboardingState({ safetyPlan: plan });
+    })
+    .catch(() => null);
+
   captureClick(saveButton, async () => {
-    const fields = [...doc.querySelectorAll('textarea, input')];
     const payload = {
       warningSigns: text(fields[0]?.value),
       calmingMethods: text(fields[1]?.value),
@@ -163,10 +206,11 @@ function bindSafetyContactPage(doc) {
     setBusy(saveButton, true, '저장 중...');
     const data = successful(await saveSafetyPlan(payload));
     updateFlowIds({ safetyPlan: data.flow_id });
-    location.href = './alert.html';
+    updateOnboardingState({ safetyPlan: { ...payload, updatedAt: new Date().toISOString() } });
+    location.href = destination;
   });
   captureClick(skipButton, async () => {
-    location.href = './alert.html';
+    location.href = destination;
   });
 }
 

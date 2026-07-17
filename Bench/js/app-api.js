@@ -37,6 +37,10 @@ export async function getOnboardingStatus(payload = {}, options = {}) {
   return call('onboarding_status', payload, options);
 }
 
+export async function getSafetyPlan(payload = {}, options = {}) {
+  return call('get_safety_plan', payload, options);
+}
+
 export async function acceptConsent(payload = { accepted: true }, options = {}) {
   return call('accept_consent', payload, options);
 }

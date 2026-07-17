@@ -62,6 +62,11 @@ async function handleAction(action, payload, userId, env) {
     return { profile };
   }
 
+  if (action === 'get_safety_plan') {
+    const safetyPlan = await selectOne(env, `/rest/v1/safety_plans?select=flow_id,warning_signs,calming_methods,contact_text,created_at,updated_at&user_id=eq.${encodeURIComponent(userId)}&limit=1`);
+    return { safety_plan: safetyPlan };
+  }
+
   if (action === 'complete_registration') {
     const common = {
       p_user_id: userId,
@@ -122,9 +127,14 @@ async function handleAction(action, payload, userId, env) {
     const contactText = text(pick(payload, 'contactText', 'contact_text'));
     if (!warningSigns || !calmingMethods) throw Object.assign(new Error('warning signs and calming methods are required'), { status: 400 });
     const flowId = await startFlow(env, userId, 'safety_plan');
-    await insertRows(env, 'safety_plans', { user_id: userId, flow_id: flowId, warning_signs: warningSigns, calming_methods: calmingMethods, contact_text: contactText });
+    await insertRows(
+      env,
+      'safety_plans',
+      { user_id: userId, flow_id: flowId, warning_signs: warningSigns, calming_methods: calmingMethods, contact_text: contactText },
+      { upsert: true, onConflict: 'user_id' },
+    );
     await completeFlow(env, flowId, userId);
-    return { flow_id: flowId };
+    return { flow_id: flowId, warning_signs: warningSigns, calming_methods: calmingMethods, contact_text: contactText };
   }
 
   if (action === 'start_ema') {
