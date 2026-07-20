@@ -17,6 +17,7 @@ const PAGE_TITLES = {
   journal: '일기',
   landing: '시작',
   login: '로그인',
+  'password-reset': '비밀번호 재설정',
   'mood-character': '캐릭터',
   'mood-type': '상황',
   profile: '프로필',

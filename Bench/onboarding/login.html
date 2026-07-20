@@ -84,6 +84,8 @@
     filter: saturate(1.04);
     color: #7A63C8;
   }
+  .login-error { margin:10px 0 0;text-align:center;color:#D85B66;font:600 12px/1.45 Pretendard;opacity:0;max-height:0;overflow:hidden;transition:opacity .2s ease,max-height .2s ease; }
+  .login-error.is-visible { opacity:1;max-height:70px; }
 </style>
 </head>
 <body>
@@ -112,11 +114,12 @@
     <input class="field" placeholder="you@email.com" style="margin-bottom:14px">
     <input class="field" type="password" placeholder="12345678" style="margin-bottom:10px">
 
-    <a href="#" style="align-self:flex-end;font:600 12px Pretendard;color:#9A7FAD;text-decoration:none;margin-bottom:28px">비밀번호를 잊었어? <b style="color:#A98BE8">찾기</b></a>
+    <a class="password-reset-link" href="./password-reset.html" style="align-self:flex-end;font:600 12px Pretendard;color:#9A7FAD;text-decoration:none;margin-bottom:28px">비밀번호를 잊었어? <b style="color:#A98BE8">찾기</b></a>
 
     <button class="login-btn" onClick="location.href='../home/home.html'" style="border:none;width:100%;background:linear-gradient(90deg,#A98BE8,#7FA8F0);color:#fff;font:400 21px Jua,Pretendard;padding:16px 0;border-radius:22px;cursor:pointer;box-shadow:0 14px 28px -12px rgba(120,100,220,.8);display:flex;align-items:center;justify-content:center;gap:8px">로그인
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
+    <p class="login-error" data-form-error aria-live="polite"></p>
 
     <div style="flex:1"></div>
     <p style="text-align:center;font:500 13px Pretendard;color:#9A7FAD">처음이야? <a class="login-link" href="./account.html" style="color:#A98BE8;font-weight:700;text-decoration:none">가입하기</a></p>

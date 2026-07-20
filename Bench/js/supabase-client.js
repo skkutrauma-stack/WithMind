@@ -100,6 +100,32 @@ export function createSupabaseClient(overrides = {}) {
         persistSession(data);
         return data;
       },
+      async resetPasswordForEmail(email, options = {}) {
+        const redirectTo = String(options.redirectTo || '').trim();
+        const path = redirectTo ? `recover?redirect_to=${encodeURIComponent(redirectTo)}` : 'recover';
+        return authRequest(config, path, { email: String(email || '').trim() });
+      },
+      async updatePassword({ password, accessToken }) {
+        if (!config.configured) throw new Error('Supabase is not configured');
+        const token = String(accessToken || '').trim();
+        if (!token) throw new Error('비밀번호 재설정 링크가 유효하지 않아요. 재설정 메일을 다시 요청해 주세요.');
+        const response = await fetch(`${config.authUrl}/user`, {
+          method: 'PUT',
+          headers: {
+            apikey: config.anonKey,
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ password }),
+        });
+        const data = await parseResponse(response);
+        if (!response.ok) {
+          const message = data?.msg || data?.message || data?.error_description || data?.error || response.statusText;
+          throw new Error(String(message));
+        }
+        return data;
+      },
       async signOut() {
         const token = (() => {
           try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null')?.access_token || ''; } catch { return ''; }

@@ -40,6 +40,9 @@ function friendlyAuthError(error) {
   if (/rate limit|too many requests/i.test(message)) {
     return '가입 요청이 잠시 몰렸어. 잠깐 기다린 뒤 다시 눌러 줘.';
   }
+  if (/invalid login credentials/i.test(message)) {
+    return '이메일 또는 비밀번호가 맞지 않아요. 비밀번호가 기억나지 않으면 비밀번호 찾기를 이용해 주세요.';
+  }
   if (/failed to fetch|networkerror|network request failed/i.test(message)) {
     return '서버에 연결하지 못했어. 인터넷 연결을 확인하고 다시 시도해 줘.';
   }
@@ -127,9 +130,15 @@ function bindAccountPage(doc) {
 function bindLoginPage(doc) {
   const button = doc.querySelector('.login-btn');
   const inputs = [...doc.querySelectorAll('input.field')];
+  const resetLink = doc.querySelector('.password-reset-link');
   const params = new URLSearchParams(location.search);
   const presetEmail = text(params.get('email')) || text(readFlowState().onboarding?.account?.email);
   if (presetEmail && inputs[0] && !text(inputs[0].value)) inputs[0].value = presetEmail;
+  resetLink?.addEventListener('click', (event) => {
+    event.preventDefault();
+    const email = text(inputs[0]?.value);
+    location.href = `./password-reset.html${email ? `?email=${encodeURIComponent(email)}` : ''}`;
+  });
   captureClick(button, async () => {
     const email = text(inputs[0]?.value);
     const password = String(inputs[1]?.value || '');
@@ -166,6 +175,56 @@ function bindProfilePage(doc) {
     successful(await completeRegistration({ nickname, genderCode, birthDate, educationCode, regionName }));
     updateOnboardingState({ profile: { nickname, genderCode, birthDate, educationCode, regionName, saved: true } });
     location.href = './agreement.html';
+  });
+}
+
+function bindPasswordResetPage(doc) {
+  const requestPanel = doc.querySelector('[data-reset-request]');
+  const updatePanel = doc.querySelector('[data-reset-update]');
+  const emailInput = doc.querySelector('.reset-email');
+  const requestButton = doc.querySelector('.reset-request-btn');
+  const passwordInput = doc.querySelector('.reset-password');
+  const confirmInput = doc.querySelector('.reset-confirm');
+  const updateButton = doc.querySelector('.reset-update-btn');
+  const status = doc.querySelector('[data-reset-status]');
+  const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const accessToken = text(hash.get('access_token'));
+  const recoveryMode = hash.get('type') === 'recovery' && Boolean(accessToken);
+
+  if (requestPanel) requestPanel.hidden = recoveryMode;
+  if (updatePanel) updatePanel.hidden = !recoveryMode;
+  const presetEmail = text(new URLSearchParams(location.search).get('email'));
+  if (presetEmail && emailInput) emailInput.value = presetEmail;
+
+  const setStatus = (message, error = false) => {
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.error = String(error);
+    status.classList.toggle('is-visible', error);
+  };
+
+  captureClick(requestButton, async () => {
+    const email = text(emailInput?.value);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('가입할 때 사용한 이메일을 정확히 입력해 주세요.');
+    setBusy(requestButton, true, '메일 보내는 중...');
+    const redirectTo = new URL('./password-reset.html', location.href).href;
+    await getSupabaseClient().auth.resetPasswordForEmail(email, { redirectTo });
+    try { localStorage.setItem('withmind:password-reset-email', email); } catch { /* ignore */ }
+    setBusy(requestButton, false);
+    setStatus('비밀번호 재설정 메일을 보냈어요. 메일의 링크를 열어 새 비밀번호를 설정해 주세요.');
+  });
+
+  captureClick(updateButton, async () => {
+    const password = String(passwordInput?.value || '');
+    const confirmation = String(confirmInput?.value || '');
+    if (password.length < 8) throw new Error('새 비밀번호는 8자 이상으로 입력해 주세요.');
+    if (password !== confirmation) throw new Error('새 비밀번호 확인이 일치하지 않아요.');
+    setBusy(updateButton, true, '변경하는 중...');
+    await getSupabaseClient().auth.updatePassword({ password, accessToken });
+    let email = '';
+    try { email = localStorage.getItem('withmind:password-reset-email') || ''; } catch { /* ignore */ }
+    globalThis.alert?.('비밀번호를 변경했어요. 새 비밀번호로 로그인해 주세요.');
+    location.href = `./login.html${email ? `?email=${encodeURIComponent(email)}` : ''}`;
   });
 }
 
@@ -274,6 +333,7 @@ export function bindOnboardingPage(doc = document) {
   const pageKey = doc?.documentElement?.dataset?.pageKey || '';
   if (pageKey === 'account') return bindAccountPage(doc);
   if (pageKey === 'login') return bindLoginPage(doc);
+  if (pageKey === 'password-reset') return bindPasswordResetPage(doc);
   if (pageKey === 'profile') return bindProfilePage(doc);
   if (pageKey === 'agreement') return bindAgreementPage(doc);
   if (pageKey === 'baseline_assessment') return bindBaselinePage(doc);

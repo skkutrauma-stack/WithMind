@@ -31,6 +31,7 @@ for (const file of htmlFiles) {
 const requiredEntryPages = [
   'onboarding/account.html',
   'onboarding/login.html',
+  'onboarding/password-reset.html',
   'onboarding/profile.html',
   'onboarding/agreement.html',
   'onboarding/baseline_assessment.html',
@@ -121,6 +122,16 @@ if (!existsSync(join(root, 'api/auth-signup.js'))) failures.push('Vercel API pro
 const supabaseClient = readFileSync(join(bench, 'js/supabase-client.js'), 'utf8');
 if (!supabaseClient.includes("resolveUrl(config.functionsUrl, 'auth-signup')")) {
   failures.push('supabase-client.js must use the server-side auth-signup endpoint');
+}
+if (!supabaseClient.includes("recover?redirect_to=${encodeURIComponent(redirectTo)}")) {
+  failures.push('supabase-client.js must support password recovery email redirects');
+}
+if (!supabaseClient.includes("fetch(`${config.authUrl}/user`")) {
+  failures.push('supabase-client.js must support updating a recovered password');
+}
+const loginPage = readFileSync(join(bench, 'onboarding/login.html'), 'utf8');
+if (!loginPage.includes('href="./password-reset.html"')) {
+  failures.push('onboarding/login.html must link to password recovery');
 }
 
 if (failures.length) {
