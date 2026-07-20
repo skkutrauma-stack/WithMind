@@ -375,73 +375,73 @@
   </div>
   </div>
 </div>
+</x-dc>
 <script>
-  const g = [...document.querySelectorAll('.gender')];
-  g.forEach((b, i) => b.addEventListener('click', () => g.forEach((x, j) => x.dataset.active = String(i === j))));
+  (() => {
+    const dropdownSelector = '.birth-group, .region-group, .education-group';
+    const triggerSelector = '.birth-trigger, .region-trigger, .education-trigger';
+    const optionSelector = '.birth-option, .region-option, .education-option';
 
-  const birthGroups = [...document.querySelectorAll('.birth-group')];
-  const closeAllBirthMenus = () => birthGroups.forEach((group) => group.dataset.open = 'false');
+    const closeDropdowns = (except = null) => {
+      document.querySelectorAll(dropdownSelector).forEach((group) => {
+        if (group === except) return;
+        group.dataset.open = 'false';
+        group.querySelector(triggerSelector)?.setAttribute('aria-expanded', 'false');
+      });
+    };
 
-  birthGroups.forEach((group) => {
-    const trigger = group.querySelector('.birth-trigger');
-    const display = group.querySelector('.birth-display');
-    const options = [...group.querySelectorAll('.birth-option')];
-    trigger.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const willOpen = group.dataset.open !== 'true';
-      closeAllBirthMenus();
-      group.dataset.open = String(willOpen);
-    });
-    options.forEach((option) => {
-      option.addEventListener('click', (event) => {
-        event.stopPropagation();
+    document.addEventListener('click', (event) => {
+      const gender = event.target.closest?.('.gender');
+      if (gender) {
+        document.querySelectorAll('.gender').forEach((button) => {
+          const active = button === gender;
+          button.dataset.active = String(active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        return;
+      }
+
+      const option = event.target.closest?.(optionSelector);
+      if (option) {
+        const group = option.closest(dropdownSelector);
+        const display = group?.querySelector('.birth-display, .region-display, .education-display');
+        if (!group || !display) return;
         const value = option.dataset.value || '';
-        display.textContent = value || (group.dataset.key === 'year' ? '년' : group.dataset.key === 'month' ? '월' : '일');
+        const fallback = group.classList.contains('region-group')
+          ? '지역'
+          : group.classList.contains('education-group')
+            ? '최종 학력'
+            : group.dataset.key === 'year' ? '년' : group.dataset.key === 'month' ? '월' : '일';
+        group.dataset.value = value;
+        display.textContent = value ? option.textContent.trim() : fallback;
+        group.querySelectorAll(optionSelector).forEach((item) => {
+          item.setAttribute('aria-selected', String(item === option));
+        });
         group.dataset.open = 'false';
-      });
+        group.querySelector(triggerSelector)?.setAttribute('aria-expanded', 'false');
+        return;
+      }
+
+      const trigger = event.target.closest?.(triggerSelector);
+      if (trigger) {
+        const group = trigger.closest(dropdownSelector);
+        if (!group) return;
+        const willOpen = group.dataset.open !== 'true';
+        closeDropdowns(group);
+        group.dataset.open = String(willOpen);
+        trigger.setAttribute('aria-haspopup', 'listbox');
+        trigger.setAttribute('aria-expanded', String(willOpen));
+        return;
+      }
+
+      closeDropdowns();
     });
-  });
 
-  const regionGroup = document.querySelector('.region-group');
-  const educationGroup = document.querySelector('.education-group');
-
-  function setupSingleSelect(group, selectors, fallback) {
-    if (!group) return;
-    const trigger = group.querySelector(selectors.trigger);
-    const display = group.querySelector(selectors.display);
-    const options = [...group.querySelectorAll(selectors.option)];
-    trigger.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const willOpen = group.dataset.open !== 'true';
-      closeAllBirthMenus();
-      if (regionGroup) regionGroup.dataset.open = 'false';
-      if (educationGroup) educationGroup.dataset.open = 'false';
-      group.dataset.open = String(willOpen);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeDropdowns();
     });
-    options.forEach((option) => {
-      option.addEventListener('click', (event) => {
-        event.stopPropagation();
-        group.dataset.value = option.dataset.value || '';
-        display.textContent = option.textContent.trim() || fallback;
-        group.dataset.open = 'false';
-      });
-    });
-  }
-
-  setupSingleSelect(regionGroup, {
-    trigger: '.region-trigger', display: '.region-display', option: '.region-option'
-  }, '지역');
-  setupSingleSelect(educationGroup, {
-    trigger: '.education-trigger', display: '.education-display', option: '.education-option'
-  }, '최종 학력');
-
-  document.addEventListener('click', () => {
-    closeAllBirthMenus();
-    if (regionGroup) regionGroup.dataset.open = 'false';
-    if (educationGroup) educationGroup.dataset.open = 'false';
-  });
+  })();
 </script>
 <script type="module" src="../js/entry.js"></script>
-</x-dc>
 </body>
 </html>

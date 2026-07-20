@@ -50,6 +50,18 @@ for (const page of requiredEntryPages) {
   if (!source.includes('js/entry.js')) failures.push(`${page} is missing js/entry.js`);
 }
 
+const profilePage = readFileSync(join(bench, 'onboarding/profile.html'), 'utf8');
+if (profilePage.indexOf('js/entry.js') < profilePage.lastIndexOf('</x-dc>')) {
+  failures.push('onboarding/profile.html must load entry.js outside the replaceable x-dc root');
+}
+if (!profilePage.includes("const dropdownSelector = '.birth-group, .region-group, .education-group'")) {
+  failures.push('onboarding/profile.html is missing persistent dropdown event delegation');
+}
+const entry = readFileSync(join(bench, 'js/entry.js'), 'utf8');
+if (!entry.includes('const bootWhenRendered = () =>')) {
+  failures.push('entry.js must wait for the design-component root before binding page events');
+}
+
 const runtime = readFileSync(join(bench, 'runtime-config.js'), 'utf8');
 if (!runtime.includes("functionsUrl: '/api'")) failures.push('runtime-config.js must target the authenticated Vercel API proxy');
 

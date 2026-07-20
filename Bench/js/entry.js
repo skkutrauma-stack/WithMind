@@ -75,10 +75,29 @@ if (!globalThis[globalKey]) {
   };
 
   const start = () => {
+    const bootWhenRendered = () => {
+      const dcRoot = document.querySelector('#dc-root');
+      if (dcRoot?.firstElementChild) {
+        boot();
+        return;
+      }
+      if (!document.querySelector('x-dc') && !dcRoot) {
+        boot();
+        return;
+      }
+
+      const observer = new MutationObserver(() => {
+        const renderedRoot = document.querySelector('#dc-root');
+        if (!renderedRoot?.firstElementChild) return;
+        observer.disconnect();
+        boot();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    };
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', boot, { once: true });
+      document.addEventListener('DOMContentLoaded', bootWhenRendered, { once: true });
     } else {
-      boot();
+      bootWhenRendered();
     }
   };
 
