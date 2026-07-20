@@ -19,6 +19,15 @@ import { getSupabaseClient } from '../supabase-client.js';
 
 const GESTALT_IDS = Object.freeze({ 반전: 1, 투사: 2, 내사: 3, 편향: 4, 자의식: 5, 융합: 6 });
 
+const CHARACTER_IMAGE_PATHS = Object.freeze({
+  1: '../assets/02_characters/transparent_1024/character_sun_pebble_1024.png',
+  2: '../assets/02_characters/transparent_1024/character_cloud_cushion_1024.png',
+  3: '../assets/02_characters/transparent_1024/character_water_pot_1024.png',
+  4: '../assets/02_characters/transparent_1024/character_radio_1024.png',
+  5: '../assets/02_characters/transparent_1024/character_tense_balloon_1024.png',
+  6: '../assets/02_characters/transparent_1024/character_tangled_earphones_1024.png',
+});
+
 function text(value) {
   return String(value ?? '').trim();
 }
@@ -159,9 +168,14 @@ async function bindMoodCharacter(doc) {
     if (name && nameEl) nameEl.textContent = name;
     if (comment) setComment(comment, 'ready');
     else setComment('저장된 AI 분석 결과가 없어요. 감정 검사를 다시 완료해 주세요.', 'empty');
-    if (result?.type?.image_bucket && result?.type?.image_path && imageEl) {
-      const base = getSupabaseClient().config.storageUrl;
-      imageEl.src = `${base}/object/public/${encodeURIComponent(result.type.image_bucket)}/${String(result.type.image_path).split('/').map(encodeURIComponent).join('/')}`;
+    if (imageEl) {
+      const localImagePath = CHARACTER_IMAGE_PATHS[Number(result?.type?.type_id)];
+      if (localImagePath) {
+        imageEl.src = localImagePath;
+      } else if (result?.type?.image_bucket && result?.type?.image_path) {
+        const base = getSupabaseClient().config.storageUrl;
+        imageEl.src = `${base}/object/public/${encodeURIComponent(result.type.image_bucket)}/${String(result.type.image_path).split('/').map(encodeURIComponent).join('/')}`;
+      }
       imageEl.alt = name || imageEl.alt;
     }
     if (!flowId && result?.analysis?.flow_id) setFlowId('ema', result.analysis.flow_id);

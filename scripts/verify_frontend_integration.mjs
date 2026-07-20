@@ -112,6 +112,12 @@ if (moodCharacter.includes('오늘은 마음이 비교적 편안했구나.')) {
 if (!moodCharacter.includes('data-ai-comment-state="loading"')) {
   failures.push('mood-character.html must expose the AI comment loading state');
 }
+for (const imageName of ['character_sun_pebble_1024.png', 'character_cloud_cushion_1024.png', 'character_water_pot_1024.png', 'character_radio_1024.png', 'character_tense_balloon_1024.png', 'character_tangled_earphones_1024.png']) {
+  if (!daily.includes(imageName)) failures.push(`daily.js is missing the local character image mapping for ${imageName}`);
+}
+if (!moodCharacter.includes('entry.js?v=20260720-character-images') || !entry.includes('daily.js?v=20260720-character-images')) {
+  failures.push('mood-character image scripts must bypass stale browser caches');
+}
 if (!daily.includes("getEmaResult(flowId ? { flowId } : {})")) {
   failures.push('mood-character must fall back to the latest stored EMA AI result');
 }
