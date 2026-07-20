@@ -1,6 +1,7 @@
 import {
   acceptConsent,
   completeRegistration,
+  getOnboardingStatus,
   getSafetyPlan,
   saveSafetyPlan,
   submitBaselineValues,
@@ -50,6 +51,35 @@ function successful(response) {
   return response.data ?? response;
 }
 
+function isExistingAccountError(error) {
+  const code = String(error?.code || '').toLowerCase();
+  const message = String(error?.message || error || '');
+  return code === 'email_already_registered' || /already registered|already exists/i.test(message);
+}
+
+function rememberRemoteProfile(profile, email = '') {
+  if (!profile) return null;
+  const nickname = text(profile.nickname);
+  const accountEmail = text(email) || text(readFlowState().onboarding?.account?.email);
+  updateOnboardingState({
+    account: { email: accountEmail, nickname },
+    profile: {
+      nickname,
+      genderCode: text(profile.gender_code),
+      birthDate: text(profile.birth_date),
+      educationCode: Number(profile.education_code || 0),
+      regionName: text(profile.region_name),
+      saved: profile.registration_status === 'completed',
+    },
+  });
+  return profile;
+}
+
+async function loadRemoteProfile(email = '') {
+  const data = successful(await getOnboardingStatus());
+  return rememberRemoteProfile(data?.profile, email);
+}
+
 function captureClick(button, handler) {
   if (!button || button.dataset.withmindBound === 'true') return;
   button.addEventListener('click', async (event) => {
@@ -78,7 +108,15 @@ function bindAccountPage(doc) {
     if (password.length < 8) throw new Error('비밀번호는 8자 이상이어야 해.');
     setBusy(button, true, '계정 만드는 중...');
     updateOnboardingState({ account: { email, nickname } });
-    const result = await getSupabaseClient().auth.signUp({ email, password, nickname });
+    let result;
+    try {
+      result = await getSupabaseClient().auth.signUp({ email, password, nickname });
+    } catch (error) {
+      if (!isExistingAccountError(error)) throw error;
+      updateOnboardingState({ account: { email, nickname } });
+      location.href = `./login.html?email=${encodeURIComponent(email)}&resume=profile`;
+      return;
+    }
     if (!result?.access_token) {
       throw new Error('로그인 세션을 만들지 못했어. 다시 시도해 줘.');
     }
@@ -89,6 +127,9 @@ function bindAccountPage(doc) {
 function bindLoginPage(doc) {
   const button = doc.querySelector('.login-btn');
   const inputs = [...doc.querySelectorAll('input.field')];
+  const params = new URLSearchParams(location.search);
+  const presetEmail = text(params.get('email')) || text(readFlowState().onboarding?.account?.email);
+  if (presetEmail && inputs[0] && !text(inputs[0].value)) inputs[0].value = presetEmail;
   captureClick(button, async () => {
     const email = text(inputs[0]?.value);
     const password = String(inputs[1]?.value || '');
@@ -96,7 +137,10 @@ function bindLoginPage(doc) {
     setBusy(button, true, '로그인 중...');
     await getSupabaseClient().auth.signInWithPassword({ email, password });
     updateOnboardingState({ login: { email, signedInAt: new Date().toISOString() } });
-    location.href = '../home/home.html';
+    const profile = await loadRemoteProfile(email);
+    location.href = profile?.registration_status === 'completed'
+      ? '../home/home.html'
+      : './profile.html?resume=1';
   });
 }
 
@@ -107,7 +151,12 @@ function bindProfilePage(doc) {
     const birth = [...doc.querySelectorAll('.birth-display')].map((node) => text(node.textContent));
     const regionName = text(doc.querySelector('.region-group')?.dataset.value);
     const educationCode = Number(doc.querySelector('.education-group')?.dataset.value || 0);
-    const nickname = text(readFlowState().onboarding?.account?.nickname);
+    let nickname = text(readFlowState().onboarding?.account?.nickname)
+      || text(readFlowState().onboarding?.profile?.nickname);
+    if (!nickname) {
+      const profile = await loadRemoteProfile();
+      nickname = text(profile?.nickname);
+    }
     const birthDate = birth.length === 3 ? `${birth[0]}-${birth[1].padStart(2, '0')}-${birth[2].padStart(2, '0')}` : '';
     if (!nickname) throw new Error('가입 단계의 별명 정보가 없어요. 계정 만들기부터 다시 진행해 주세요.');
     if (!genderCode || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || !regionName || !educationCode) {

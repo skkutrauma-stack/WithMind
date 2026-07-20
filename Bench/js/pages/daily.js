@@ -41,7 +41,13 @@ function setBusy(button, busy, label = '처리 중...') {
 }
 
 function showError(error) {
-  globalThis.alert?.(error instanceof Error ? error.message : String(error));
+  const message = error instanceof Error ? error.message : String(error);
+  if (/active completed user profile is required/i.test(message)) {
+    globalThis.alert?.('계정은 있지만 프로필 설정이 아직 완료되지 않았어요. 프로필을 저장한 뒤 다시 감정검사를 시작해 주세요.');
+    location.href = '../onboarding/profile.html?resume=ema';
+    return;
+  }
+  globalThis.alert?.(message);
 }
 
 function captureClick(button, handler) {

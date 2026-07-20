@@ -98,6 +98,15 @@ const onboardingPageLogic = readFileSync(join(bench, 'js/pages/onboarding.js'), 
 if (!onboardingPageLogic.includes('if (!session?.access_token)')) {
   failures.push('safety_contact must preserve local safety-plan edits without an auth session');
 }
+if (!onboardingPageLogic.includes("profile?.registration_status === 'completed'")) {
+  failures.push('login must resume onboarding when the authenticated profile is incomplete');
+}
+if (!onboardingPageLogic.includes('getOnboardingStatus')) {
+  failures.push('onboarding must load the authenticated profile status');
+}
+if (!daily.includes('/active completed user profile is required/i')) {
+  failures.push('daily EMA pages must recover incomplete authenticated profiles');
+}
 
 for (const name of ['ema-interpret', 'ema-reflection-question', 'emi-generate-questions', 'emi-comment']) {
   const source = readFileSync(join(root, `supabase/functions/${name}/index.ts`), 'utf8');
