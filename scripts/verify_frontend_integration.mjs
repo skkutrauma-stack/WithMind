@@ -112,6 +112,11 @@ if (!daily.includes("getEmaResult(flowId ? { flowId } : {})")) {
 const vercelAppApi = readFileSync(join(root, 'api/app-api.js'), 'utf8');
 if (!vercelAppApi.includes("if (action === 'get_safety_plan')")) failures.push('Vercel app-api is missing get_safety_plan');
 if (!vercelAppApi.includes("{ upsert: true, onConflict: 'user_id' }")) failures.push('Vercel app-api must upsert safety plans by user_id');
+if (!vercelAppApi.includes('isMissingExtendedProfileColumns')) failures.push('Vercel app-api must support the deployed legacy profile schema');
+if (!vercelAppApi.includes("result = await rpc(env, 'complete_registration', legacy)")) failures.push('Vercel app-api must support the deployed legacy registration RPC');
+
+const authSignup = readFileSync(join(root, 'api/auth-signup.js'), 'utf8');
+if (authSignup.includes("Number(error?.status) === 422")) failures.push('auth-signup must not report every validation error as an existing email');
 
 const safetyPlanPage = readFileSync(join(bench, 'safetyplan/plan.html'), 'utf8');
 for (const field of ['warningSigns', 'calmingMethods', 'contactText']) {

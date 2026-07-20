@@ -1,7 +1,7 @@
 import { requireUser } from '../_shared/auth.ts';
 import { corsHeaders, handleCors } from '../_shared/cors.ts';
 import { HttpError, jsonResponse, toErrorMessage, toHttpError } from '../_shared/errors.ts';
-import { insertRows, rpc, selectMany, selectOne, updateRows } from '../_shared/supabase.ts';
+import { insertRows, requestJson, rpc, selectMany, selectOne, updateRows } from '../_shared/supabase.ts';
 import type { SupabaseEnv } from '../_shared/types.ts';
 
 function env(): SupabaseEnv {
@@ -24,6 +24,35 @@ function pick(payload: Record<string, unknown>, ...keys: string[]) {
 
 function text(value: unknown) {
   return String(value ?? '').trim();
+}
+
+function isMissingExtendedProfileColumns(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  return /42703|column profiles\.(?:gender_code|region_name) does not exist/i.test(message);
+}
+
+async function loadOnboardingProfile(
+  runtime: SupabaseEnv,
+  userId: string,
+  userMetadata: Record<string, unknown> = {},
+) {
+  try {
+    return await selectOne<Record<string, unknown>>(
+      runtime,
+      `/rest/v1/profiles?select=user_id,nickname,gender_code,birth_date,education_code,region_name,registration_status&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
+    );
+  } catch (error) {
+    if (!isMissingExtendedProfileColumns(error)) throw error;
+    const profile = await selectOne<Record<string, unknown>>(
+      runtime,
+      `/rest/v1/profiles?select=user_id,nickname,birth_date,education_code,registration_status&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
+    );
+    return profile ? {
+      ...profile,
+      gender_code: text(userMetadata.gender_code),
+      region_name: text(userMetadata.region_name),
+    } : null;
+  }
 }
 
 function integer(value: unknown, label: string, min?: number, max?: number) {
@@ -78,13 +107,16 @@ function normalizeAnswers(value: unknown, allowPartial = false) {
   });
 }
 
-async function handleAction(action: string, payload: Record<string, unknown>, userId: string, runtime: SupabaseEnv) {
+async function handleAction(
+  action: string,
+  payload: Record<string, unknown>,
+  userId: string,
+  runtime: SupabaseEnv,
+  userMetadata: Record<string, unknown> = {},
+) {
   switch (action) {
     case 'onboarding_status': {
-      const profile = await selectOne<Record<string, unknown>>(
-        runtime,
-        `/rest/v1/profiles?select=user_id,nickname,gender_code,birth_date,education_code,region_name,registration_status&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
-      );
+      const profile = await loadOnboardingProfile(runtime, userId, userMetadata);
       return { profile };
     }
 
@@ -297,15 +329,38 @@ async function handleAction(action: string, payload: Record<string, unknown>, us
       return { emi };
     }
 
-    case 'complete_registration':
-      return await rpc(runtime, 'complete_registration', {
+    case 'complete_registration': {
+      const legacy = {
         p_user_id: userId,
         p_nickname: pick(payload, 'nickname', 'p_nickname'),
         p_birth_date: pick(payload, 'birthDate', 'birth_date', 'p_birth_date'),
         p_education_code: pick(payload, 'educationCode', 'education_code', 'p_education_code'),
-        p_region_name: pick(payload, 'regionName', 'region_name', 'p_region_name'),
-        p_gender_code: pick(payload, 'genderCode', 'gender_code', 'p_gender_code'),
-      });
+      };
+      const regionName = pick(payload, 'regionName', 'region_name', 'p_region_name');
+      const genderCode = pick(payload, 'genderCode', 'gender_code', 'p_gender_code');
+      try {
+        return await rpc(runtime, 'complete_registration', {
+          ...legacy,
+          p_region_name: regionName,
+          p_gender_code: genderCode,
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error || '');
+        if (!message.includes('PGRST202')) throw error;
+        const result = await rpc(runtime, 'complete_registration', legacy);
+        await requestJson(runtime, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            user_metadata: {
+              ...userMetadata,
+              gender_code: genderCode,
+              region_name: regionName,
+            },
+          }),
+        });
+        return result;
+      }
+    }
 
     case 'start_activity_flow':
       return await rpc(runtime, 'start_activity_flow', {
@@ -477,7 +532,7 @@ Deno.serve(async (req) => {
       throw new HttpError(400, 'action is required');
     }
 
-    const data = await handleAction(action, payload as Record<string, unknown>, user.id, runtime);
+    const data = await handleAction(action, payload as Record<string, unknown>, user.id, runtime, user.user_metadata || {});
     return jsonResponse({
       ok: true,
       action,

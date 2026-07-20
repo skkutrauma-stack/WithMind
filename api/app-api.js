@@ -21,6 +21,24 @@ function pick(payload, ...keys) {
 
 const text = (value) => String(value ?? '').trim();
 
+function isMissingExtendedProfileColumns(error) {
+  return /42703|column profiles\.(?:gender_code|region_name) does not exist/i.test(String(error?.message || ''));
+}
+
+async function loadOnboardingProfile(env, userId, userMetadata = {}) {
+  try {
+    return await selectOne(env, `/rest/v1/profiles?select=user_id,nickname,gender_code,birth_date,education_code,region_name,registration_status&user_id=eq.${encodeURIComponent(userId)}&limit=1`);
+  } catch (error) {
+    if (!isMissingExtendedProfileColumns(error)) throw error;
+    const profile = await selectOne(env, `/rest/v1/profiles?select=user_id,nickname,birth_date,education_code,registration_status&user_id=eq.${encodeURIComponent(userId)}&limit=1`);
+    return profile ? {
+      ...profile,
+      gender_code: text(userMetadata.gender_code),
+      region_name: text(userMetadata.region_name),
+    } : null;
+  }
+}
+
 function integer(value, label, min, max) {
   const result = Number(value);
   if (!Number.isInteger(result) || (min != null && result < min) || (max != null && result > max)) {
@@ -54,11 +72,11 @@ function completeFlow(env, flowId, userId) {
   return updateRows(env, 'activity_flows', { flow_id: flowId, user_id: userId }, { status: 'completed', submitted_at: now, completed_at: now });
 }
 
-async function handleAction(action, payload, userId, env) {
+async function handleAction(action, payload, userId, env, userMetadata = {}) {
   if (action === 'ping') return { ok: true, user_id: userId };
 
   if (action === 'onboarding_status') {
-    const profile = await selectOne(env, `/rest/v1/profiles?select=user_id,nickname,gender_code,birth_date,education_code,region_name,registration_status&user_id=eq.${encodeURIComponent(userId)}&limit=1`);
+    const profile = await loadOnboardingProfile(env, userId, userMetadata);
     return { profile };
   }
 
@@ -68,23 +86,33 @@ async function handleAction(action, payload, userId, env) {
   }
 
   if (action === 'complete_registration') {
-    const common = {
+    const legacy = {
       p_user_id: userId,
       p_nickname: pick(payload, 'nickname'),
       p_birth_date: pick(payload, 'birthDate', 'birth_date'),
       p_education_code: pick(payload, 'educationCode', 'education_code'),
-      p_region_name: pick(payload, 'regionName', 'region_name'),
     };
+    const regionName = pick(payload, 'regionName', 'region_name');
     const genderCode = pick(payload, 'genderCode', 'gender_code');
     let result;
     try {
-      result = await rpc(env, 'complete_registration', { ...common, p_gender_code: genderCode });
+      result = await rpc(env, 'complete_registration', {
+        ...legacy,
+        p_region_name: regionName,
+        p_gender_code: genderCode,
+      });
     } catch (error) {
       if (!String(error?.message || '').includes('PGRST202')) throw error;
-      result = await rpc(env, 'complete_registration', common);
+      result = await rpc(env, 'complete_registration', legacy);
       await requestJson(env, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
         method: 'PUT',
-        body: JSON.stringify({ user_metadata: { gender_code: genderCode } }),
+        body: JSON.stringify({
+          user_metadata: {
+            ...userMetadata,
+            gender_code: genderCode,
+            region_name: regionName,
+          },
+        }),
       });
     }
     return result;
@@ -262,7 +290,7 @@ module.exports = async function appApi(req, res) {
     const action = typeof body?.action === 'string' ? body.action : '';
     const payload = body?.payload && typeof body.payload === 'object' ? body.payload : {};
     if (!action) throw Object.assign(new Error('action is required'), { status: 400 });
-    const data = await handleAction(action, payload, user.id, env);
+    const data = await handleAction(action, payload, user.id, env, user.user_metadata || {});
     sendJson(res, 200, { ok: true, action, data, user_id: user.id });
   } catch (error) {
     sendJson(res, Number(error?.status || 500), { ok: false, error: error?.message || 'internal server error' });

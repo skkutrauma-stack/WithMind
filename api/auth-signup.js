@@ -20,7 +20,7 @@ async function createSession(env, email, password) {
 
 function isRegisteredUserError(error) {
   const message = String(error?.message || '');
-  return Number(error?.status) === 422 || /already (?:been )?registered|already exists|user.*exists/i.test(message);
+  return /user_already_exists|email_exists|already (?:been )?registered|already exists|user (?:already )?exists/i.test(message);
 }
 
 function isUnconfirmedUserError(error) {
