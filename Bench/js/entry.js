@@ -1,6 +1,6 @@
 import { applyPageStatus, describePage, renderStatusText } from './page-status.js';
 import { patchFlowState, updatePageState } from './flow-state.js';
-import { bindOnboardingPage } from './pages/onboarding.js';
+import { bindOnboardingPage } from './pages/onboarding.js?v=20260720-agreement-check';
 import { bindDailyPage } from './pages/daily.js';
 import { bindSafetyPlanPage } from './pages/safetyplan.js';
 

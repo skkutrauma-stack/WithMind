@@ -63,6 +63,7 @@ if (!entry.includes('const bootWhenRendered = () =>')) {
   failures.push('entry.js must wait for the design-component root before binding page events');
 }
 const onboardingPageLogic = readFileSync(join(bench, 'js/pages/onboarding.js'), 'utf8');
+const agreementPage = readFileSync(join(bench, 'onboarding/agreement.html'), 'utf8');
 
 const onboardingSequence = [
   ['welcome.html', './account.html'],
@@ -80,6 +81,9 @@ if (!onboardingPageLogic.includes("location.href = './safety_contact.html'")) {
 }
 if (!onboardingPageLogic.includes('withmindAgreementBound') || !onboardingPageLogic.includes("item.setAttribute('aria-pressed'")) {
   failures.push('agreement checkboxes must bind after the design component is rendered');
+}
+if (!agreementPage.includes('entry.js?v=20260720-agreement-check') || !entry.includes('onboarding.js?v=20260720-agreement-check')) {
+  failures.push('agreement checkbox scripts must bypass stale browser caches');
 }
 if (!onboardingPageLogic.includes("location.href = './profile.html'")) {
   failures.push('successful account signup must continue directly to profile');
