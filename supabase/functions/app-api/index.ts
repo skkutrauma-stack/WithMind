@@ -347,7 +347,17 @@ async function handleAction(
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error || '');
         if (!message.includes('PGRST202')) throw error;
-        const result = await rpc(runtime, 'complete_registration', legacy);
+        let result;
+        try {
+          result = await rpc(runtime, 'complete_registration', {
+            ...legacy,
+            p_region_name: regionName,
+          });
+        } catch (regionalError) {
+          const regionalMessage = regionalError instanceof Error ? regionalError.message : String(regionalError || '');
+          if (!regionalMessage.includes('PGRST202')) throw regionalError;
+          result = await rpc(runtime, 'complete_registration', legacy);
+        }
         await requestJson(runtime, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
           method: 'PUT',
           body: JSON.stringify({

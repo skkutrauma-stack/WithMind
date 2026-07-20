@@ -103,7 +103,15 @@ async function handleAction(action, payload, userId, env, userMetadata = {}) {
       });
     } catch (error) {
       if (!String(error?.message || '').includes('PGRST202')) throw error;
-      result = await rpc(env, 'complete_registration', legacy);
+      try {
+        result = await rpc(env, 'complete_registration', {
+          ...legacy,
+          p_region_name: regionName,
+        });
+      } catch (regionalError) {
+        if (!String(regionalError?.message || '').includes('PGRST202')) throw regionalError;
+        result = await rpc(env, 'complete_registration', legacy);
+      }
       await requestJson(env, `/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
         method: 'PUT',
         body: JSON.stringify({
