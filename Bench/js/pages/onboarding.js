@@ -54,12 +54,6 @@ function successful(response) {
   return response.data ?? response;
 }
 
-function isExistingAccountError(error) {
-  const code = String(error?.code || '').toLowerCase();
-  const message = String(error?.message || error || '');
-  return code === 'email_already_registered' || /already registered|already exists/i.test(message);
-}
-
 function rememberRemoteProfile(profile, email = '') {
   if (!profile) return null;
   const nickname = text(profile.nickname);
@@ -111,15 +105,7 @@ function bindAccountPage(doc) {
     if (password.length < 8) throw new Error('비밀번호는 8자 이상이어야 해.');
     setBusy(button, true, '계정 만드는 중...');
     updateOnboardingState({ account: { email, nickname } });
-    let result;
-    try {
-      result = await getSupabaseClient().auth.signUp({ email, password, nickname });
-    } catch (error) {
-      if (!isExistingAccountError(error)) throw error;
-      updateOnboardingState({ account: { email, nickname } });
-      location.href = `./login.html?email=${encodeURIComponent(email)}&resume=profile`;
-      return;
-    }
+    const result = await getSupabaseClient().auth.signUp({ email, password, nickname });
     if (!result?.access_token) {
       throw new Error('로그인 세션을 만들지 못했어. 다시 시도해 줘.');
     }
@@ -237,7 +223,7 @@ function bindAgreementPage(doc) {
     setBusy(button, true, '동의 저장 중...');
     const data = successful(await acceptConsent({ accepted: true }));
     updateFlowIds({ consent: data.flow_id });
-    location.href = './baseline_assessment.html';
+    location.href = './safety_contact.html';
   });
 }
 

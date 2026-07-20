@@ -62,6 +62,28 @@ const entry = readFileSync(join(bench, 'js/entry.js'), 'utf8');
 if (!entry.includes('const bootWhenRendered = () =>')) {
   failures.push('entry.js must wait for the design-component root before binding page events');
 }
+const onboardingPageLogic = readFileSync(join(bench, 'js/pages/onboarding.js'), 'utf8');
+
+const onboardingSequence = [
+  ['welcome.html', './account.html'],
+  ['profile.html', './agreement.html'],
+  ['agreement.html', './safety_contact.html'],
+  ['safety_contact.html', './alert.html'],
+  ['alert.html', './landing.html'],
+];
+for (const [page, destination] of onboardingSequence) {
+  const source = readFileSync(join(bench, 'onboarding', page), 'utf8');
+  if (!source.includes(destination)) failures.push(`onboarding/${page} must continue to ${destination}`);
+}
+if (!onboardingPageLogic.includes("location.href = './safety_contact.html'")) {
+  failures.push('agreement API completion must continue directly to safety_contact');
+}
+if (!onboardingPageLogic.includes("location.href = './profile.html'")) {
+  failures.push('successful account signup must continue directly to profile');
+}
+if (onboardingPageLogic.includes('resume=profile')) {
+  failures.push('account signup must not redirect existing-email errors to login');
+}
 
 const runtime = readFileSync(join(bench, 'runtime-config.js'), 'utf8');
 if (!runtime.includes("functionsUrl: '/api'")) failures.push('runtime-config.js must target the authenticated Vercel API proxy');
@@ -95,7 +117,6 @@ const safetyPlanPage = readFileSync(join(bench, 'safetyplan/plan.html'), 'utf8')
 for (const field of ['warningSigns', 'calmingMethods', 'contactText']) {
   if (!safetyPlanPage.includes(`data-safety-value="${field}"`)) failures.push(`safetyplan/plan.html is missing ${field}`);
 }
-const onboardingPageLogic = readFileSync(join(bench, 'js/pages/onboarding.js'), 'utf8');
 if (!onboardingPageLogic.includes('if (!session?.access_token)')) {
   failures.push('safety_contact must preserve local safety-plan edits without an auth session');
 }
