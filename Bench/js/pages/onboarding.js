@@ -216,6 +216,46 @@ function bindPasswordResetPage(doc) {
 
 function bindAgreementPage(doc) {
   const button = doc.querySelector('#startBtn');
+  const items = [...doc.querySelectorAll('.agree-item')];
+
+  const renderItem = (item) => {
+    const active = item.dataset.active === 'true';
+    const box = item.querySelector('.box');
+    item.setAttribute('aria-pressed', String(active));
+    item.style.border = active ? '2px solid #A98BE8' : '2px solid #E9E0F5';
+    item.style.background = '#fff';
+    if (!box) return;
+    box.style.background = active ? 'linear-gradient(135deg,#A98BE8,#7FA8F0)' : 'transparent';
+    box.style.border = active ? 'none' : '2px solid #D9CBE8';
+    box.innerHTML = active
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12.2l3.6 3.6L18 7.4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '';
+  };
+
+  const syncButton = () => {
+    const allChecked = items.length > 0 && items.every((item) => item.dataset.active === 'true');
+    button.disabled = !allChecked;
+    button.style.opacity = allChecked ? '1' : '.75';
+    button.style.cursor = allChecked ? 'pointer' : 'not-allowed';
+    button.style.background = allChecked
+      ? 'linear-gradient(90deg,#A98BE8,#7FA8F0)'
+      : 'linear-gradient(90deg,#C8BBDB,#C7D3EA)';
+  };
+
+  for (const item of items) {
+    renderItem(item);
+    if (item.dataset.withmindAgreementBound === 'true') continue;
+    item.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      item.dataset.active = String(item.dataset.active !== 'true');
+      renderItem(item);
+      syncButton();
+    }, { capture: true });
+    item.dataset.withmindAgreementBound = 'true';
+  }
+  syncButton();
+
   captureClick(button, async () => {
     if ([...doc.querySelectorAll('.agree-item')].some((item) => item.dataset.active !== 'true')) {
       throw new Error('필수 동의 항목을 모두 확인해 주세요.');

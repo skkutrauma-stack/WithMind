@@ -78,6 +78,9 @@ for (const [page, destination] of onboardingSequence) {
 if (!onboardingPageLogic.includes("location.href = './safety_contact.html'")) {
   failures.push('agreement API completion must continue directly to safety_contact');
 }
+if (!onboardingPageLogic.includes('withmindAgreementBound') || !onboardingPageLogic.includes("item.setAttribute('aria-pressed'")) {
+  failures.push('agreement checkboxes must bind after the design component is rendered');
+}
 if (!onboardingPageLogic.includes("location.href = './profile.html'")) {
   failures.push('successful account signup must continue directly to profile');
 }
