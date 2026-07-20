@@ -177,11 +177,22 @@ async function handleAction(action, payload, userId, env) {
   }
 
   if (action === 'get_ema_result') {
-    const flowId = uuid(pick(payload, 'flowId', 'flow_id'));
-    await assertFlowOwner(env, flowId, userId, 'ema');
+    const requestedFlowId = text(pick(payload, 'flowId', 'flow_id'));
+    let flowId = '';
+    let analysis = null;
+    if (requestedFlowId) {
+      flowId = uuid(requestedFlowId);
+      await assertFlowOwner(env, flowId, userId, 'ema');
+    } else {
+      analysis = await selectOne(env, `/rest/v1/ema_ai_results?select=flow_id,characteristic_1,characteristic_2,characteristic_3,ai_comment,generated_at&user_id=eq.${encodeURIComponent(userId)}&order=generated_at.desc&limit=1`);
+      flowId = text(analysis?.flow_id);
+    }
+    if (!flowId) return { classification: null, type: null, analysis: null };
     const classification = await selectOne(env, `/rest/v1/ema_classifications?select=flow_id,type_id,classified_at&flow_id=eq.${flowId}&user_id=eq.${userId}&limit=1`);
     const type = classification ? await selectOne(env, `/rest/v1/classification_types?select=type_id,node_code,internal_type_name,character_name,image_bucket,image_path&type_id=eq.${classification.type_id}&limit=1`) : null;
-    const analysis = await selectOne(env, `/rest/v1/ema_ai_results?select=flow_id,characteristic_1,characteristic_2,characteristic_3,ai_comment,generated_at&flow_id=eq.${flowId}&user_id=eq.${userId}&limit=1`);
+    if (!analysis) {
+      analysis = await selectOne(env, `/rest/v1/ema_ai_results?select=flow_id,characteristic_1,characteristic_2,characteristic_3,ai_comment,generated_at&flow_id=eq.${flowId}&user_id=eq.${userId}&limit=1`);
+    }
     return { classification, type, analysis };
   }
 

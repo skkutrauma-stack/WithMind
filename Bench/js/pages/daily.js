@@ -132,25 +132,37 @@ function bindCheckin(doc) {
 
 async function bindMoodCharacter(doc) {
   const flowId = getFlowId('ema');
-  if (!flowId) return;
+  const commentEl = doc.querySelector('.comment-scroll');
+  const setComment = (message, state) => {
+    if (!commentEl) return;
+    commentEl.textContent = message;
+    commentEl.dataset.aiCommentState = state;
+    commentEl.setAttribute('aria-busy', String(state === 'loading'));
+  };
+  const session = getSupabaseClient().auth.getSession();
+  if (!flowId && !session?.access_token) {
+    setComment('감정 검사를 완료하면 마음 도사의 코멘트를 확인할 수 있어요.', 'empty');
+    return;
+  }
   try {
-    const result = dataOf(await getEmaResult({ flowId }));
+    const result = dataOf(await getEmaResult(flowId ? { flowId } : {}));
     const name = text(result?.type?.character_name);
     const comment = text(result?.analysis?.ai_comment);
     const nameEl = doc.querySelector('#characterName');
     const imageEl = doc.querySelector('.character-panel img');
-    const commentEl = doc.querySelector('.comment-scroll');
     if (name && nameEl) nameEl.textContent = name;
-    if (comment && commentEl) commentEl.textContent = comment;
+    if (comment) setComment(comment, 'ready');
+    else setComment('저장된 AI 분석 결과가 없어요. 감정 검사를 다시 완료해 주세요.', 'empty');
     if (result?.type?.image_bucket && result?.type?.image_path && imageEl) {
       const base = getSupabaseClient().config.storageUrl;
       imageEl.src = `${base}/object/public/${encodeURIComponent(result.type.image_bucket)}/${String(result.type.image_path).split('/').map(encodeURIComponent).join('/')}`;
       imageEl.alt = name || imageEl.alt;
     }
+    if (!flowId && result?.analysis?.flow_id) setFlowId('ema', result.analysis.flow_id);
     if (name) localStorage.setItem('selectedMoodCharacter', name);
     updateDailyState({ moodCharacter: { ...result, name } });
-  } catch (error) {
-    showError(error);
+  } catch {
+    setComment('AI 코멘트를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.', 'error');
   }
 }
 

@@ -63,6 +63,17 @@ for (const action of ['accept_consent', 'submit_baseline_values', 'get_safety_pl
   if (!appApi.includes(`case '${action}'`)) failures.push(`app-api is missing ${action}`);
 }
 
+const moodCharacter = readFileSync(join(bench, 'daily/mood-character.html'), 'utf8');
+if (moodCharacter.includes('오늘은 마음이 비교적 편안했구나.')) {
+  failures.push('mood-character.html must not contain a fixed AI comment');
+}
+if (!moodCharacter.includes('data-ai-comment-state="loading"')) {
+  failures.push('mood-character.html must expose the AI comment loading state');
+}
+if (!daily.includes("getEmaResult(flowId ? { flowId } : {})")) {
+  failures.push('mood-character must fall back to the latest stored EMA AI result');
+}
+
 const vercelAppApi = readFileSync(join(root, 'api/app-api.js'), 'utf8');
 if (!vercelAppApi.includes("if (action === 'get_safety_plan')")) failures.push('Vercel app-api is missing get_safety_plan');
 if (!vercelAppApi.includes("{ upsert: true, onConflict: 'user_id' }")) failures.push('Vercel app-api must upsert safety plans by user_id');
