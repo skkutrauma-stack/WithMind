@@ -99,6 +99,10 @@ const daily = readFileSync(join(bench, 'js/pages/daily.js'), 'utf8');
 for (const workflow of ['ema-interpret', 'ema-reflection-question', 'emi-generate-questions', 'emi-comment']) {
   if (!daily.includes(`'${workflow}'`)) failures.push(`daily.js does not invoke ${workflow}`);
 }
+const emiCommentFunction = readFileSync(join(root, 'supabase/functions/emi-comment/index.ts'), 'utf8');
+for (const input of ['selected_question_1', 'selected_question_2', 'combined_response']) {
+  if (!emiCommentFunction.includes(input)) failures.push(`emi-comment prompt is missing the journal input ${input}`);
+}
 
 const appApi = readFileSync(join(root, 'supabase/functions/app-api/index.ts'), 'utf8');
 for (const action of ['accept_consent', 'submit_baseline_values', 'get_safety_plan', 'save_safety_plan', 'start_ema', 'save_ema_answers']) {
@@ -106,6 +110,8 @@ for (const action of ['accept_consent', 'submit_baseline_values', 'get_safety_pl
 }
 
 const moodCharacter = readFileSync(join(bench, 'daily/mood-character.html'), 'utf8');
+const journalPage = readFileSync(join(bench, 'daily/journal.html'), 'utf8');
+const aiCommentPage = readFileSync(join(bench, 'daily/ai-comment.html'), 'utf8');
 if (moodCharacter.includes('오늘은 마음이 비교적 편안했구나.')) {
   failures.push('mood-character.html must not contain a fixed AI comment');
 }
@@ -115,8 +121,14 @@ if (!moodCharacter.includes('data-ai-comment-state="loading"')) {
 for (const imageName of ['character_sun_pebble_1024.png', 'character_cloud_cushion_1024.png', 'character_water_pot_1024.png', 'character_radio_1024.png', 'character_tense_balloon_1024.png', 'character_tangled_earphones_1024.png']) {
   if (!daily.includes(imageName)) failures.push(`daily.js is missing the local character image mapping for ${imageName}`);
 }
-if (!moodCharacter.includes('entry.js?v=20260720-character-images') || !entry.includes('daily.js?v=20260720-character-images')) {
-  failures.push('mood-character image scripts must bypass stale browser caches');
+if (!entry.includes('daily.js?v=20260721-journal-sync')) {
+  failures.push('daily page logic must bypass stale browser caches');
+}
+for (const [page, source] of [['mood-character', moodCharacter], ['journal', journalPage], ['ai-comment', aiCommentPage]]) {
+  if (!source.includes('entry.js?v=20260721-journal-sync')) failures.push(`${page} must load the current daily page logic`);
+}
+for (const marker of ['rememberJournalAnswer', 'journalAnswerFromEmi', 'journalAnswerFromLocation', 'renderJournalAnswer', 'getEmi({ flowId })']) {
+  if (!daily.includes(marker)) failures.push(`journal-to-comment synchronization is missing ${marker}`);
 }
 if (!daily.includes("getEmaResult(flowId ? { flowId } : {})")) {
   failures.push('mood-character must fall back to the latest stored EMA AI result');

@@ -41,6 +41,89 @@ function dataOf(response) {
   return response.data ?? response;
 }
 
+function rememberJournalAnswer(selectedQuestions, combinedResponse) {
+  const questions = selectedQuestions.map(text).filter(Boolean).slice(0, 2);
+  const response = text(combinedResponse);
+  for (const storage of [globalThis.localStorage, globalThis.sessionStorage]) {
+    try {
+      storage?.setItem('journalSelectedQuestions', JSON.stringify(questions));
+      storage?.setItem('journalText', response);
+    } catch {
+      // The flow-state copy and database remain available when storage is blocked.
+    }
+  }
+  return { selectedQuestions: questions, combinedResponse: response };
+}
+
+function journalAnswerFromEmi(emi = {}) {
+  const questions = [1, 2, 3, 4, 5].map((index) => text(emi[`question_${index}`]));
+  const selectedNumbers = [emi.selected_question_1_no, emi.selected_question_2_no]
+    .map(Number)
+    .filter((number, index, values) => number >= 1 && number <= 5 && values.indexOf(number) === index);
+  return {
+    selectedNumbers,
+    selectedQuestions: selectedNumbers.map((number) => questions[number - 1]).filter(Boolean),
+    combinedResponse: text(emi.combined_response),
+  };
+}
+
+function journalAnswerFromLocation() {
+  try {
+    const params = new URLSearchParams(globalThis.location?.search || '');
+    const parsedQuestions = JSON.parse(params.get('q') || '[]');
+    return {
+      selectedQuestions: Array.isArray(parsedQuestions) ? parsedQuestions.map(text).filter(Boolean).slice(0, 2) : [],
+      combinedResponse: text(params.get('t')),
+    };
+  } catch {
+    return { selectedQuestions: [], combinedResponse: '' };
+  }
+}
+
+function renderJournalAnswer(doc, journal = {}) {
+  const list = doc.querySelector('#answeredList');
+  if (!list) return;
+  const questions = Array.isArray(journal.selectedQuestions)
+    ? journal.selectedQuestions.map(text).filter(Boolean).slice(0, 2)
+    : [];
+  const response = text(journal.combinedResponse);
+  list.replaceChildren();
+
+  if (!questions.length && !response) {
+    const empty = doc.createElement('p');
+    empty.style.cssText = 'margin:0;font:500 13px/1.5 Pretendard;color:#6A5A78';
+    empty.textContent = '선택한 질문이나 작성한 답변이 없습니다.';
+    list.append(empty);
+    return;
+  }
+
+  for (const question of questions) {
+    const row = doc.createElement('div');
+    row.style.cssText = 'padding:8px 0;border-bottom:1px solid #F4EEF9';
+    const label = doc.createElement('p');
+    label.style.cssText = 'margin:0 0 3px;font:700 12px Pretendard;color:#A98BE8';
+    label.textContent = 'Q.';
+    const value = doc.createElement('p');
+    value.style.cssText = 'margin:0;font:500 13px/1.55 Pretendard;color:#4A3550';
+    value.textContent = question;
+    row.append(label, value);
+    list.append(row);
+  }
+
+  if (response) {
+    const row = doc.createElement('div');
+    row.style.cssText = 'padding-top:8px';
+    const label = doc.createElement('p');
+    label.style.cssText = 'margin:0 0 3px;font:700 12px Pretendard;color:#7A63C8';
+    label.textContent = 'A.';
+    const value = doc.createElement('p');
+    value.style.cssText = 'margin:0;font:500 13px/1.65 Pretendard;color:#6A5A78';
+    value.textContent = response;
+    row.append(label, value);
+    list.append(row);
+  }
+}
+
 function setBusy(button, busy, label = '처리 중...') {
   if (!button) return;
   if (!button.dataset.idleText) button.dataset.idleText = text(button.textContent);
@@ -254,9 +337,13 @@ async function bindJournal(doc) {
   captureClick(button, async () => {
     const selectedNumbers = items.map((item, index) => item.dataset.active === 'true' ? index + 1 : 0).filter(Boolean);
     const combinedResponse = text(input?.value);
+    const selectedQuestions = selectedNumbers
+      .map((number) => text(items[number - 1]?.querySelector('span')?.textContent))
+      .filter(Boolean);
     if (!flowId) throw new Error('EMI 흐름 정보가 없어요.');
     if (!selectedNumbers.length || !combinedResponse) throw new Error('질문을 선택하고 답을 적어 주세요.');
     setBusy(button, true, 'AI 코멘트 생성 중...');
+    const journal = rememberJournalAnswer(selectedQuestions, combinedResponse);
     dataOf(await saveEmiResponse({
       flowId,
       selectedQuestion1No: selectedNumbers[0],
@@ -266,16 +353,38 @@ async function bindJournal(doc) {
     dataOf(await submitEmi({ flowId }));
     const comment = await invokeWorkflow('emi-comment', { flowId });
     if (!comment?.ok) throw new Error(comment?.error || 'AI 코멘트 생성에 실패했어요.');
-    updateDailyState({ journal: { selectedNumbers, completedAt: new Date().toISOString() } });
-    location.href = './ai-comment.html';
+    updateDailyState({
+      journal: {
+        flowId,
+        selectedNumbers,
+        ...journal,
+        completedAt: new Date().toISOString(),
+      },
+    });
+    const params = new URLSearchParams({
+      q: JSON.stringify(journal.selectedQuestions),
+      t: journal.combinedResponse,
+    });
+    location.href = `./ai-comment.html?${params.toString()}`;
   });
 }
 
 async function bindAiComment(doc) {
   const target = doc.querySelector('#aiCommentText');
   const flowId = getFlowId('emi');
+  const savedJournal = readFlowState().daily?.journal || {};
+  const urlJournal = journalAnswerFromLocation();
+  const initialJournal = savedJournal.selectedQuestions?.length || text(savedJournal.combinedResponse)
+    ? savedJournal
+    : urlJournal;
+  renderJournalAnswer(doc, initialJournal);
   if (!target || !flowId) return;
   try {
+    const emiData = dataOf(await getEmi({ flowId }));
+    const journal = journalAnswerFromEmi(emiData?.emi);
+    renderJournalAnswer(doc, journal);
+    rememberJournalAnswer(journal.selectedQuestions, journal.combinedResponse);
+    updateDailyState({ journal: { flowId, ...journal } });
     const result = dataOf(await getEmiAiResult({ flowId }));
     const comment = text(result?.result?.ai_comment);
     if (comment) target.textContent = comment;
