@@ -37,6 +37,40 @@ const CHARACTER_DESCRIPTIONS = Object.freeze({
   6: ['여러 생각과 감정이 얽혀 있어도,', '하나씩 천천히 풀어가는 캐릭터예요.'],
 });
 
+function renderCharacterPresentation(doc, result, {
+  nameSelector,
+  descriptionSelector,
+  imageSelector,
+}) {
+  const typeId = Number(result?.type?.type_id);
+  const name = text(result?.type?.character_name || result?.name);
+  const description = CHARACTER_DESCRIPTIONS[typeId];
+  const nameEl = doc.querySelector(nameSelector);
+  const descriptionEl = doc.querySelector(descriptionSelector);
+  const imageEl = doc.querySelector(imageSelector);
+
+  if (name && nameEl) nameEl.textContent = name;
+  if (descriptionEl && description) {
+    descriptionEl.replaceChildren(
+      doc.createTextNode(description[0]),
+      doc.createElement('br'),
+      doc.createTextNode(description[1]),
+    );
+  }
+  if (imageEl) {
+    const localImagePath = CHARACTER_IMAGE_PATHS[typeId];
+    if (localImagePath) {
+      imageEl.src = localImagePath;
+    } else if (result?.type?.image_bucket && result?.type?.image_path) {
+      const base = getSupabaseClient().config.storageUrl;
+      imageEl.src = `${base}/object/public/${encodeURIComponent(result.type.image_bucket)}/${String(result.type.image_path).split('/').map(encodeURIComponent).join('/')}`;
+    }
+    imageEl.alt = name || imageEl.alt;
+  }
+
+  return { name, descriptionText: description?.join(' ') || '' };
+}
+
 function text(value) {
   return String(value ?? '').trim();
 }
@@ -253,36 +287,17 @@ async function bindMoodCharacter(doc) {
   }
   try {
     const result = dataOf(await getEmaResult(flowId ? { flowId } : {}));
-    const typeId = Number(result?.type?.type_id);
-    const name = text(result?.type?.character_name);
     const comment = text(result?.analysis?.ai_comment);
-    const description = CHARACTER_DESCRIPTIONS[typeId];
-    const nameEl = doc.querySelector('#characterName');
-    const descriptionEl = doc.querySelector('#characterDescription');
-    const imageEl = doc.querySelector('.character-panel img');
-    if (name && nameEl) nameEl.textContent = name;
-    if (descriptionEl && description) {
-      descriptionEl.replaceChildren(
-        doc.createTextNode(description[0]),
-        doc.createElement('br'),
-        doc.createTextNode(description[1]),
-      );
-    }
+    const { name, descriptionText } = renderCharacterPresentation(doc, result, {
+      nameSelector: '#characterName',
+      descriptionSelector: '#characterDescription',
+      imageSelector: '.character-panel img',
+    });
     if (comment) setComment(comment, 'ready');
     else setComment('저장된 AI 분석 결과가 없어요. 감정 검사를 다시 완료해 주세요.', 'empty');
-    if (imageEl) {
-      const localImagePath = CHARACTER_IMAGE_PATHS[typeId];
-      if (localImagePath) {
-        imageEl.src = localImagePath;
-      } else if (result?.type?.image_bucket && result?.type?.image_path) {
-        const base = getSupabaseClient().config.storageUrl;
-        imageEl.src = `${base}/object/public/${encodeURIComponent(result.type.image_bucket)}/${String(result.type.image_path).split('/').map(encodeURIComponent).join('/')}`;
-      }
-      imageEl.alt = name || imageEl.alt;
-    }
     if (!flowId && result?.analysis?.flow_id) setFlowId('ema', result.analysis.flow_id);
     if (name) localStorage.setItem('selectedMoodCharacter', name);
-    updateDailyState({ moodCharacter: { ...result, name, description: description?.join(' ') || '' } });
+    updateDailyState({ moodCharacter: { ...result, name, description: descriptionText } });
   } catch {
     setComment('AI 코멘트를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.', 'error');
   }
@@ -292,6 +307,23 @@ async function bindMoodType(doc) {
   const button = doc.querySelector('#nextBtn');
   const input = doc.querySelector('#situationInput');
   const flowId = getFlowId('emaReflection');
+  const emaFlowId = getFlowId('ema');
+  const cachedCharacter = readFlowState().daily?.moodCharacter;
+  const characterSelectors = {
+    nameSelector: '#moodCharacterName',
+    descriptionSelector: '#moodCharacterDescription',
+    imageSelector: '.character-card img',
+  };
+  if (cachedCharacter) renderCharacterPresentation(doc, cachedCharacter, characterSelectors);
+  if (emaFlowId || getSupabaseClient().auth.getSession()?.access_token) {
+    try {
+      const emaResult = dataOf(await getEmaResult(emaFlowId ? { flowId: emaFlowId } : {}));
+      const { name, descriptionText } = renderCharacterPresentation(doc, emaResult, characterSelectors);
+      updateDailyState({ moodCharacter: { ...emaResult, name, description: descriptionText } });
+    } catch (error) {
+      if (!cachedCharacter) showError(error);
+    }
+  }
   if (flowId) {
     try {
       const result = dataOf(await getReflection({ flowId }));
