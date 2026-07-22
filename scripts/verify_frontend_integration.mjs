@@ -119,6 +119,9 @@ if (moodCharacter.includes('오늘은 마음이 비교적 편안했구나.')) {
 if (!moodCharacter.includes('data-ai-comment-state="loading"')) {
   failures.push('mood-character.html must expose the AI comment loading state');
 }
+if (!aiCommentPage.includes('data-ai-comment-state="loading"') || aiCommentPage.includes('data-fallback-text=')) {
+  failures.push('ai-comment.html must load the current comment without a fixed fallback');
+}
 if (!moodCharacter.includes('id="characterDescription"')) {
   failures.push('mood-character.html must expose the dynamic character description');
 }
@@ -134,11 +137,14 @@ for (const marker of ['CHARACTER_DESCRIPTIONS', 'characterDescription', '하나�
 for (const marker of ['renderCharacterPresentation', "descriptionSelector: '#moodCharacterDescription'", "imageSelector: '.character-card img'"]) {
   if (!daily.includes(marker)) failures.push(`mood-type character synchronization is missing ${marker}`);
 }
-if (!entry.includes('daily.js?v=20260722-mood-type-character')) {
+for (const marker of ['generatedComment', 'aiComment: { flowId', 'flow: flowId', 'hasCurrentCachedComment', 'rowFlowId !== flowId']) {
+  if (!daily.includes(marker)) failures.push(`ai-comment flow pinning is missing ${marker}`);
+}
+if (!entry.includes('daily.js?v=20260722-ai-comment-flow')) {
   failures.push('daily page logic must bypass stale browser caches');
 }
 for (const [page, source] of [['mood-character', moodCharacter], ['mood-type', moodTypePage], ['journal', journalPage], ['ai-comment', aiCommentPage]]) {
-  if (!source.includes('entry.js?v=20260722-mood-type-character')) failures.push(`${page} must load the current daily page logic`);
+  if (!source.includes('entry.js?v=20260722-ai-comment-flow')) failures.push(`${page} must load the current daily page logic`);
 }
 for (const marker of ['rememberJournalAnswer', 'journalAnswerFromEmi', 'journalAnswerFromLocation', 'renderJournalAnswer', 'getEmi({ flowId })']) {
   if (!daily.includes(marker)) failures.push(`journal-to-comment synchronization is missing ${marker}`);

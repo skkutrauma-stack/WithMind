@@ -404,15 +404,20 @@ async function bindJournal(doc) {
     dataOf(await submitEmi({ flowId }));
     const comment = await invokeWorkflow('emi-comment', { flowId });
     if (!comment?.ok) throw new Error(comment?.error || 'AI 코멘트 생성에 실패했어요.');
+    const generatedComment = text(comment?.output?.ai_comment);
+    if (!generatedComment) throw new Error('생성된 AI 코멘트를 확인하지 못했어요.');
+    const completedAt = new Date().toISOString();
     updateDailyState({
       journal: {
         flowId,
         selectedNumbers,
         ...journal,
-        completedAt: new Date().toISOString(),
+        completedAt,
       },
+      aiComment: { flowId, comment: generatedComment, generatedAt: completedAt },
     });
     const params = new URLSearchParams({
+      flow: flowId,
       q: JSON.stringify(journal.selectedQuestions),
       t: journal.combinedResponse,
     });
@@ -422,24 +427,53 @@ async function bindJournal(doc) {
 
 async function bindAiComment(doc) {
   const target = doc.querySelector('#aiCommentText');
-  const flowId = getFlowId('emi');
-  const savedJournal = readFlowState().daily?.journal || {};
+  const state = readFlowState();
+  const urlFlowId = text(new URLSearchParams(globalThis.location?.search || '').get('flow'));
+  const flowId = urlFlowId || text(state.daily?.journal?.flowId) || getFlowId('emi');
+  const savedJournal = state.daily?.journal || {};
+  const cachedComment = state.daily?.aiComment || {};
   const urlJournal = journalAnswerFromLocation();
   const initialJournal = savedJournal.selectedQuestions?.length || text(savedJournal.combinedResponse)
     ? savedJournal
     : urlJournal;
   renderJournalAnswer(doc, initialJournal);
-  if (!target || !flowId) return;
+  if (!target) return;
+  target.dataset.aiCommentState = 'loading';
+  if (!flowId) {
+    target.textContent = '현재 기록의 AI 코멘트 흐름을 찾지 못했어요.';
+    target.dataset.aiCommentState = 'error';
+    return;
+  }
+  if (urlFlowId && urlFlowId !== getFlowId('emi')) setFlowId('emi', urlFlowId);
+  const cachedCommentText = text(cachedComment.comment);
+  const hasCurrentCachedComment = text(cachedComment.flowId) === flowId && Boolean(cachedCommentText);
+  if (hasCurrentCachedComment) {
+    target.textContent = cachedCommentText;
+    target.dataset.aiCommentState = 'ready';
+  }
   try {
     const emiData = dataOf(await getEmi({ flowId }));
     const journal = journalAnswerFromEmi(emiData?.emi);
     renderJournalAnswer(doc, journal);
     rememberJournalAnswer(journal.selectedQuestions, journal.combinedResponse);
     updateDailyState({ journal: { flowId, ...journal } });
+    if (hasCurrentCachedComment) return;
     const result = dataOf(await getEmiAiResult({ flowId }));
+    const rowFlowId = text(result?.result?.flow_id);
+    if (rowFlowId && rowFlowId !== flowId) throw new Error('현재 기록과 다른 AI 코멘트가 반환됐어요.');
     const comment = text(result?.result?.ai_comment);
-    if (comment) target.textContent = comment;
+    if (comment) {
+      target.textContent = comment;
+      target.dataset.aiCommentState = 'ready';
+      updateDailyState({ aiComment: { flowId, comment, generatedAt: result?.result?.generated_at || '' } });
+    } else {
+      target.textContent = '저장된 AI 코멘트를 찾지 못했어요.';
+      target.dataset.aiCommentState = 'empty';
+    }
   } catch (error) {
+    if (hasCurrentCachedComment) return;
+    target.textContent = 'AI 코멘트를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
+    target.dataset.aiCommentState = 'error';
     showError(error);
   }
 }
