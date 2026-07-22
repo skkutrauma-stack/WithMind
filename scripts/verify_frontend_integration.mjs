@@ -103,6 +103,9 @@ const emiCommentFunction = readFileSync(join(root, 'supabase/functions/emi-comme
 for (const input of ['selected_question_1', 'selected_question_2', 'combined_response']) {
   if (!emiCommentFunction.includes(input)) failures.push(`emi-comment prompt is missing the journal input ${input}`);
 }
+for (const marker of ['validatePersonalizedComment', 'GENERIC_COMMENT_PHRASES', 'OpenAI returned a generic EMI comment; no result was saved']) {
+  if (!emiCommentFunction.includes(marker)) failures.push(`emi-comment generic response guard is missing ${marker}`);
+}
 
 const appApi = readFileSync(join(root, 'supabase/functions/app-api/index.ts'), 'utf8');
 for (const action of ['accept_consent', 'submit_baseline_values', 'get_safety_plan', 'save_safety_plan', 'start_ema', 'save_ema_answers']) {

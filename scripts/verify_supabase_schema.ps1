@@ -178,6 +178,9 @@ if ($hasEmiComment) {
   Require-Match $emiComment 'PERSONALIZATION_RULES' 'runtime EMI personalization rules'
   Require-Match $emiComment '\[priority-journal-context\]' 'runtime priority journal context'
   Require-Match $emiComment 'renderedUserPrompt\.includes' 'database prompt compatibility guard'
+  Require-Match $emiComment 'validatePersonalizedComment' 'runtime personalized comment validator'
+  Require-Match $emiComment 'GENERIC_COMMENT_PHRASES' 'runtime generic comment rejection list'
+  Require-Match $emiComment 'OpenAI returned a generic EMI comment; no result was saved' 'generic comment database save guard'
 }
 
 if ($failures.Count -gt 0) {

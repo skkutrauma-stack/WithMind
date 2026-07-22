@@ -28,6 +28,33 @@ const PERSONALIZATION_RULES = `
 - [avoid-generic-language] "잘 정리해 주셨어요", "그 상황을 중심으로", "정답을 찾기보다", "마음과 몸의 반응을 구분", "충분히 의미가 있습니다" 같은 범용 문구를 사용하지 않는다.
 `;
 
+const GENERIC_COMMENT_PHRASES = [
+  '잘 정리해 주셨어요',
+  '그 상황을 중심으로',
+  '정답을 찾기보다',
+  '마음과 몸의 반응을 구분',
+  '충분히 의미가 있습니다',
+];
+
+function journalTokens(value: unknown) {
+  const matches = String(value ?? '').normalize('NFC').match(/[가-힣A-Za-z0-9]+/g) || [];
+  return [...new Set(matches.map((token) => token.trim()).filter((token) => token.length >= 2))]
+    .sort((left, right) => right.length - left.length);
+}
+
+function validatePersonalizedComment(commentValue: unknown, combinedResponse: unknown) {
+  const comment = String(commentValue ?? '').normalize('NFC').trim();
+  const bannedPhrases = GENERIC_COMMENT_PHRASES.filter((phrase) => comment.includes(phrase));
+  const sourceTokens = journalTokens(combinedResponse);
+  const reflectedTokens = sourceTokens.filter((token) => comment.includes(token));
+  return {
+    valid: comment.length >= 40 && bannedPhrases.length === 0 && reflectedTokens.length > 0,
+    bannedPhrases,
+    sourceTokens,
+    reflectedTokens,
+  };
+}
+
 Deno.serve(async (req) => {
   const cors = handleCors(req);
   if (cors) return cors;
@@ -68,11 +95,37 @@ Deno.serve(async (req) => {
       ? renderedUserPrompt
       : `${priorityContext}\n\n[보조 맥락]\n${renderedUserPrompt}`;
 
-    const output = await runJsonCompletion<{ ai_comment: string }>(runtime, {
+    let output = await runJsonCompletion<{ ai_comment: string }>(runtime, {
       systemPrompt,
       userPrompt,
       outputSchema: template.output_schema,
     });
+    let validation = validatePersonalizedComment(output.ai_comment, context.combined_response);
+
+    if (!validation.valid) {
+      const requiredPhrases = validation.sourceTokens.slice(0, 5);
+      const retryPrompt = `${userPrompt}
+
+[필수 재생성 조건]
+- 이전 결과는 개인화 검증에 실패했으므로 완전히 새로 작성한다.
+- 사용자의 통합 응답에서 다음 표현 중 하나 이상을 원문 그대로 코멘트에 포함한다: ${JSON.stringify(requiredPhrases)}
+- 다음 범용 문구는 한 글자도 사용하지 않는다: ${JSON.stringify(GENERIC_COMMENT_PHRASES)}
+- 사용자의 선택 질문과 통합 응답에 직접 답하는 3문장만 작성한다.`;
+      output = await runJsonCompletion<{ ai_comment: string }>(runtime, {
+        systemPrompt,
+        userPrompt: retryPrompt,
+        outputSchema: template.output_schema,
+        temperature: 0.4,
+      });
+      validation = validatePersonalizedComment(output.ai_comment, context.combined_response);
+    }
+
+    if (!validation.valid) {
+      throw new HttpError(502, 'OpenAI returned a generic EMI comment; no result was saved', {
+        banned_phrases: validation.bannedPhrases,
+        reflected_source_phrase: validation.reflectedTokens.length > 0,
+      });
+    }
 
     await rpc(runtime, 'save_emi_ai_result', {
       p_flow_id: flowId,
