@@ -28,6 +28,15 @@ const CHARACTER_IMAGE_PATHS = Object.freeze({
   6: '../assets/02_characters/transparent_1024/character_tangled_earphones_1024.png',
 });
 
+const CHARACTER_DESCRIPTIONS = Object.freeze({
+  1: ['조용히 볕을 모으고 있다가,', '필요할 때 따뜻하게 건네주는 캐릭터예요.'],
+  2: ['마음의 무게를 포근히 받아주고,', '잠시 기대어 숨을 고르게 해주는 캐릭터예요.'],
+  3: ['여러 걱정을 마음속에 머금고도,', '천천히 돌보며 다시 자라나는 캐릭터예요.'],
+  4: ['작은 마음의 신호에도 귀 기울이며,', '필요한 연결을 찾아주는 캐릭터예요.'],
+  5: ['팽팽한 긴장을 안고 버티다가도,', '숨을 고르면 천천히 놓아주는 캐릭터예요.'],
+  6: ['여러 생각과 감정이 얽혀 있어도,', '하나씩 천천히 풀어가는 캐릭터예요.'],
+});
+
 function text(value) {
   return String(value ?? '').trim();
 }
@@ -244,15 +253,25 @@ async function bindMoodCharacter(doc) {
   }
   try {
     const result = dataOf(await getEmaResult(flowId ? { flowId } : {}));
+    const typeId = Number(result?.type?.type_id);
     const name = text(result?.type?.character_name);
     const comment = text(result?.analysis?.ai_comment);
+    const description = CHARACTER_DESCRIPTIONS[typeId];
     const nameEl = doc.querySelector('#characterName');
+    const descriptionEl = doc.querySelector('#characterDescription');
     const imageEl = doc.querySelector('.character-panel img');
     if (name && nameEl) nameEl.textContent = name;
+    if (descriptionEl && description) {
+      descriptionEl.replaceChildren(
+        doc.createTextNode(description[0]),
+        doc.createElement('br'),
+        doc.createTextNode(description[1]),
+      );
+    }
     if (comment) setComment(comment, 'ready');
     else setComment('저장된 AI 분석 결과가 없어요. 감정 검사를 다시 완료해 주세요.', 'empty');
     if (imageEl) {
-      const localImagePath = CHARACTER_IMAGE_PATHS[Number(result?.type?.type_id)];
+      const localImagePath = CHARACTER_IMAGE_PATHS[typeId];
       if (localImagePath) {
         imageEl.src = localImagePath;
       } else if (result?.type?.image_bucket && result?.type?.image_path) {
@@ -263,7 +282,7 @@ async function bindMoodCharacter(doc) {
     }
     if (!flowId && result?.analysis?.flow_id) setFlowId('ema', result.analysis.flow_id);
     if (name) localStorage.setItem('selectedMoodCharacter', name);
-    updateDailyState({ moodCharacter: { ...result, name } });
+    updateDailyState({ moodCharacter: { ...result, name, description: description?.join(' ') || '' } });
   } catch {
     setComment('AI 코멘트를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.', 'error');
   }

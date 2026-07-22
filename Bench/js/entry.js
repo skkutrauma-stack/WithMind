@@ -1,7 +1,7 @@
 import { applyPageStatus, describePage, renderStatusText } from './page-status.js';
 import { patchFlowState, updatePageState } from './flow-state.js';
 import { bindOnboardingPage } from './pages/onboarding.js?v=20260720-agreement-check';
-import { bindDailyPage } from './pages/daily.js?v=20260721-journal-sync';
+import { bindDailyPage } from './pages/daily.js?v=20260722-character-description';
 import { bindSafetyPlanPage } from './pages/safetyplan.js';
 
 const runtimeConfigReady = import('../runtime-config.js')

@@ -118,14 +118,20 @@ if (moodCharacter.includes('오늘은 마음이 비교적 편안했구나.')) {
 if (!moodCharacter.includes('data-ai-comment-state="loading"')) {
   failures.push('mood-character.html must expose the AI comment loading state');
 }
+if (!moodCharacter.includes('id="characterDescription"')) {
+  failures.push('mood-character.html must expose the dynamic character description');
+}
 for (const imageName of ['character_sun_pebble_1024.png', 'character_cloud_cushion_1024.png', 'character_water_pot_1024.png', 'character_radio_1024.png', 'character_tense_balloon_1024.png', 'character_tangled_earphones_1024.png']) {
   if (!daily.includes(imageName)) failures.push(`daily.js is missing the local character image mapping for ${imageName}`);
 }
-if (!entry.includes('daily.js?v=20260721-journal-sync')) {
+for (const marker of ['CHARACTER_DESCRIPTIONS', 'characterDescription', '하나씩 천천히 풀어가는 캐릭터예요.']) {
+  if (!daily.includes(marker)) failures.push(`mood-character description mapping is missing ${marker}`);
+}
+if (!entry.includes('daily.js?v=20260722-character-description')) {
   failures.push('daily page logic must bypass stale browser caches');
 }
 for (const [page, source] of [['mood-character', moodCharacter], ['journal', journalPage], ['ai-comment', aiCommentPage]]) {
-  if (!source.includes('entry.js?v=20260721-journal-sync')) failures.push(`${page} must load the current daily page logic`);
+  if (!source.includes('entry.js?v=20260722-character-description')) failures.push(`${page} must load the current daily page logic`);
 }
 for (const marker of ['rememberJournalAnswer', 'journalAnswerFromEmi', 'journalAnswerFromLocation', 'renderJournalAnswer', 'getEmi({ flowId })']) {
   if (!daily.includes(marker)) failures.push(`journal-to-comment synchronization is missing ${marker}`);
