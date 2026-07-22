@@ -9,6 +9,7 @@ $baselineScreenPath = Join-Path $root 'Bench\onboarding\baseline_assessment.html
 $agreementPath = Join-Path $root 'Bench\onboarding\agreement.html'
 $safetyPath = Join-Path $root 'Bench\onboarding\safety_contact.html'
 $checkinPath = Join-Path $root 'Bench\daily\checkin.html'
+$emiCommentPath = Join-Path $root 'supabase\functions\emi-comment\index.ts'
 
 $failures = [System.Collections.Generic.List[string]]::new()
 
@@ -40,6 +41,7 @@ $hasBaselineScreen = Require-File $baselineScreenPath 'baseline assessment scree
 $hasAgreement = Require-File $agreementPath 'agreement screen'
 $hasSafety = Require-File $safetyPath 'safety contact screen'
 $hasCheckin = Require-File $checkinPath 'EMA check-in screen'
+$hasEmiComment = Require-File $emiCommentPath 'EMI comment Edge Function'
 
 if ($hasSql) {
   $sql = Get-Content -LiteralPath $sqlPath -Raw -Encoding UTF8
@@ -77,6 +79,11 @@ if ($hasSql) {
   Require-Match $sql 'when 0 then' 'EMI sentinel label branch'
   Require-Match $sql '''emotion_details'', v_emotions' 'LLM context emotion array'
   Require-Match $sql 'emotion_details_json' 'exported emotion array'
+  Require-Match $sql '\[personalization-rules-v2\]' 'personalized EMI comment prompt version'
+  Require-Match $sql '\[priority-journal-context\]' 'priority journal context in EMI comment prompt'
+  Require-Match $sql '\[reflect-user-phrase\]' 'specific journal phrase reflection rule'
+  Require-Match $sql '\[suggest-concrete-next-step\]' 'concrete next-action rule'
+  Require-Match $sql '\[avoid-generic-language\]' 'generic EMI comment phrase ban'
 
   $instrumentRows = [regex]::Matches(
     $sql,
@@ -147,12 +154,12 @@ if ($hasBaselineScreen) {
 
 if ($hasAgreement) {
   $agreement = Get-Content -LiteralPath $agreementPath -Raw -Encoding UTF8
-  Require-Match $agreement 'baseline_assessment\.html' 'agreement to baseline route'
+  Require-Match $agreement 'safety_contact\.html' 'agreement to safety-contact route'
 }
 
 if ($hasSafety) {
   $safety = Get-Content -LiteralPath $safetyPath -Raw -Encoding UTF8
-  Require-Match $safety 'baseline_assessment\.html' 'safety back to baseline route'
+  Require-Match $safety 'agreement\.html' 'safety back to agreement route'
 }
 
 if ($hasCheckin) {
@@ -164,6 +171,13 @@ if ($hasCheckin) {
   if ($screenQuestionCount -ne 31) {
     $failures.Add("Expected 31 EMA screen questions; found $screenQuestionCount")
   }
+}
+
+if ($hasEmiComment) {
+  $emiComment = Get-Content -LiteralPath $emiCommentPath -Raw -Encoding UTF8
+  Require-Match $emiComment 'PERSONALIZATION_RULES' 'runtime EMI personalization rules'
+  Require-Match $emiComment '\[priority-journal-context\]' 'runtime priority journal context'
+  Require-Match $emiComment 'renderedUserPrompt\.includes' 'database prompt compatibility guard'
 }
 
 if ($failures.Count -gt 0) {
