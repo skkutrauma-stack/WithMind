@@ -91,33 +91,6 @@
   if (journalInputEl) journalInputEl.addEventListener('input', updateDoneButton);
   // initial update
   updateDoneButton();
-  if (doneBtn) {
-    doneBtn.addEventListener('click', () => {
-      if (doneBtn.disabled) return;
-      try {
-        // collect selected questions
-        const selectedQuestions = items.filter((it) => it.dataset.active === 'true').map((it) => {
-          const s = it.querySelector('span');
-          return s ? s.textContent.trim() : '';
-        }).filter(Boolean);
-        const journalText = journalInputEl ? journalInputEl.value.trim() : '';
-          // save in both localStorage and sessionStorage as a fallback
-          try { localStorage.setItem('journalSelectedQuestions', JSON.stringify(selectedQuestions)); } catch (e) {}
-          try { localStorage.setItem('journalText', journalText); } catch (e) {}
-          try { sessionStorage.setItem('journalSelectedQuestions', JSON.stringify(selectedQuestions)); } catch (e) {}
-          try { sessionStorage.setItem('journalText', journalText); } catch (e) {}
-      } catch (e) { /* ignore storage errors */ }
-      // Also pass via URL to avoid storage-loss across origins
-      try {
-        const params = new URLSearchParams();
-        params.set('q', JSON.stringify(selectedQuestions));
-        params.set('t', journalText);
-        location.href = './ai-comment.html?' + params.toString();
-      } catch (err) {
-        location.href = './ai-comment.html';
-      }
-    });
-  }
 </script>
-<script type="module" src="../js/entry.js?v=20260722-ai-comment-flow"></script>
+<script type="module" src="../js/entry.js?v=20260723-emi-questions-ready"></script>
 </body></html>

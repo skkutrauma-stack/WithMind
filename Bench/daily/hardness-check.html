@@ -367,19 +367,7 @@
     if (event.target === helpModal) closeHelpModal();
   });
   
-  // When user proceeds, store the selected strategy so journal.html can read it
-  const nextBtn = document.getElementById('nextBtn');
-  nextBtn.addEventListener('click', () => {
-    const active = document.querySelector('.choice[data-active="true"]');
-    const key = active ? active.dataset.key : null;
-    if (key) {
-      try { localStorage.setItem('selectedStrategy', key); } catch (e) { /* ignore */ }
-    } else {
-      try { localStorage.removeItem('selectedStrategy'); } catch (e) { /* ignore */ }
-    }
-    location.href = './journal.html';
-  });
 </script>
-<script type="module" src="../js/entry.js"></script>
+<script type="module" src="../js/entry.js?v=20260723-emi-questions-ready"></script>
 </body>
 </html>

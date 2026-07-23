@@ -363,9 +363,36 @@ function bindHardness(doc) {
     setFlowId('emi', flowId);
     const generated = await invokeWorkflow('emi-generate-questions', { flowId });
     if (!generated?.ok) throw new Error(generated?.error || 'EMI 질문 생성에 실패했어요.');
+    const stored = dataOf(await getEmi({ flowId }));
+    if (!hasStoredEmiQuestions(stored?.emi)) {
+      throw new Error('생성된 EMI 질문이 DB에 저장되지 않았어요. 다시 시도해 주세요.');
+    }
     updateDailyState({ hardness: { strategy, gestaltTypeId } });
     location.href = './journal.html';
   });
+}
+
+function emiQuestions(emi = {}) {
+  return [1, 2, 3, 4, 5].map((index) => text(emi[`question_${index}`]));
+}
+
+function hasStoredEmiQuestions(emi = {}) {
+  const questions = emiQuestions(emi);
+  return Boolean(text(emi.questions_generated_at)) && questions.length === 5 && questions.every(Boolean);
+}
+
+async function ensureEmiQuestionsReady(flowId) {
+  let result = dataOf(await getEmi({ flowId }));
+  if (hasStoredEmiQuestions(result?.emi)) return result.emi;
+
+  const generated = await invokeWorkflow('emi-generate-questions', { flowId });
+  if (!generated?.ok) throw new Error(generated?.error || 'EMI 질문 생성에 실패했어요.');
+
+  result = dataOf(await getEmi({ flowId }));
+  if (!hasStoredEmiQuestions(result?.emi)) {
+    throw new Error('EMI 질문이 DB에 아직 준비되지 않았어요. 이전 단계에서 다시 시도해 주세요.');
+  }
+  return result.emi;
 }
 
 async function bindJournal(doc) {
@@ -373,18 +400,39 @@ async function bindJournal(doc) {
   const input = doc.querySelector('#journalInput');
   const items = [...doc.querySelectorAll('.check-item')];
   const flowId = getFlowId('emi');
-  if (flowId) {
-    try {
-      const result = dataOf(await getEmi({ flowId }));
-      const questions = [1, 2, 3, 4, 5].map((index) => text(result?.emi?.[`question_${index}`]));
-      items.forEach((item, index) => {
-        const label = item.querySelector('span');
-        if (label && questions[index]) label.textContent = questions[index];
-      });
-    } catch (error) {
-      showError(error);
-    }
+  let questionsReady = false;
+  const idleText = text(button?.textContent) || '다 썼어';
+  items.forEach((item) => {
+    item.disabled = true;
+    item.setAttribute('aria-busy', 'true');
+    item.style.opacity = '.55';
+  });
+  if (input) input.disabled = true;
+  if (button) {
+    button.disabled = true;
+    button.textContent = '질문 확인 중...';
+    button.style.opacity = '.5';
   }
+
+  try {
+    if (!flowId) throw new Error('EMI 흐름 정보가 없어요. 이전 단계부터 다시 진행해 주세요.');
+    const emi = await ensureEmiQuestionsReady(flowId);
+    const questions = emiQuestions(emi);
+    items.forEach((item, index) => {
+      const label = item.querySelector('span');
+      if (label) label.textContent = questions[index];
+      item.disabled = false;
+      item.setAttribute('aria-busy', 'false');
+      item.style.opacity = '1';
+    });
+    if (input) input.disabled = false;
+    if (button) button.textContent = idleText;
+    questionsReady = true;
+    input?.dispatchEvent(new Event('input'));
+  } catch (error) {
+    showError(error);
+  }
+
   captureClick(button, async () => {
     const selectedNumbers = items.map((item, index) => item.dataset.active === 'true' ? index + 1 : 0).filter(Boolean);
     const combinedResponse = text(input?.value);
@@ -392,8 +440,13 @@ async function bindJournal(doc) {
       .map((number) => text(items[number - 1]?.querySelector('span')?.textContent))
       .filter(Boolean);
     if (!flowId) throw new Error('EMI 흐름 정보가 없어요.');
+    if (!questionsReady) throw new Error('EMI 질문이 아직 준비되지 않았어요. 잠시 후 다시 시도해 주세요.');
     if (!selectedNumbers.length || !combinedResponse) throw new Error('질문을 선택하고 답을 적어 주세요.');
     setBusy(button, true, 'AI 코멘트 생성 중...');
+    const stored = dataOf(await getEmi({ flowId }));
+    if (!hasStoredEmiQuestions(stored?.emi)) {
+      throw new Error('EMI 질문 저장이 확인되지 않았어요. 이전 단계에서 다시 시도해 주세요.');
+    }
     const journal = rememberJournalAnswer(selectedQuestions, combinedResponse);
     dataOf(await saveEmiResponse({
       flowId,

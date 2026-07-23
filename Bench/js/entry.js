@@ -1,7 +1,7 @@
 import { applyPageStatus, describePage, renderStatusText } from './page-status.js';
 import { patchFlowState, updatePageState } from './flow-state.js';
 import { bindOnboardingPage } from './pages/onboarding.js?v=20260720-agreement-check';
-import { bindDailyPage } from './pages/daily.js?v=20260722-ai-comment-flow';
+import { bindDailyPage } from './pages/daily.js?v=20260723-emi-questions-ready';
 import { bindSafetyPlanPage } from './pages/safetyplan.js';
 import { bindUserGreeting } from './user-greeting.js?v=20260723-nickname-vocative';
 

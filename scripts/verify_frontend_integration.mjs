@@ -161,13 +161,22 @@ for (const marker of ['renderCharacterPresentation', "descriptionSelector: '#moo
 for (const marker of ['generatedComment', 'aiComment: { flowId', 'flow: flowId', 'hasCurrentCachedComment', 'rowFlowId !== flowId']) {
   if (!daily.includes(marker)) failures.push(`ai-comment flow pinning is missing ${marker}`);
 }
-if (!entry.includes('daily.js?v=20260722-ai-comment-flow')) {
+for (const marker of ['ensureEmiQuestionsReady', 'hasStoredEmiQuestions', 'questions_generated_at', '질문 확인 중...']) {
+  if (!daily.includes(marker)) failures.push(`EMI question readiness guard is missing ${marker}`);
+}
+if (readFileSync(join(bench, 'daily/hardness-check.html'), 'utf8').includes("location.href = './journal.html'")) {
+  failures.push('hardness-check inline script must not bypass persisted EMI question generation');
+}
+if (journalPage.includes("location.href = './ai-comment.html'")) {
+  failures.push('journal inline script must not bypass the database-backed submit flow');
+}
+if (!entry.includes('daily.js?v=20260723-emi-questions-ready')) {
   failures.push('daily page logic must bypass stale browser caches');
 }
 for (const [page, source, version] of [
   ['mood-character', moodCharacter, '20260722-ai-comment-flow'],
   ['mood-type', moodTypePage, '20260722-ai-comment-flow'],
-  ['journal', journalPage, '20260722-ai-comment-flow'],
+  ['journal', journalPage, '20260723-emi-questions-ready'],
   ['ai-comment', aiCommentPage, '20260723-user-greeting'],
 ]) {
   if (!source.includes(`entry.js?v=${version}`)) failures.push(`${page} must load the current daily page logic`);
