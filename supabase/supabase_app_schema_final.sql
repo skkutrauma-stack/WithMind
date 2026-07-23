@@ -1349,7 +1349,7 @@ EMA 척도별 점수: {{ema_scale_scores_json}}
 위 정보에 근거하여 서로 중복되지 않는 특성 3개와 AI 코멘트 1개를 생성하라.
 $prompt$,
   '["emotion_category","emotion_details_json","ema_responses_json","ema_scale_scores_json","classification_json"]'::jsonb,
-  '{"type":"object","required":["characteristic_1","characteristic_2","characteristic_3","ai_comment"],"properties":{"characteristic_1":{"type":"string"},"characteristic_2":{"type":"string"},"characteristic_3":{"type":"string"},"ai_comment":{"type":"string"}}}'::jsonb,
+  '{"type":"object","additionalProperties":false,"required":["characteristic_1","characteristic_2","characteristic_3","ai_comment"],"properties":{"characteristic_1":{"type":"string"},"characteristic_2":{"type":"string"},"characteristic_3":{"type":"string"},"ai_comment":{"type":"string"}}}'::jsonb,
   true
 ),
 (
@@ -1380,7 +1380,7 @@ EMA 분석 내용에 대한 질문: {{reflection_question}}
 현재 경험과 접촉 방식을 탐색할 수 있는 질문을 정확히 5개 생성하라.
 $prompt$,
   '["emotion_category","emotion_details_json","ema_responses_json","ema_scale_scores_json","classification_json","ema_analysis_json","reflection_question","reflection_response","gestalt_types_json"]'::jsonb,
-  '{"type":"object","required":["questions"],"properties":{"questions":{"type":"array","minItems":5,"maxItems":5,"items":{"type":"string"}}}}'::jsonb,
+  '{"type":"object","additionalProperties":false,"required":["questions"],"properties":{"questions":{"type":"array","minItems":5,"maxItems":5,"items":{"type":"string"}}}}'::jsonb,
   true
 ),
 (
@@ -1426,7 +1426,7 @@ EMA 분석 내용에 대한 질문: {{reflection_question}}
 최우선 자기성찰 기록을 중심으로, 위 개인화 규칙을 모두 지킨 AI 코멘트 1개를 생성하라.
 $prompt$,
   '["emotion_category","emotion_details_json","ema_responses_json","ema_scale_scores_json","classification_json","ema_analysis_json","reflection_question","reflection_response","gestalt_types_json","selected_question_1","selected_question_2","combined_response"]'::jsonb,
-  '{"type":"object","required":["ai_comment"],"properties":{"ai_comment":{"type":"string"}}}'::jsonb,
+  '{"type":"object","additionalProperties":false,"required":["ai_comment"],"properties":{"ai_comment":{"type":"string"}}}'::jsonb,
   true
 ),
 (
@@ -1452,7 +1452,7 @@ EMA 분석 결과: {{ema_analysis_json}}
 위 분석 내용을 사용자의 실제 현재 경험과 연결하는 개방형 질문을 정확히 1개 생성하라.
 $prompt$,
   '["emotion_category","emotion_details_json","ema_responses_json","ema_scale_scores_json","classification_json","ema_analysis_json"]'::jsonb,
-  '{"type":"object","required":["reflection_question"],"properties":{"reflection_question":{"type":"string"}}}'::jsonb,
+  '{"type":"object","additionalProperties":false,"required":["reflection_question"],"properties":{"reflection_question":{"type":"string"}}}'::jsonb,
   true
 )
 on conflict (prompt_template_id) do update

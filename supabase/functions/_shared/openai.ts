@@ -29,6 +29,18 @@ function extractText(payload: any) {
   return '';
 }
 
+export function enforceStrictObjectSchemas(schema: Json): Json {
+  if (Array.isArray(schema)) return schema.map(enforceStrictObjectSchemas);
+  if (!schema || typeof schema !== 'object') return schema;
+
+  const normalized: { [key: string]: Json } = {};
+  for (const [key, value] of Object.entries(schema)) {
+    normalized[key] = enforceStrictObjectSchemas(value);
+  }
+  if (normalized.type === 'object') normalized.additionalProperties = false;
+  return normalized;
+}
+
 export async function runJsonCompletion<T extends Record<string, unknown>>(
   env: SupabaseEnv,
   input: {
@@ -66,7 +78,7 @@ export async function runJsonCompletion<T extends Record<string, unknown>>(
         format: {
           type: 'json_schema',
           name: 'output',
-          schema: input.outputSchema,
+          schema: enforceStrictObjectSchemas(input.outputSchema),
           strict: true,
         },
       },

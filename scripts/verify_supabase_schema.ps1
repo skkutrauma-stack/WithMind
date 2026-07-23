@@ -10,6 +10,7 @@ $agreementPath = Join-Path $root 'Bench\onboarding\agreement.html'
 $safetyPath = Join-Path $root 'Bench\onboarding\safety_contact.html'
 $checkinPath = Join-Path $root 'Bench\daily\checkin.html'
 $emiCommentPath = Join-Path $root 'supabase\functions\emi-comment\index.ts'
+$openAiPath = Join-Path $root 'supabase\functions\_shared\openai.ts'
 
 $failures = [System.Collections.Generic.List[string]]::new()
 
@@ -42,6 +43,7 @@ $hasAgreement = Require-File $agreementPath 'agreement screen'
 $hasSafety = Require-File $safetyPath 'safety contact screen'
 $hasCheckin = Require-File $checkinPath 'EMA check-in screen'
 $hasEmiComment = Require-File $emiCommentPath 'EMI comment Edge Function'
+$hasOpenAi = Require-File $openAiPath 'shared OpenAI client'
 
 if ($hasSql) {
   $sql = Get-Content -LiteralPath $sqlPath -Raw -Encoding UTF8
@@ -84,6 +86,10 @@ if ($hasSql) {
   Require-Match $sql '\[reflect-user-phrase\]' 'specific journal phrase reflection rule'
   Require-Match $sql '\[suggest-concrete-next-step\]' 'concrete next-action rule'
   Require-Match $sql '\[avoid-generic-language\]' 'generic EMI comment phrase ban'
+  $strictOutputSchemaCount = [regex]::Matches($sql, '"type":"object","additionalProperties":false').Count
+  if ($strictOutputSchemaCount -lt 4) {
+    $failures.Add("Expected strict additionalProperties=false on all four LLM output schemas; found $strictOutputSchemaCount")
+  }
 
   $instrumentRows = [regex]::Matches(
     $sql,
@@ -181,6 +187,13 @@ if ($hasEmiComment) {
   Require-Match $emiComment 'validatePersonalizedComment' 'runtime personalized comment validator'
   Require-Match $emiComment 'GENERIC_COMMENT_PHRASES' 'runtime generic comment rejection list'
   Require-Match $emiComment 'OpenAI returned a generic EMI comment; no result was saved' 'generic comment database save guard'
+}
+
+if ($hasOpenAi) {
+  $openAi = Get-Content -LiteralPath $openAiPath -Raw -Encoding UTF8
+  Require-Match $openAi 'enforceStrictObjectSchemas' 'runtime strict JSON schema normalization'
+  Require-Match $openAi 'normalized\.additionalProperties = false' 'runtime additionalProperties=false guard'
+  Require-Match $openAi 'schema: enforceStrictObjectSchemas\(input\.outputSchema\)' 'normalized schema sent to OpenAI'
 }
 
 if ($failures.Count -gt 0) {
