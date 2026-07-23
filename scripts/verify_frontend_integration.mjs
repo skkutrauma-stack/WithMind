@@ -96,6 +96,7 @@ const runtime = readFileSync(join(bench, 'runtime-config.js'), 'utf8');
 if (!runtime.includes("functionsUrl: '/api'")) failures.push('runtime-config.js must target the authenticated Vercel API proxy');
 
 const daily = readFileSync(join(bench, 'js/pages/daily.js'), 'utf8');
+const userGreeting = readFileSync(join(bench, 'js/user-greeting.js'), 'utf8');
 for (const workflow of ['ema-interpret', 'ema-reflection-question', 'emi-generate-questions', 'emi-comment']) {
   if (!daily.includes(`'${workflow}'`)) failures.push(`daily.js does not invoke ${workflow}`);
 }
@@ -115,7 +116,24 @@ for (const action of ['accept_consent', 'submit_baseline_values', 'get_safety_pl
 const moodCharacter = readFileSync(join(bench, 'daily/mood-character.html'), 'utf8');
 const moodTypePage = readFileSync(join(bench, 'daily/mood-type.html'), 'utf8');
 const journalPage = readFileSync(join(bench, 'daily/journal.html'), 'utf8');
+const checkinPage = readFileSync(join(bench, 'daily/checkin.html'), 'utf8');
 const aiCommentPage = readFileSync(join(bench, 'daily/ai-comment.html'), 'utf8');
+const personalizedGreetingPages = [
+  ['home', readFileSync(join(bench, 'home/home.html'), 'utf8')],
+  ['onboarding-home', readFileSync(join(bench, 'onboarding/home.html'), 'utf8')],
+  ['checkin', checkinPage],
+  ['ai-comment', aiCommentPage],
+  ['crisis', readFileSync(join(bench, 'safetyplan/crisis.html'), 'utf8')],
+];
+for (const [page, source] of personalizedGreetingPages) {
+  if (!source.includes('data-user-vocative')) failures.push(`${page} must expose the personalized nickname greeting`);
+  if (!source.includes('entry.js?v=20260723-user-greeting')) failures.push(`${page} must load the current nickname greeting logic`);
+  if (/지우[야아]/.test(source)) failures.push(`${page} must not contain a fixed Jiwoo greeting`);
+}
+for (const marker of ['getOnboardingStatus', 'profile?.nickname', '0xAC00', "% 28 !== 0", "return `${nickname} 친구야`"]) {
+  if (!userGreeting.includes(marker)) failures.push(`nickname greeting logic is missing ${marker}`);
+}
+if (!entry.includes('bindUserGreeting(document)')) failures.push('entry.js must bind personalized nickname greetings');
 if (moodCharacter.includes('오늘은 마음이 비교적 편안했구나.')) {
   failures.push('mood-character.html must not contain a fixed AI comment');
 }
@@ -146,8 +164,13 @@ for (const marker of ['generatedComment', 'aiComment: { flowId', 'flow: flowId',
 if (!entry.includes('daily.js?v=20260722-ai-comment-flow')) {
   failures.push('daily page logic must bypass stale browser caches');
 }
-for (const [page, source] of [['mood-character', moodCharacter], ['mood-type', moodTypePage], ['journal', journalPage], ['ai-comment', aiCommentPage]]) {
-  if (!source.includes('entry.js?v=20260722-ai-comment-flow')) failures.push(`${page} must load the current daily page logic`);
+for (const [page, source, version] of [
+  ['mood-character', moodCharacter, '20260722-ai-comment-flow'],
+  ['mood-type', moodTypePage, '20260722-ai-comment-flow'],
+  ['journal', journalPage, '20260722-ai-comment-flow'],
+  ['ai-comment', aiCommentPage, '20260723-user-greeting'],
+]) {
+  if (!source.includes(`entry.js?v=${version}`)) failures.push(`${page} must load the current daily page logic`);
 }
 for (const marker of ['rememberJournalAnswer', 'journalAnswerFromEmi', 'journalAnswerFromLocation', 'renderJournalAnswer', 'getEmi({ flowId })']) {
   if (!daily.includes(marker)) failures.push(`journal-to-comment synchronization is missing ${marker}`);

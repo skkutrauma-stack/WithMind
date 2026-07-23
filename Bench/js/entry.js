@@ -3,6 +3,7 @@ import { patchFlowState, updatePageState } from './flow-state.js';
 import { bindOnboardingPage } from './pages/onboarding.js?v=20260720-agreement-check';
 import { bindDailyPage } from './pages/daily.js?v=20260722-ai-comment-flow';
 import { bindSafetyPlanPage } from './pages/safetyplan.js';
+import { bindUserGreeting } from './user-greeting.js?v=20260723-nickname-vocative';
 
 const runtimeConfigReady = import('../runtime-config.js')
   .catch(() => null)
@@ -58,6 +59,7 @@ if (!globalThis[globalKey]) {
       return state;
     });
     bindLegacyNavigation(document);
+    bindUserGreeting(document);
 
     if (page.section === 'onboarding') {
       bindOnboardingPage(document);
