@@ -170,13 +170,13 @@ if (readFileSync(join(bench, 'daily/hardness-check.html'), 'utf8').includes("loc
 if (journalPage.includes("location.href = './ai-comment.html'")) {
   failures.push('journal inline script must not bypass the database-backed submit flow');
 }
-if (!entry.includes('daily.js?v=20260723-emi-questions-ready')) {
+if (!entry.includes('daily.js?v=20260723-emi-flow-retry')) {
   failures.push('daily page logic must bypass stale browser caches');
 }
 for (const [page, source, version] of [
   ['mood-character', moodCharacter, '20260722-ai-comment-flow'],
   ['mood-type', moodTypePage, '20260722-ai-comment-flow'],
-  ['journal', journalPage, '20260723-emi-questions-ready'],
+  ['journal', journalPage, '20260723-emi-flow-retry'],
   ['ai-comment', aiCommentPage, '20260723-user-greeting'],
 ]) {
   if (!source.includes(`entry.js?v=${version}`)) failures.push(`${page} must load the current daily page logic`);
@@ -192,6 +192,11 @@ const vercelAppApi = readFileSync(join(root, 'api/app-api.js'), 'utf8');
 if (!vercelAppApi.includes("if (action === 'get_safety_plan')")) failures.push('Vercel app-api is missing get_safety_plan');
 if (!vercelAppApi.includes("{ upsert: true, onConflict: 'user_id' }")) failures.push('Vercel app-api must upsert safety plans by user_id');
 if (!vercelAppApi.includes('isMissingExtendedProfileColumns')) failures.push('Vercel app-api must support the deployed legacy profile schema');
+for (const [name, source] of [['Supabase', appApi], ['Vercel', vercelAppApi]]) {
+  for (const marker of ['findEmiFlowForReflection', 'startOrReuseEmiFlow', 'EMI flow already exists for this EMA reflection']) {
+    if (!source.includes(marker)) failures.push(`${name} app-api is missing the EMI retry guard: ${marker}`);
+  }
+}
 if (!vercelAppApi.includes('p_region_name: regionName') || !vercelAppApi.includes("result = await rpc(env, 'complete_registration', legacy)")) {
   failures.push('Vercel app-api must support both deployed legacy registration RPC signatures');
 }

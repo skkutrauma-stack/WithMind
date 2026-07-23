@@ -97,6 +97,38 @@ async function completeFlow(runtime: SupabaseEnv, flowId: string, userId: string
   }, false);
 }
 
+async function findEmiFlowForReflection(runtime: SupabaseEnv, userId: string, sourceReflectionFlowId: string) {
+  const session = await selectOne<Record<string, unknown>>(
+    runtime,
+    `/rest/v1/emi_sessions?select=flow_id&source_reflection_flow_id=eq.${encodeURIComponent(sourceReflectionFlowId)}&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
+  );
+  return text(session?.flow_id) || null;
+}
+
+async function startOrReuseEmiFlow(
+  runtime: SupabaseEnv,
+  userId: string,
+  sourceReflectionFlowId: string,
+  gestaltTypeIds: unknown,
+) {
+  const existingFlowId = await findEmiFlowForReflection(runtime, userId, sourceReflectionFlowId);
+  if (existingFlowId) return existingFlowId;
+
+  try {
+    return await rpc<string>(runtime, 'start_emi_flow', {
+      p_user_id: userId,
+      p_source_reflection_flow_id: sourceReflectionFlowId,
+      p_gestalt_type_ids: gestaltTypeIds,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error || '');
+    if (!/EMI flow already exists for this EMA reflection/i.test(message)) throw error;
+    const racedFlowId = await findEmiFlowForReflection(runtime, userId, sourceReflectionFlowId);
+    if (!racedFlowId) throw error;
+    return racedFlowId;
+  }
+}
+
 function normalizeAnswers(value: unknown, allowPartial = false) {
   if (!Array.isArray(value) || value.length !== 31) {
     throw new HttpError(400, '31 EMA answers are required');
@@ -452,11 +484,12 @@ async function handleAction(
     case 'start_emi_flow': {
       const sourceFlowId = asUuid(pick(payload, 'sourceReflectionFlowId', 'source_reflection_flow_id'), 'sourceReflectionFlowId');
       await assertOwnedFlow(runtime, sourceFlowId, userId, 'ema_reflection');
-      return await rpc(runtime, 'start_emi_flow', {
-        p_user_id: userId,
-        p_source_reflection_flow_id: sourceFlowId,
-        p_gestalt_type_ids: pick(payload, 'gestaltTypeIds', 'gestalt_type_ids'),
-      });
+      return await startOrReuseEmiFlow(
+        runtime,
+        userId,
+        sourceFlowId,
+        pick(payload, 'gestaltTypeIds', 'gestalt_type_ids'),
+      );
     }
 
     case 'get_emi_llm_context':

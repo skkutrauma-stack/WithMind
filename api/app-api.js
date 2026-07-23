@@ -72,6 +72,32 @@ function completeFlow(env, flowId, userId) {
   return updateRows(env, 'activity_flows', { flow_id: flowId, user_id: userId }, { status: 'completed', submitted_at: now, completed_at: now });
 }
 
+async function findEmiFlowForReflection(env, userId, sourceReflectionFlowId) {
+  const session = await selectOne(
+    env,
+    `/rest/v1/emi_sessions?select=flow_id&source_reflection_flow_id=eq.${encodeURIComponent(sourceReflectionFlowId)}&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
+  );
+  return session?.flow_id || null;
+}
+
+async function startOrReuseEmiFlow(env, userId, sourceReflectionFlowId, gestaltTypeIds) {
+  const existingFlowId = await findEmiFlowForReflection(env, userId, sourceReflectionFlowId);
+  if (existingFlowId) return existingFlowId;
+
+  try {
+    return await rpc(env, 'start_emi_flow', {
+      p_user_id: userId,
+      p_source_reflection_flow_id: sourceReflectionFlowId,
+      p_gestalt_type_ids: gestaltTypeIds,
+    });
+  } catch (error) {
+    if (!/EMI flow already exists for this EMA reflection/i.test(String(error?.message || ''))) throw error;
+    const racedFlowId = await findEmiFlowForReflection(env, userId, sourceReflectionFlowId);
+    if (!racedFlowId) throw error;
+    return racedFlowId;
+  }
+}
+
 async function handleAction(action, payload, userId, env, userMetadata = {}) {
   if (action === 'ping') return { ok: true, user_id: userId };
 
@@ -256,7 +282,7 @@ async function handleAction(action, payload, userId, env, userMetadata = {}) {
   if (action === 'start_emi_flow') {
     const sourceFlowId = uuid(pick(payload, 'sourceReflectionFlowId', 'source_reflection_flow_id'), 'sourceReflectionFlowId');
     await assertFlowOwner(env, sourceFlowId, userId, 'ema_reflection');
-    return rpc(env, 'start_emi_flow', { p_user_id: userId, p_source_reflection_flow_id: sourceFlowId, p_gestalt_type_ids: pick(payload, 'gestaltTypeIds', 'gestalt_type_ids') });
+    return startOrReuseEmiFlow(env, userId, sourceFlowId, pick(payload, 'gestaltTypeIds', 'gestalt_type_ids'));
   }
 
   if (action === 'get_emi') {
